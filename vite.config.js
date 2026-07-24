@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => {
             allowedHosts: ['starter.benq.test']
         },
         // TODO: Change base path to match your deployment path
-        base: '/frontend/',
+        base: './',
         plugins: [vueDevTools(), vue(), svgLoader()],
         resolve: {
             alias: {
