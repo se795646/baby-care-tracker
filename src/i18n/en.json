@@ -1,0 +1,465 @@
+{
+    "common": {
+        "confirm": "Confirm",
+        "cancel": "Cancel",
+        "save": "Save",
+        "delete": "Delete",
+        "edit": "Edit",
+        "search": "Search",
+        "loading": "Loading...",
+        "noData": "No data",
+        "error": "An error occurred",
+        "success": "Success",
+        "reset": "Reset",
+        "unknown": "Unknown",
+        "injected": "Injected"
+    },
+    "auth": {
+        "login": "Login",
+        "logout": "Logout",
+        "tokenExpired": "Session expired, please login again",
+        "tokenExpiredTitle": "Session Expired",
+        "noPermission": "You do not have permission to access this page",
+        "backToLogin": "Back to Login"
+    },
+    "validation": {
+        "required": "This field is required.",
+        "invalidEmail": "Invalid email address. Please enter a valid email.",
+        "minLength": "Minimum {length} characters.",
+        "maxLength": "Maximum {length} characters.",
+        "whitespaceOnly": "Whitespace-only values are not allowed.",
+        "noEmoji": "Emoji characters are not allowed."
+    },
+    "nav": {
+        "headingPatterns": "Pattern Index",
+        "overview": "Overview",
+        "components": "Components",
+        "routerGuard": "Router Guard",
+        "treeView": "Tree View",
+        "treeTable": "Tree + Table",
+        "deviceList": "Device List"
+    },
+    "deviceList": {
+        "pageTitle": "Device List",
+        "searchPlaceholder": "Search devices...",
+        "selectedText": "items selected",
+        "selectColumnsTooltip": "Select columns",
+        "columns": {
+            "status": "Status",
+            "name": "Name",
+            "model": "Model",
+            "serial": "Serial",
+            "ip": "IP Address",
+            "mac": "MAC Address",
+            "group": "Group",
+            "updatedAt": "Last Updated"
+        },
+        "status": {
+            "online": "Online",
+            "offline": "Offline",
+            "standby": "Standby",
+            "unknown": "Unknown"
+        },
+        "noData": {
+            "title": "No devices",
+            "desc": "Add your first device to get started."
+        },
+        "noSearch": {
+            "title": "No results found",
+            "action": "Clear search"
+        },
+        "action": {
+            "detail": "Details",
+            "deleteSelected": "Delete selected"
+        },
+        "toast": {
+            "delete": "Delete {count} devices (demo)",
+            "viewDetail": "View device #{id}"
+        }
+    },
+    "treeTable": {
+        "groups": "Groups",
+        "allDevices": "All Devices",
+        "collapse": "Collapse",
+        "expandGroups": "Expand groups",
+        "devicesCount": "{count} devices",
+        "columns": {
+            "status": "Status",
+            "name": "Name",
+            "serial": "Serial",
+            "group": "Group",
+            "model": "Model",
+            "firmware": "Firmware",
+            "ip": "IP Address"
+        },
+        "status": {
+            "online": "Online",
+            "offline": "Offline",
+            "warning": "Warning"
+        },
+        "noData": {
+            "title": "No devices",
+            "desc": "No devices found in this group."
+        }
+    },
+    "treeView": {
+        "pageTitle": "Tree View Pattern",
+        "pageDesc": "QTreeView usage patterns sourced from DMS3 and XSign_frontend. The canonical way to manage state is useTreeCtx(namespace) + proxyRefs in setup(), not $refs. Always call resetTreeCtx(namespace) in beforeUnmount.",
+        "demo": {
+            "basic": {
+                "title": "Basic Selection",
+                "desc": "No drag, no menu, no count. Call resetGroupOpenIds(allGroup, selectedId) after init to auto-expand to the selected node."
+            },
+            "menu": {
+                "title": "Dynamic Context Menu",
+                "desc": "menu-icon-click pattern: build the menu dynamically per node just before the dropdown opens."
+            },
+            "checkbox": {
+                "title": "Checkbox Multi-select",
+                "desc": "Dialog mode: confirm/cancel to select multiple nodes."
+            },
+            "drag": {
+                "title": "Drag & Drop Reorder",
+                "desc": "Enable isDraggable to allow reordering siblings or moving nodes across hierarchy levels."
+            },
+            "quickRef": "Quick Reference"
+        },
+        "info": {
+            "selected": "Selected",
+            "lastAction": "Last Action",
+            "checked": "Checked",
+            "lastMove": "Last Move",
+            "none": "None",
+            "node": "Node",
+            "action": "Action",
+            "moveTo": "Move to",
+            "type": "Type"
+        },
+        "apiRef": {
+            "useTreeCtx": "Returns a reactive context object bound to the matching :namespace on <q-tree-view>. Wrap with proxyRefs so methods are accessible without .value.",
+            "resetTreeCtx": "Destroy the context. Call in beforeUnmount to avoid memory leaks when the component is reused.",
+            "setIsDraggable": "Enable or disable drag-and-drop. Default: true.",
+            "setIsShowMenu": "Show or hide the 3-dot menu icon on hover.",
+            "setIsShowCount": "Show or hide the deviceCount badge.",
+            "setWithCheckbox": "Enable checkbox multi-select mode.",
+            "setIsDialog": "Apply dialog-context row sizing (52px rows, no drag styling).",
+            "setAllGroup": "Required for drag. Flat map {'{'} [id]: {'{'} isSubGroupExist, parentId, depth, ... {'}'} {'}'}.",
+            "setSelectedGroupId": "Highlight a node as selected. Pass null to deselect.",
+            "resetGroupOpenIds": "Expand all ancestor nodes of the given id. Call after init to reveal the current selection.",
+            "setTreeMenu": "Set a per-node context menu [ {'{'} title, action {'}'} ] just before the dropdown opens. Call inside {'@'}menu-icon-click.",
+            "setCheckedIds": "Sync the checked node list into the tree. Used in checkbox mode.",
+            "setIsHierarchyMoveAllowed": "Allow dragging a node into another node (nesting). Default: false.",
+            "setIsSortAllowed": "Allow drag-reordering siblings. Default: false.",
+            "dragAndMoveInfo": "Object with {'{'} moveIds, moveTargetId, moveTargetType, dragTargetId {'}'}. Read after {'@'}group-move fires.",
+            "resetDragAndMoveInfo": "Reset drag state. Always call at the end of your {'@'}group-move handler.",
+            "treeClick": "Node row clicked (not the expand arrow).",
+            "menuIconClick": "The ··· icon was clicked. Set the menu here via ctx.setTreeMenu(id, items).",
+            "menuClick": "A menu item was selected.",
+            "updateGroupCheck": "Checkbox toggled. Manage your own checkedIds array and sync via ctx.setCheckedIds(ids).",
+            "groupMove": "Drag dropped. Read ctx.dragAndMoveInfo, update your data, then call ctx.resetDragAndMoveInfo()."
+        }
+    },
+    "routerGuard": {
+        "pageTitle": "Router Guard Pattern",
+        "pageDesc": "Two auth guard strategies observed across projects. Both use the createAppRouter factory — only the getAccessToken and onMissingToken options differ.",
+        "tokenGuard": {
+            "title": "Token Guard (JWT / localStorage)",
+            "desc": "Used in DMS3 and this starter. The token is written to localStorage after login (or extracted from URL params on first load). The guard reads it synchronously on every navigation.",
+            "howItWorks": "How it works",
+            "steps": [
+                "On app init, check URL for ?token= param and persist to localStorage.",
+                "createAppRouter receives getAccessToken: () => localStorage.getItem(TOKEN).",
+                "beforeEach calls getAccessToken(). If null → redirect to TokenExpired page.",
+                "Token refresh is handled by the HTTP client interceptor, not the router."
+            ],
+            "wiring": "Wiring"
+        },
+        "sessionGuard": {
+            "title": "Session Guard (Server-side Session Cookie)",
+            "desc": "Used in XSign. The backend manages the session cookie. The frontend only tracks a signed flag in the Vuex store, populated after a successful login API call.",
+            "howItWorks": "How it works",
+            "steps": [
+                "After login API succeeds, store.commit sets loginStatus.signed = true.",
+                "createAppRouter receives getAccessToken: () => store.state.common.loginStatus.signed ? 'session' : null.",
+                "If null → next() with no redirect (backend returns 401/redirect for expired sessions).",
+                "onMissingToken: null — the router does not redirect; backend handles auth."
+            ],
+            "wiring": "Wiring"
+        },
+        "comparison": {
+            "title": "Pattern Comparison",
+            "aspect": "Aspect",
+            "tokenBased": "Token-based",
+            "sessionBased": "Session-based",
+            "rows": [
+                { "aspect": "Token storage", "token": "localStorage", "session": "Server-side cookie" },
+                { "aspect": "Guard reads", "token": "localStorage.getItem(KEY)", "session": "store.state.loginStatus.signed" },
+                { "aspect": "On missing token", "token": "Redirect to TokenExpired page", "session": "next() — backend handles" },
+                { "aspect": "Token refresh", "token": "HTTP interceptor (createHttpClient)", "session": "Not applicable" },
+                { "aspect": "Used in", "token": "DMS3, this starter", "session": "XSign" }
+            ]
+        }
+    },
+    "overview": {
+        "pageTitle": "Pattern Index",
+        "pageDesc": "All implementation patterns in this template at a glance.",
+        "btnGo": "Go",
+        "sectionPatterns": "Demo Pages",
+        "sectionCore": "Core Infrastructure",
+        "patterns": [
+            {
+                "title": "Components",
+                "desc": "Injected app service demos: Processing Dialog, Notice Dialog, Toast, Inline Alert, Badge."
+            },
+            {
+                "title": "Router Guard",
+                "desc": "Two auth guard patterns: token-based (JWT in localStorage, used in DMS3) and session-based (server-side session cookie, used in XSign)."
+            },
+            {
+                "title": "Tree View",
+                "desc": "QTreeView in four modes: basic selection, dynamic context menu (menu-icon-click), checkbox multi-select, drag & drop."
+            },
+            {
+                "title": "Tree + Table",
+                "desc": "Collapsible QTreeView panel alongside QDataTable — selecting a group filters the device list."
+            },
+            {
+                "title": "Device List",
+                "desc": "Full QDataTable example with keyword search, column toggle, sorting, and pagination."
+            }
+        ],
+        "coreItems": [
+            {
+                "title": "Bootstrap",
+                "path": "foundation/bootstrap/bootstrapApp.js",
+                "desc": "Load runtime config before mount, register shared plugins, and inject APP_CONFIG via provide."
+            },
+            {
+                "title": "Router Guard",
+                "path": "foundation/router/createAppRouter.js",
+                "desc": "Token guard, public route allowlist, event-driven token-expired and no-permission redirects."
+            },
+            {
+                "title": "HTTP Client",
+                "path": "foundation/http/createHttpClient.js",
+                "desc": "Centralized request factory: token attach, auto-refresh, result-code handling, fake/mock toggle."
+            },
+            {
+                "title": "App Shell Services",
+                "path": "foundation/app/useAppShellServices.js",
+                "desc": "Processing Dialog, Notice Dialog, and Toast exposed to all child pages via provide/inject."
+            },
+            {
+                "title": "Form Validation Hook",
+                "path": "hooks/useCustomVuelidate.js",
+                "desc": "useCustomVuelidate: v$, field rule sets, getErrors, blur-triggered validate — shared across pages."
+            },
+            {
+                "title": "Vuex Store",
+                "path": "store/modules/personal.js",
+                "desc": "User info (member) managed in the personal module; pages access it via mapGetters."
+            }
+        ]
+    },
+    "components": {
+        "pageTitle": "Shared App Services",
+        "pageDesc": "Demonstrates the injected services every project should be able to call without rebuilding local infrastructure.",
+        "serviceCards": {
+            "processing": {
+                "title": "Processing service",
+                "desc": "Show loading and progress from any page without duplicating modal state."
+            },
+            "notice": {
+                "title": "Notice service",
+                "desc": "Open common confirm and warning dialogs with one shared pattern."
+            },
+            "toast": {
+                "title": "Toast service",
+                "desc": "Send user feedback through a single global app-shell surface."
+            }
+        },
+        "processingDialog": {
+            "title": "Processing Dialog",
+            "desc": "Useful for any page that has loading or progress requirements.",
+            "btnLoading": "Show Loading",
+            "btnProgress": "Show Progress (3s)"
+        },
+        "noticeDialog": {
+            "title": "Notice Dialog",
+            "desc": "Centralized notice UX avoids per-page modal implementations.",
+            "btnInfo": "Info Notice",
+            "btnWarning": "Warning Notice",
+            "btnCallback": "Notice with Callback",
+            "infoTitle": "Information",
+            "infoDesc": "This is an informational notice dialog.",
+            "infoBtnText": "Got it",
+            "warningTitle": "Warning",
+            "warningDesc": "Are you sure you want to proceed? This action cannot be undone.",
+            "warningBtnText": "I understand",
+            "callbackTitle": "Confirm Action",
+            "callbackDesc": "Click confirm to trigger a callback.",
+            "callbackBtnText": "Confirm"
+        },
+        "toastSection": {
+            "title": "Toast Notifications",
+            "desc": "App-level feedback should route through one toast panel.",
+            "btnSuccess": "Success",
+            "btnError": "Error",
+            "btnInfo": "Info",
+            "successTitle": "Success",
+            "successDesc": "Operation completed!",
+            "errorTitle": "Error",
+            "errorDesc": "Something went wrong.",
+            "infoTitle": "Info",
+            "infoDesc": "This is an info message.",
+            "progressDone": "Done",
+            "progressDoneDesc": "Processing complete!"
+        },
+        "alertSection": {
+            "title": "Inline Alerts",
+            "desc": "Keep content components lightweight and let design-system components handle consistent messaging.",
+            "success": "This is a success alert.",
+            "info": "This is an informational alert.",
+            "error": "This is an error alert."
+        },
+        "badgeSection": {
+            "title": "Badges & Status",
+            "desc": "Shared status semantics make list pages and dashboards easier to standardize."
+        }
+    },
+    "settings": {
+        "general": {
+            "pageTitle": "Foundation Preferences",
+            "pageDesc": "Example settings page for application-level preferences and rollout flags.",
+            "recommendTitle": "Current recommendation",
+            "recommendDesc": "Treat settings pages as examples of predictable form structure, not as final product design.",
+            "authGuard": {
+                "title": "Enable auth guard",
+                "desc": "Matches the router-level gate used by the baseline factory."
+            },
+            "mockApi": {
+                "title": "Mock API mode",
+                "desc": "Useful when new projects want a stable UI before backend APIs are ready."
+            },
+            "migrationBanner": {
+                "title": "Legacy migration banner",
+                "desc": "Keep migration guidance visible while bringing old repos toward this baseline."
+            },
+            "flags": {
+                "authGuard": "Auth guard",
+                "mockApi": "Mock API",
+                "migrationHints": "Migration hints"
+            },
+            "flagValues": {
+                "on": "On",
+                "off": "Off",
+                "enabled": "Enabled",
+                "disabled": "Disabled",
+                "visible": "Visible",
+                "hidden": "Hidden"
+            }
+        },
+        "account": {
+            "pageTitle": "Account Form Pattern",
+            "pageDesc": "Example profile form showing a clean baseline for detail pages and save actions.",
+            "profileTitle": "Profile identity",
+            "validationTitle": "Form validation baseline",
+            "validationDesc": "Follows the same pattern used in AMS and Meeting Room: `useCustomVuelidate` exposes `v$`, rules, `getErrors`, and blur-triggered `validate`.",
+            "patternNotesTitle": "Pattern notes",
+            "patternNotes": [
+                "Keep forms split into clear sections with stable action placement.",
+                "Pull initial values from store once and allow local editing state.",
+                "Route success feedback through the shared toast service."
+            ],
+            "fields": {
+                "displayName": "Display Name",
+                "email": "Email",
+                "company": "Company",
+                "role": "Role",
+                "shortDesc": "Short Description"
+            },
+            "action": {
+                "save": "Save",
+                "reset": "Reset",
+                "cancel": "Cancel"
+            },
+            "toast": {
+                "saved": "Account updated (demo)",
+                "cancelled": "Cancelled"
+            }
+        },
+        "validation": {
+            "pageTitle": "Form Validation Patterns",
+            "pageDesc": "This page demonstrates the shared validation flow used by AMS and Meeting Room: `useCustomVuelidate`, field-level error rendering, blur-triggered validation, and full-form submit validation.",
+            "profileForm": {
+                "title": "Profile Form",
+                "subtitle": "Common text, email, and description rules."
+            },
+            "notificationForm": {
+                "title": "Notification Settings",
+                "subtitle": "A second form block to show the same validation pattern across feature modules."
+            },
+            "integrationCheck": {
+                "title": "Integration Check",
+                "subtitle": "Compare storybook-style static usage with the controlled binding used in this starter.",
+                "staticLabel": "Static initModel",
+                "controlledLabel": "Controlled initModel",
+                "maskedLabel": "Masked value"
+            },
+            "debug": {
+                "controlledValue": "controlled value",
+                "lastTextFieldValue": "last text-field-value",
+                "lastInputChange": "last input-change",
+                "maskedValue": "masked value"
+            },
+            "guide": {
+                "title": "Pattern Checklist",
+                "hookInterface": "Hook Interface",
+                "hookItems": [
+                    "`v$` for validations object",
+                    "`getErrors(keys, v$)` for field messages",
+                    "`validate(value, keys)` for blur-triggered check",
+                    "Rules exposed from one shared hook"
+                ],
+                "currentState": "Current State",
+                "submitBehavior": "Submit Behavior",
+                "submitDesc": "Use `await v$.$validate()` on final submit. For immediate field feedback, reuse `validate(false, key)` on blur.",
+                "dirty": "Dirty",
+                "error": "Error",
+                "displayName": "Display Name",
+                "email": "Email",
+                "fallbackEmail": "Fallback Email",
+                "yes": "Yes",
+                "no": "No",
+                "invalid": "Invalid",
+                "ok": "OK"
+            },
+            "fields": {
+                "displayName": "Display Name",
+                "role": "Role",
+                "primaryEmail": "Primary Email",
+                "supportEmail": "Support Email",
+                "description": "Description",
+                "confirmKeyword": "Confirm Keyword (\"VALIDATE\")",
+                "ownerName": "Owner Name",
+                "notificationEmail": "Notification Email",
+                "escalationRole": "Escalation Role",
+                "fallbackEmail": "Fallback Email",
+                "escalationMessage": "Escalation Message"
+            },
+            "action": {
+                "reset": "Reset",
+                "validate": "Validate Entire Form"
+            },
+            "toast": {
+                "passed": "Validation passed",
+                "passedDesc": "This form follows the shared starter validation pattern."
+            },
+            "notice": {
+                "failedTitle": "Validation Failed",
+                "failedDesc": "Please fix the highlighted fields before continuing.",
+                "failedBtnText": "Review"
+            }
+        }
+    }
+}

@@ -1,0 +1,465 @@
+{
+    "common": {
+        "confirm": "確認",
+        "cancel": "取消",
+        "save": "儲存",
+        "delete": "刪除",
+        "edit": "編輯",
+        "search": "搜尋",
+        "loading": "載入中...",
+        "noData": "無資料",
+        "error": "發生錯誤",
+        "success": "成功",
+        "reset": "重設",
+        "unknown": "未知",
+        "injected": "注入式"
+    },
+    "auth": {
+        "login": "登入",
+        "logout": "登出",
+        "tokenExpired": "登入逾期，請重新登入",
+        "tokenExpiredTitle": "連線逾時",
+        "noPermission": "您沒有權限存取此頁面",
+        "backToLogin": "返回登入"
+    },
+    "validation": {
+        "required": "此欄位為必填。",
+        "invalidEmail": "電子郵件格式不正確，請輸入有效的電子郵件地址。",
+        "minLength": "至少需要 {length} 個字元。",
+        "maxLength": "最多只能輸入 {length} 個字元。",
+        "whitespaceOnly": "不可只輸入空白字元。",
+        "noEmoji": "不可輸入表情符號。"
+    },
+    "nav": {
+        "headingPatterns": "Pattern 索引",
+        "overview": "概覽",
+        "components": "元件示範",
+        "routerGuard": "路由守衛",
+        "treeView": "樹狀視圖",
+        "treeTable": "樹狀 + 表格",
+        "deviceList": "裝置清單"
+    },
+    "deviceList": {
+        "pageTitle": "裝置清單",
+        "searchPlaceholder": "搜尋裝置...",
+        "selectedText": "筆已選取",
+        "selectColumnsTooltip": "選擇欄位",
+        "columns": {
+            "status": "狀態",
+            "name": "名稱",
+            "model": "型號",
+            "serial": "序號",
+            "ip": "IP 位址",
+            "mac": "MAC 位址",
+            "group": "群組",
+            "updatedAt": "最後更新"
+        },
+        "status": {
+            "online": "在線",
+            "offline": "離線",
+            "standby": "待機",
+            "unknown": "未知"
+        },
+        "noData": {
+            "title": "無裝置",
+            "desc": "新增您的第一台裝置以開始使用。"
+        },
+        "noSearch": {
+            "title": "查無結果",
+            "action": "清除搜尋"
+        },
+        "action": {
+            "detail": "查看詳細",
+            "deleteSelected": "刪除所選"
+        },
+        "toast": {
+            "delete": "刪除 {count} 台裝置（示範）",
+            "viewDetail": "查看裝置 #{id}"
+        }
+    },
+    "treeTable": {
+        "groups": "群組",
+        "allDevices": "所有裝置",
+        "collapse": "收合",
+        "expandGroups": "展開群組",
+        "devicesCount": "{count} 台裝置",
+        "columns": {
+            "status": "狀態",
+            "name": "名稱",
+            "serial": "序號",
+            "group": "群組",
+            "model": "型號",
+            "firmware": "韌體版本",
+            "ip": "IP 位址"
+        },
+        "status": {
+            "online": "在線",
+            "offline": "離線",
+            "warning": "警告"
+        },
+        "noData": {
+            "title": "無裝置",
+            "desc": "此群組中無裝置。"
+        }
+    },
+    "treeView": {
+        "pageTitle": "樹狀視圖模式",
+        "pageDesc": "QTreeView 使用模式，來源自 DMS3 和 XSign_frontend。管理狀態的標準做法是在 setup() 中使用 useTreeCtx(namespace) + proxyRefs，而非 $refs。務必在 beforeUnmount 中呼叫 resetTreeCtx(namespace)。",
+        "demo": {
+            "basic": {
+                "title": "基本選擇",
+                "desc": "無拖曳、無選單、無計數。初始化後呼叫 resetGroupOpenIds(allGroup, selectedId) 可自動展開至選取節點。"
+            },
+            "menu": {
+                "title": "動態右鍵選單",
+                "desc": "menu-icon-click 模式：點擊圖示時依節點動態組出選單後再開啟。"
+            },
+            "checkbox": {
+                "title": "勾選框多選",
+                "desc": "對話框模式：搭配確認/取消按鈕選取多個節點。"
+            },
+            "drag": {
+                "title": "拖曳排序",
+                "desc": "啟用 isDraggable 後可在同層或跨層移動節點。"
+            },
+            "quickRef": "快速參考"
+        },
+        "info": {
+            "selected": "已選取",
+            "lastAction": "最後操作",
+            "checked": "已勾選",
+            "lastMove": "最後移動",
+            "none": "無",
+            "node": "節點",
+            "action": "操作",
+            "moveTo": "移動至",
+            "type": "位置"
+        },
+        "apiRef": {
+            "useTreeCtx": "回傳與對應 :namespace 綁定的響應式 context 物件。搭配 proxyRefs 包裹，即可不透過 .value 直接呼叫方法。",
+            "resetTreeCtx": "銷毀 context。於 beforeUnmount 中呼叫，以避免元件重新掛載時產生記憶體洩漏。",
+            "setIsDraggable": "啟用或停用拖曳功能。預設值：true。",
+            "setIsShowMenu": "顯示或隱藏 hover 時出現的 ··· 選單圖示。",
+            "setIsShowCount": "顯示或隱藏 deviceCount 徽章。",
+            "setWithCheckbox": "啟用勾選框多選模式。",
+            "setIsDialog": "套用對話框情境的列高（52px，無拖曳樣式）。",
+            "setAllGroup": "拖曳必填。扁平化 map，格式：{'{'} [id]: {'{'} isSubGroupExist, parentId, depth, ... {'}'} {'}'}。",
+            "setSelectedGroupId": "將指定節點高亮為已選取。傳入 null 可取消選取。",
+            "resetGroupOpenIds": "展開指定 id 的所有祖先節點。初始化後呼叫，可顯示當前選取的節點。",
+            "setTreeMenu": "在下拉選單開啟前，針對特定節點設定右鍵選單 [ {'{'} title, action {'}'} ]。在 {'@'}menu-icon-click 內呼叫。",
+            "setCheckedIds": "將勾選節點清單同步至樹中。用於勾選框模式。",
+            "setIsHierarchyMoveAllowed": "允許將節點拖入另一節點（巢狀）。預設值：false。",
+            "setIsSortAllowed": "允許拖曳排列同層節點。預設值：false。",
+            "dragAndMoveInfo": "包含 {'{'} moveIds, moveTargetId, moveTargetType, dragTargetId {'}'} 的物件。在 {'@'}group-move 觸發後讀取。",
+            "resetDragAndMoveInfo": "重設拖曳狀態。務必在 {'@'}group-move 處理器結尾呼叫。",
+            "treeClick": "節點列被點擊時觸發（非展開箭頭）。",
+            "menuIconClick": "··· 圖示被點擊時觸發。在此透過 ctx.setTreeMenu(id, items) 設定選單。",
+            "menuClick": "選單項目被選取時觸發。",
+            "updateGroupCheck": "勾選框切換時觸發。自行維護 checkedIds 陣列，並透過 ctx.setCheckedIds(ids) 同步。",
+            "groupMove": "拖放完成時觸發。讀取 ctx.dragAndMoveInfo，更新資料後呼叫 ctx.resetDragAndMoveInfo()。"
+        }
+    },
+    "routerGuard": {
+        "pageTitle": "路由守衛 Pattern",
+        "pageDesc": "跨專案觀察到的兩種 Auth 守衛策略，均使用 createAppRouter 工廠，僅 getAccessToken 與 onMissingToken 選項不同。",
+        "tokenGuard": {
+            "title": "Token 守衛（JWT / localStorage）",
+            "desc": "用於 DMS3 與此範本。Token 於登入後寫入 localStorage（或首次載入時從 URL 參數取出）。守衛在每次導航時同步讀取。",
+            "howItWorks": "運作方式",
+            "steps": [
+                "App 初始化時，檢查 URL 是否有 ?token= 參數並存入 localStorage。",
+                "createAppRouter 接收 getAccessToken: () => localStorage.getItem(TOKEN)。",
+                "beforeEach 呼叫 getAccessToken()，若為 null → 導向 TokenExpired 頁面。",
+                "Token 更新由 HTTP Client 攔截器處理，與路由無關。"
+            ],
+            "wiring": "接線方式"
+        },
+        "sessionGuard": {
+            "title": "Session 守衛（伺服器端 Session Cookie）",
+            "desc": "用於 XSign。後端管理 Session Cookie，前端僅追蹤 Vuex store 中登入 API 成功後設定的 signed 旗標。",
+            "howItWorks": "運作方式",
+            "steps": [
+                "登入 API 成功後，store.commit 設定 loginStatus.signed = true。",
+                "createAppRouter 接收 getAccessToken: () => store.state.common.loginStatus.signed ? 'session' : null。",
+                "若為 null → next()，不導向任何頁面（後端對逾期 Session 回傳 401 或自行導向）。",
+                "onMissingToken: null — 路由不主動導向，由後端處理 Auth。"
+            ],
+            "wiring": "接線方式"
+        },
+        "comparison": {
+            "title": "模式比較",
+            "aspect": "面向",
+            "tokenBased": "Token 型",
+            "sessionBased": "Session 型",
+            "rows": [
+                { "aspect": "Token 儲存位置", "token": "localStorage", "session": "伺服器端 Cookie" },
+                { "aspect": "守衛讀取方式", "token": "localStorage.getItem(KEY)", "session": "store.state.loginStatus.signed" },
+                { "aspect": "Token 遺失時", "token": "導向 TokenExpired 頁面", "session": "next()，後端處理" },
+                { "aspect": "Token 更新", "token": "HTTP Client 攔截器（createHttpClient）", "session": "不適用" },
+                { "aspect": "使用專案", "token": "DMS3、此範本", "session": "XSign" }
+            ]
+        }
+    },
+    "overview": {
+        "pageTitle": "Pattern 索引",
+        "pageDesc": "此範本提供的所有實作模式一覽。",
+        "btnGo": "前往",
+        "sectionPatterns": "展示頁",
+        "sectionCore": "核心基礎架構",
+        "patterns": [
+            {
+                "title": "元件示範",
+                "desc": "注入式 App 服務展示：Processing Dialog、Notice Dialog、Toast、Inline Alert、Badge。"
+            },
+            {
+                "title": "路由守衛",
+                "desc": "兩種 Auth 守衛策略：Token 型（JWT 存 localStorage，DMS3 模式）與 Session 型（伺服器端 Session Cookie，XSign 模式）。"
+            },
+            {
+                "title": "樹狀視圖",
+                "desc": "QTreeView 四種模式：基本選擇、動態右鍵選單（menu-icon-click）、勾選框多選、拖曳排序。"
+            },
+            {
+                "title": "樹狀 + 表格",
+                "desc": "左側可折疊 QTreeView 搭配右側 QDataTable，選群組即過濾裝置列表。"
+            },
+            {
+                "title": "裝置清單",
+                "desc": "具備關鍵字搜尋、欄位切換、排序、分頁的 QDataTable 完整範例。"
+            }
+        ],
+        "coreItems": [
+            {
+                "title": "Bootstrap",
+                "path": "foundation/bootstrap/bootstrapApp.js",
+                "desc": "掛載前載入 Runtime 設定、統一 Plugin 註冊、透過 provide 注入 APP_CONFIG。"
+            },
+            {
+                "title": "Router Guard",
+                "path": "foundation/router/createAppRouter.js",
+                "desc": "Token 守衛、公開路由白名單、事件驅動的 token-expired 與無權限導向。"
+            },
+            {
+                "title": "HTTP Client",
+                "path": "foundation/http/createHttpClient.js",
+                "desc": "集中化請求工廠：Token 附加、自動更新、結果碼處理、Fake/Mock 切換。"
+            },
+            {
+                "title": "App Shell Services",
+                "path": "foundation/app/useAppShellServices.js",
+                "desc": "Processing Dialog、Notice Dialog、Toast 統一透過 provide/inject 暴露給所有子頁面。"
+            },
+            {
+                "title": "Form Validation Hook",
+                "path": "hooks/useCustomVuelidate.js",
+                "desc": "useCustomVuelidate：v$、欄位規則集、getErrors、blur 觸發驗證，跨頁面共用。"
+            },
+            {
+                "title": "Vuex Store",
+                "path": "store/modules/personal.js",
+                "desc": "使用者資訊（member）統一由 personal module 管理，頁面透過 mapGetters 存取。"
+            }
+        ]
+    },
+    "components": {
+        "pageTitle": "共用 App 服務",
+        "pageDesc": "示範每個專案應可呼叫的注入式服務，無需重建本地基礎架構。",
+        "serviceCards": {
+            "processing": {
+                "title": "Processing 服務",
+                "desc": "從任何頁面顯示載入與進度，無需重複實作 modal 狀態。"
+            },
+            "notice": {
+                "title": "Notice 服務",
+                "desc": "以一個共用模式開啟確認與警告對話框。"
+            },
+            "toast": {
+                "title": "Toast 服務",
+                "desc": "透過單一全域 App Shell 介面傳遞使用者回饋。"
+            }
+        },
+        "processingDialog": {
+            "title": "Processing Dialog",
+            "desc": "適用於任何有載入/進度需求的頁面。",
+            "btnLoading": "顯示載入",
+            "btnProgress": "顯示進度 (3秒)"
+        },
+        "noticeDialog": {
+            "title": "Notice Dialog",
+            "desc": "集中式通知 UX，避免各頁面重複實作 modal。",
+            "btnInfo": "資訊通知",
+            "btnWarning": "警告通知",
+            "btnCallback": "帶回呼的通知",
+            "infoTitle": "資訊",
+            "infoDesc": "這是一個資訊通知對話框。",
+            "infoBtnText": "知道了",
+            "warningTitle": "警告",
+            "warningDesc": "確定要繼續嗎？此操作無法復原。",
+            "warningBtnText": "我了解",
+            "callbackTitle": "確認操作",
+            "callbackDesc": "點擊確認以觸發回呼。",
+            "callbackBtnText": "確認"
+        },
+        "toastSection": {
+            "title": "Toast 通知",
+            "desc": "應用層級的回饋應統一透過一個 Toast 面板處理。",
+            "btnSuccess": "成功",
+            "btnError": "錯誤",
+            "btnInfo": "資訊",
+            "successTitle": "成功",
+            "successDesc": "操作已完成！",
+            "errorTitle": "錯誤",
+            "errorDesc": "發生了一些問題。",
+            "infoTitle": "資訊",
+            "infoDesc": "這是一則資訊訊息。",
+            "progressDone": "完成",
+            "progressDoneDesc": "處理完成！"
+        },
+        "alertSection": {
+            "title": "Inline Alert",
+            "desc": "保持內容元件輕量，讓設計系統元件處理一致的訊息呈現。",
+            "success": "這是一個成功提示。",
+            "info": "這是一個資訊提示。",
+            "error": "這是一個錯誤提示。"
+        },
+        "badgeSection": {
+            "title": "Badge & 狀態",
+            "desc": "共用的狀態語意讓清單頁面和儀表板更容易標準化。"
+        }
+    },
+    "settings": {
+        "general": {
+            "pageTitle": "基礎設定偏好",
+            "pageDesc": "應用層級偏好設定與功能旗標的範例設定頁面。",
+            "recommendTitle": "目前建議",
+            "recommendDesc": "將設定頁面視為可預測表單結構的範例，而非最終產品設計。",
+            "authGuard": {
+                "title": "啟用認證守衛",
+                "desc": "對應基準工廠使用的路由層級閘道。"
+            },
+            "mockApi": {
+                "title": "Mock API 模式",
+                "desc": "適合在後端 API 尚未就緒前，讓新專案擁有穩定的 UI。"
+            },
+            "migrationBanner": {
+                "title": "舊版遷移橫幅",
+                "desc": "在舊版專案向此基準對齊期間，持續顯示遷移指引。"
+            },
+            "flags": {
+                "authGuard": "認證守衛",
+                "mockApi": "Mock API",
+                "migrationHints": "遷移提示"
+            },
+            "flagValues": {
+                "on": "開",
+                "off": "關",
+                "enabled": "已啟用",
+                "disabled": "已停用",
+                "visible": "顯示中",
+                "hidden": "已隱藏"
+            }
+        },
+        "account": {
+            "pageTitle": "帳號表單模式",
+            "pageDesc": "展示詳細頁面與儲存操作乾淨基準的範例個人資料表單。",
+            "profileTitle": "個人資料",
+            "validationTitle": "表單驗證基準",
+            "validationDesc": "遵循 AMS 和 Meeting Room 相同的模式：useCustomVuelidate 提供 v$、rules、getErrors 以及 blur 觸發的 validate。",
+            "patternNotesTitle": "模式說明",
+            "patternNotes": [
+                "將表單切分為明確的區塊，並保持穩定的操作按鈕位置。",
+                "從 Store 取得初始值一次，並允許本地編輯狀態。",
+                "將成功回饋統一透過共用 Toast 服務傳遞。"
+            ],
+            "fields": {
+                "displayName": "顯示名稱",
+                "email": "電子郵件",
+                "company": "公司",
+                "role": "角色",
+                "shortDesc": "簡短描述"
+            },
+            "action": {
+                "save": "儲存變更",
+                "reset": "重設",
+                "cancel": "取消"
+            },
+            "toast": {
+                "saved": "帳號已更新（示範）",
+                "cancelled": "已取消"
+            }
+        },
+        "validation": {
+            "pageTitle": "表單驗證模式",
+            "pageDesc": "示範 AMS 和 Meeting Room 使用的共用驗證流程：useCustomVuelidate、欄位層級錯誤渲染、blur 觸發驗證，以及整份表單提交驗證。",
+            "profileForm": {
+                "title": "個人資料表單",
+                "subtitle": "常見的文字、電子郵件和描述欄位規則。"
+            },
+            "notificationForm": {
+                "title": "通知設定",
+                "subtitle": "第二個表單區塊，展示跨功能模組的相同驗證模式。"
+            },
+            "integrationCheck": {
+                "title": "整合確認",
+                "subtitle": "比較 storybook 靜態用法與本範本受控綁定方式。",
+                "staticLabel": "靜態 initModel",
+                "controlledLabel": "受控 initModel",
+                "maskedLabel": "遮罩值"
+            },
+            "debug": {
+                "controlledValue": "受控值",
+                "lastTextFieldValue": "最後 text-field-value",
+                "lastInputChange": "最後 input-change",
+                "maskedValue": "遮罩值"
+            },
+            "guide": {
+                "title": "模式檢查清單",
+                "hookInterface": "Hook 介面",
+                "hookItems": [
+                    "`v$` — 驗證物件",
+                    "`getErrors(keys, v$)` — 欄位錯誤訊息",
+                    "`validate(value, keys)` — blur 觸發驗證",
+                    "所有規則從同一個共用 hook 取得"
+                ],
+                "currentState": "目前狀態",
+                "submitBehavior": "提交行為",
+                "submitDesc": "最終提交時使用 await v$.$validate()。即時欄位回饋則在 blur 時呼叫 validate(false, key)。",
+                "dirty": "已變更",
+                "error": "錯誤",
+                "displayName": "顯示名稱",
+                "email": "電子郵件",
+                "fallbackEmail": "備援電子郵件",
+                "yes": "是",
+                "no": "否",
+                "invalid": "無效",
+                "ok": "正常"
+            },
+            "fields": {
+                "displayName": "顯示名稱",
+                "role": "角色",
+                "primaryEmail": "主要電子郵件",
+                "supportEmail": "支援電子郵件",
+                "description": "描述",
+                "confirmKeyword": "確認關鍵字（\"VALIDATE\"）",
+                "ownerName": "擁有者名稱",
+                "notificationEmail": "通知電子郵件",
+                "escalationRole": "升級角色",
+                "fallbackEmail": "備援電子郵件",
+                "escalationMessage": "升級訊息"
+            },
+            "action": {
+                "reset": "重設",
+                "validate": "驗證整份表單"
+            },
+            "toast": {
+                "passed": "驗證通過",
+                "passedDesc": "表單符合共用啟動範本驗證模式。"
+            },
+            "notice": {
+                "failedTitle": "驗證失敗",
+                "failedDesc": "請修正標示的欄位後再繼續。",
+                "failedBtnText": "檢視"
+            }
+        }
+    }
+}

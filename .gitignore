@@ -1,0 +1,15 @@
+node_modules/
+dist/
+*.local
+.env*
+tailwind.config.json
+public/config/serverInfo.json
+.npm/
+
+# Editor
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

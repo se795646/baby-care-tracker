@@ -1,0 +1,239 @@
+/*
+ * Qtify Color Token Override — Complete Reference
+ *
+ * Source: tailwind.config.base.cjs in @benqcloud/qtify
+ * Figma: https://www.figma.com/design/LwYqMm7x3TE99Qz7WNpV4B/Web-App-Library?node-id=4-2
+ *
+ * Qtify components use CSS custom properties for theming.
+ * Every token below uses `var(--token-name, fallback)` in the library,
+ * so overriding here takes effect globally.
+ *
+ * HOW TO REBRAND:
+ *   1. Pick your brand color family (see list below)
+ *   2. Replace `royal-blue` with your color in the "brandable" tokens
+ *   3. Replace `navy-peony` with your color in the header/nav tokens (if dark header)
+ *      OR switch to light header pattern (see AMS example at bottom)
+ *
+ * Available color families (each has shades 1-10):
+ *   gray, navy-peony, royal-blue, carmine-pink, fuel-yellow,
+ *   ocean-green, light-coral, summer-sky, salad-green, dark-orchid,
+ *   glacier-green, persian-green, twilight-purple, ocean-blue,
+ *   night-shade, burning-orange, dawn-blue, sunlit-blue, avocado
+ *
+ * Product → Color mapping:
+ *   Default/DMS: navy-peony (header) + royal-blue (primary)
+ *   AMS: avocado
+ *   Enspire: dark-orchid
+ *   X-Sign Manager: glacier-green
+ *   InstaShare: violet
+ */
+
+:root {
+    /* ═══════════════════════════════════════════════════════
+     * COMMON — 全域語意色
+     * ═══════════════════════════════════════════════════════ */
+    --color-primary: theme('colors[royal-blue][7]');
+    --color-secondary: theme('colors[gray][8]');
+    --color-brand: theme('colors[navy-peony][10]');
+    --color-navigation: theme('colors[navy-peony][10]');
+
+    /* ── Status ─────────────────────────────────────────── */
+    /* (通常不需覆蓋，除非品牌有特殊 status 色) */
+    /* --color-status-success: theme('colors[ocean-green][9]'); */
+    /* --color-status-online: theme('colors[ocean-green][9]'); */
+    /* --color-status-error: theme('colors[carmine-pink][10]'); */
+    /* --color-danger: theme('colors[carmine-pink][10]'); */
+    /* --color-status-notification: theme('colors[carmine-pink][10]'); */
+    /* --color-status-sleep: theme('colors[fuel-yellow][10]'); */
+    /* --color-status-standby: theme('colors[fuel-yellow][10]'); */
+    /* --color-status-offline: theme('colors[gray][7]'); */
+
+    /* ── Text & Icon ────────────────────────────────────── */
+    /* (通常不需覆蓋) */
+    /* --color-text-major: theme('colors[gray][8]'); */
+    /* --color-icon-major: theme('colors[gray][8]'); */
+    /* --color-text-moderate: theme('colors[gray][5]'); */
+    /* --color-icon-moderate: theme('colors[gray][5]'); */
+    /* --color-text-minor: theme('colors[gray][3]'); */
+    /* --color-icon-minor: theme('colors[gray][3]'); */
+
+    /* ── Background ─────────────────────────────────────── */
+    /* --color-bg-global: theme('colors[gray][2]'); */
+    /* --color-bg-container: theme('colors[white]'); */
+
+    /* ── Text Link ──────────────────────────────────────── */
+    --color-text-link: theme('colors[royal-blue][7]');
+    --color-text-link-hover-with-icon: theme('colors[royal-blue][7]');
+    --color-text-link-hover-no-icon: theme('colors[royal-blue][6]');
+    /* --color-text-link-disable: theme('colors[gray][3]'); */
+
+    /* ── Chart ───────────────────────────────────────────── */
+    /* --color-chart-single: theme('colors[royal-blue][5]'); */
+    /* --color-chart-continuous-priority-1: theme('colors[royal-blue][6]'); */
+    /* --color-chart-continuous-priority-2: theme('colors[royal-blue][4]'); */
+    /* --color-chart-continuous-priority-3: theme('colors[royal-blue][3]'); */
+    /* --color-chart-continuous-priority-4: theme('colors[royal-blue][2]'); */
+    /* --color-chart-discrete-priority-1~6: 各色系獨立，通常不覆蓋 */
+
+    /* ═══════════════════════════════════════════════════════
+     * HEADER — QHeader 元件
+     * ═══════════════════════════════════════════════════════ */
+    --header-bg-color: theme('colors[navy-peony][10]');
+    --header-text-color: theme('colors[white]');
+    --header-divider-border-color: theme('colors[white]');
+    --header-org-bg-color-hover: theme('colors[navy-peony][8]');
+    --header-org-bg-color-selected: theme('colors[navy-peony][10]');
+    --header-org-border-color-selected: theme('colors[white]');
+    --header-org-icon-color: theme('colors[white]');
+
+    /* ═══════════════════════════════════════════════════════
+     * SIDE NAVIGATION — QSideNavigation
+     * ═══════════════════════════════════════════════════════ */
+    --nav-bg-color: theme('colors[navy-peony][10]');
+    --nav-arrow-icon-color: theme('colors[white]');
+    --nav-item-text-color: theme('colors[white]');
+    --nav-item-bg-color-hover: theme('colors[navy-peony][8]');
+    --nav-item-bg-color-selected: theme('colors[royal-blue][6]');
+    --nav-item-icon-color-hover: theme('colors[white]');
+    --nav-item-icon-color-selected: theme('colors[white]');
+    --nav-item-text-color-hover: theme('colors[white]');
+    --nav-item-text-color-selected: theme('colors[white]');
+    --nav-item-with-sub-text-color: theme('colors[navy-peony][4]');
+    --nav-item-with-sub-text-color-hover: theme('colors[navy-peony][4]');
+    --nav-item-with-sub-text-color-selected: theme('colors[white]');
+    --nav-heading-text-color: theme('colors[gray][3]');
+    --nav-divider-border-color: theme('colors[navy-peony][7]');
+    --nav-collapse-icon-color: theme('colors[white]');
+    --nav-collapse-icon-color-selected: theme('colors[royal-blue][5]');
+    --nav-app-name-text-color: theme('colors[navy-peony][3]');
+
+    /* ═══════════════════════════════════════════════════════
+     * BUTTONS — QBtn
+     * ═══════════════════════════════════════════════════════ */
+    --btn-bg-color-primary-default: theme('colors[royal-blue][7]');
+    --btn-bg-color-primary-hover-selected: theme('colors[royal-blue][6]');
+    --btn-bg-color-secondary-hover-selected: theme('colors[royal-blue][1]');
+    --btn-text-color-secondary-hover-selected: theme('colors[royal-blue][7]');
+    /* --btn-border-color-secondary: theme('colors[gray][3]'); */
+    /* --btn-bg-color-disabled: theme('colors[gray][1]'); */
+    /* --btn-border-color-secondary-disabled: theme('colors[gray][2]'); */
+
+    /* ═══════════════════════════════════════════════════════
+     * ICON BUTTONS — QIconBtn
+     * ═══════════════════════════════════════════════════════ */
+    --icon-btn-bg-color-primary-default: theme('colors[royal-blue][7]');
+    --icon-btn-bg-color-primary-hover-selected: theme('colors[royal-blue][6]');
+    --icon-btn-bg-color-secondary-hover-selected: theme('colors[royal-blue][1]');
+    /* --icon-btn-icon-color-secondary-hover-selected: theme('colors[gray][8]'); */
+    /* --icon-btn-border-color-secondary: theme('colors[gray][2]'); */
+    --icon-btn-bg-color-secondary-hollow-hover-selected: theme('colors[royal-blue][1]');
+    /* --icon-btn-icon-color-secondary-hollow-hover-selected: theme('colors[gray][8]'); */
+
+    /* ═══════════════════════════════════════════════════════
+     * CHECKBOX — QCheckbox
+     * ═══════════════════════════════════════════════════════ */
+    /* --checkbox-border-color-uncheck-actived: theme('colors[gray][5]'); */
+    /* --checkbox-border-color-uncheck-disabled: theme('colors[gray][2]'); */
+    --checkbox-bg-color-bulk-check-actived: theme('colors[royal-blue][7]');
+    /* --checkbox-icon-color-bulk-check-actived: theme('colors[white]'); */
+    /* --checkbox-bg-color-bulk-check-disabled: theme('colors[gray][3]'); */
+    /* --checkbox-icon-color-bulk-check-disabled: theme('colors[white]'); */
+
+    /* ═══════════════════════════════════════════════════════
+     * SWITCH — QSwitch
+     * ═══════════════════════════════════════════════════════ */
+    --switch-on-mix-track-color-active: theme('colors[royal-blue][7]');
+    /* --switch-on-mix-control-color-active: theme('colors[white]'); */
+    --switch-on-mix-icon-color-active: theme('colors[royal-blue][7]');
+    /* --switch-off-track-color-active: theme('colors[gray][3]'); */
+    /* --switch-off-control-color-active: theme('colors[white]'); */
+    /* --switch-off-icon-color-active: theme('colors[gray][5]'); */
+    /* --switch-text-color: theme('colors[gray][8]'); */
+
+    /* ═══════════════════════════════════════════════════════
+     * PROGRESS — QProgress
+     * ═══════════════════════════════════════════════════════ */
+    --progress-bar: theme('colors[royal-blue][5]');
+    /* --progress-bar-na: theme('colors[gray][2]'); */
+
+    /* ═══════════════════════════════════════════════════════
+     * DROPDOWN — QDropdown
+     * ═══════════════════════════════════════════════════════ */
+    --dropdown-list-hover: theme('colors[royal-blue][1]');
+
+    /* ═══════════════════════════════════════════════════════
+     * DATE PICKER — QDatePicker
+     * ═══════════════════════════════════════════════════════ */
+    --date-picker-fill-color-hover: theme('colors[royal-blue][1]');
+    --date-picker-fill-color-range: theme('colors[royal-blue][1]');
+    --date-picker-fill-color-selected: theme('colors[royal-blue][7]');
+    --date-picker-border-color-today: theme('colors[royal-blue][7]');
+    --date-picker-fill-color-calendar-btn-hover: theme('colors[royal-blue][1]');
+    --date-picker-fill-color-month-year-hover: theme('colors[royal-blue][1]');
+    --date-picker-text-color-month-year-hover: theme('colors[royal-blue][7]');
+    /* --date-picker-fill-color-unselected: theme('colors[white]'); */
+    /* --date-picker-text-color-unselected: theme('colors[gray][8]'); */
+    /* --date-picker-text-color-hover: theme('colors[gray][8]'); */
+    /* --date-picker-text-color-selected: theme('colors[white]'); */
+    /* --date-picker-text-color-today: theme('colors[gray][8]'); */
+    /* --date-picker-fill-color-disable: theme('colors[white]'); */
+    /* --date-picker-text-color-disable: theme('colors[gray][2]'); */
+    /* --date-picker-fill-color-last-next-month: theme('colors[white]'); */
+    /* --date-picker-text-color-last-next-month: theme('colors[gray][4]'); */
+    /* --date-picker-fill-color-calendar-btn-default: theme('colors[white]'); */
+    /* --date-picker-icon-color-calendar-btn-default: theme('colors[gray][5]'); */
+    /* --date-picker-icon-color-calendar-btn-hover: theme('colors[gray][8]'); */
+    /* --date-picker-fill-color-month-year-default: theme('colors[white]'); */
+    /* --date-picker-text-color-month-year-default: theme('colors[gray][8]'); */
+    /* --date-picker-fill-color-month-year-disable: theme('colors[white]'); */
+    /* --date-picker-text-color-month-year-disable: theme('colors[gray][2]'); */
+}
+
+/*
+ * ═══════════════════════════════════════════════════════════
+ * EXAMPLE: AMS 品牌色覆蓋（avocado 色系 + 白底 side-nav）
+ * ═══════════════════════════════════════════════════════════
+ *
+ * 取消註解以下區塊即可切換為 AMS 風格：
+ *
+ * :root {
+ *     --header-bg-color: theme('colors[avocado][7]');
+ *     --header-org-bg-color-hover: theme('colors[avocado][6]');
+ *     --header-org-bg-color-selected: theme('colors[avocado][7]');
+ *     --header-org-border-color-selected: theme('colors[avocado][1]');
+ *     --nav-bg-color: theme('colors[white]');
+ *     --nav-item-text-color: theme('colors[gray][8]');
+ *     --nav-item-bg-color-hover: theme('colors[gray][1]');
+ *     --nav-item-bg-color-selected: theme('colors[avocado][1]');
+ *     --nav-heading-text-color: theme('colors[gray][6]');
+ *     --nav-collapse-icon-color: theme('colors[gray][8]');
+ *     --nav-item-text-color-selected: theme('colors[avocado][10]');
+ *     --nav-item-icon-color-selected: theme('colors[avocado][10]');
+ *     --nav-collapse-icon-color-selected: theme('colors[avocado][10]');
+ *     --nav-org-bg-color-hover: theme('colors[gray][1]');
+ *     --nav-org-icon-color: theme('colors[gray][8]');
+ *     --nav-app-name-text-color: theme('colors[gray][8]');
+ *     --color-primary: theme('colors[avocado][7]');
+ *     --color-text-link: theme('colors[avocado][7]');
+ *     --btn-bg-color-primary-default: theme('colors[avocado][7]');
+ *     --btn-bg-color-primary-hover-selected: theme('colors[avocado][6]');
+ *     --btn-bg-color-secondary-hover-selected: theme('colors[avocado][1]');
+ *     --btn-text-color-secondary-hover-selected: theme('colors[avocado][7]');
+ *     --icon-btn-bg-color-primary-default: theme('colors[avocado][7]');
+ *     --icon-btn-bg-color-primary-hover-selected: theme('colors[avocado][6]');
+ *     --icon-btn-bg-color-secondary-hover-selected: theme('colors[avocado][1]');
+ *     --icon-btn-bg-color-secondary-hollow-hover-selected: theme('colors[avocado][1]');
+ *     --checkbox-bg-color-bulk-check-actived: theme('colors[avocado][7]');
+ *     --switch-on-mix-track-color-active: theme('colors[avocado][7]');
+ *     --switch-on-mix-icon-color-active: theme('colors[avocado][7]');
+ *     --dropdown-list-hover: theme('colors[avocado][1]');
+ *     --progress-bar: theme('colors[avocado][5]');
+ *     --date-picker-fill-color-hover: theme('colors[avocado][1]');
+ *     --date-picker-fill-color-range: theme('colors[avocado][1]');
+ *     --date-picker-fill-color-selected: theme('colors[avocado][7]');
+ *     --date-picker-border-color-today: theme('colors[avocado][7]');
+ *     --date-picker-fill-color-calendar-btn-hover: theme('colors[avocado][1]');
+ *     --date-picker-fill-color-month-year-hover: theme('colors[avocado][1]');
+ *     --date-picker-text-color-month-year-hover: theme('colors[avocado][7]');
+ * }
+ */
