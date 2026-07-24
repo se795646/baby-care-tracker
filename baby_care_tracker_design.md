@@ -68,6 +68,7 @@
   "timestamp": "2026-07-24T14:30:00Z", // 事件時間
   "amount_ml": 150, // 喝奶量 (ml)，僅 MILK 事件使用
   "duration_minutes": 120, // 睡眠時數 (分鐘)，僅 SLEEP_END 事件計算
+  "diaper_status": "WET", // 尿布狀態，僅 DIAPER 事件使用，可選值：WET (濕) | DIRTY (乾) | BOTH (乾濕)
   "image_url": "https://storage.example.com/photos/abc.jpg", // 拍照照片備份網址
   "note": "喝得比較慢，有打嗝", // 備註
   "created_at": "2026-07-24T14:31:05Z"
@@ -77,13 +78,16 @@
 ### 2. Notion 資料庫屬性對照
 | Notion 屬性名稱 | 屬性類型 | 對應 JSON 欄位 | 說明 |
 | :--- | :--- | :--- | :--- |
-| **ID** | Title | `id` | 唯一的記錄 ID |
+| **ID** | Title | `id` | 唯一的記錄 ID (Notion 主鍵，必填) |
 | **事件類型** | Select | `event_type` | 可選值：MILK, SLEEP_START, SLEEP_END, DIAPER |
 | **時間** | Date | `timestamp` | 事件發生時間 |
 | **奶量(ml)** | Number | `amount_ml` | 喝奶容量 (ml) |
-| **睡眠時數(分)**| Number | `duration_minutes` | 睡眠時間 (分鐘) |
+| **睡眠時數(分)** | Number | `duration_minutes` | 睡眠時間 (分鐘) |
+| **尿布狀態** | Select | `diaper_status` | 可選值：WET, DIRTY, BOTH |
 | **照片網址** | URL | `image_url` | 雲端照片儲存網址 |
+| **使用者ID** | Rich text | `user_id` | 使用者 ID |
 | **備註** | Rich text | `note` | 記錄備註資訊 |
+| **建立時間** | Date | `created_at` | 系統記錄建立時間 |
 
 ---
 
@@ -109,11 +113,12 @@ export default async function handler(req, res) {
           role: "system",
           content: `你是一個嬰兒照護辨識助手。請分析照片並輸出 JSON 格式：
           {
-            "event_type": "MILK" 或 "SLEEP" 或 "UNKNOWN",
-            "amount_ml": 數字(若為奶瓶)或 null,
+            "event_type": "MILK" | "SLEEP_START" | "SLEEP_END" | "DIAPER" | "UNKNOWN",
+            "amount_ml": 數字(若為奶瓶刻度，請辨識並計算出喝奶量毫升數，否則為 null),
+            "diaper_status": "WET" | "DIRTY" | "BOTH" (若是尿布照片，否則為 null),
             "confidence": 0.0~1.0,
-            "description": "簡短描述"
-          } 只能回傳 JSON，不要有其他文字。`
+            "description": "簡短的辨識結果描述，例如：'奶瓶剩餘 50ml，估算喝了 150ml' 或 '寶寶入睡中' 或 '尿布濕了'"
+          } 只能回傳符合 Schema 的 JSON，不要有任何 Markdown 標記或其它多餘文字。`
         },
         {
           role: "user",
@@ -144,17 +149,52 @@ const databaseId = process.env.NOTION_DATABASE_ID;
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
 
-  const { event_type, amount_ml, timestamp, note } = req.body;
+  const {
+    id,
+    user_id,
+    event_type,
+    timestamp,
+    amount_ml,
+    duration_minutes,
+    diaper_status,
+    image_url,
+    note,
+    created_at
+  } = req.body;
 
   try {
+    const properties = {
+      "ID": { title: [{ text: { content: id || `event-${Date.now()}` } }] },
+      "事件類型": { select: { name: event_type } },
+      "時間": { date: { start: timestamp } }
+    };
+
+    // 依據事件類型與資料內容動態寫入可選欄位，避免空值錯誤
+    if (amount_ml !== undefined && amount_ml !== null) {
+      properties["奶量(ml)"] = { number: Number(amount_ml) };
+    }
+    if (duration_minutes !== undefined && duration_minutes !== null) {
+      properties["睡眠時數(分)"] = { number: Number(duration_minutes) };
+    }
+    if (diaper_status) {
+      properties["尿布狀態"] = { select: { name: diaper_status } };
+    }
+    if (image_url) {
+      properties["照片網址"] = { url: image_url };
+    }
+    if (user_id) {
+      properties["使用者ID"] = { rich_text: [{ text: { content: user_id } }] };
+    }
+    if (note) {
+      properties["備註"] = { rich_text: [{ text: { content: note } }] };
+    }
+    if (created_at) {
+      properties["建立時間"] = { date: { start: created_at } };
+    }
+
     await notion.pages.create({
       parent: { database_id: databaseId },
-      properties: {
-        "事件類型": { select: { name: event_type } },
-        "時間": { date: { start: timestamp } },
-        "奶量(ml)": { number: amount_ml || 0 },
-        "備註": { rich_text: [{ text: { content: note || '' } }] }
-      }
+      properties
     });
 
     return res.status(200).json({ success: true, message: '成功寫入 Notion！' });
