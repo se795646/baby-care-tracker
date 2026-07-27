@@ -206,21 +206,30 @@ export default async function handler(req, res) {
 
 ---
 
-## 六、 GitHub 版控與自動化部署流程 (CI/CD Workflow)
+## 六、 GitHub 版控與自動化部署流程 (CI/CD / Vercel 部署指南)
 
-1. **Repository 設定：**
-   - 在 GitHub 建立 Private Repo（例如：`baby-care-tracker`）。
-   - 本地開發使用 `.env.local` 管理環境變數（包含 API Key），並加入 `.gitignore` 避免外洩。
+本系統非常適合託管於 **Vercel** 進行自動化部署與發佈，詳細部署規劃如下：
 
-2. **Vercel 自動部署整合：**
-   - 登入 Vercel 並匯入該 GitHub Repo。
-   - 在 Vercel 後台設定 **Environment Variables**：
-     - `OPENAI_API_KEY`
-     - `NOTION_KEY`
-     - `NOTION_DATABASE_ID`
-   - **分支部署機制：**
-     - 推送至 `main` 分支 ➔ 自動觸發 Production 部署。
-     - 推送至 `feature/*` 分支 ➔ 自動產生 Preview 測試網址。
+### 1. GitHub 儲存庫連結
+- 在 GitHub 建立您的 Repo（例如：`baby-care-tracker`）。
+- 本地開發使用 `.env` 管理環境變數（包含 Supabase 憑證），並加入 `.gitignore` 防止敏感資訊外洩。
+
+### 2. Vercel 自動化部署設定步驟
+1. **匯入專案**：登入 Vercel 後台，點擊 **Add New** > **Project**，並匯入您的 GitHub 專案。
+2. **設定 Build & Development Settings**（Vercel 預設會自動偵測 Vite）：
+   - **Framework Preset**: `Vite`
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist`
+3. **設定環境變數 (Environment Variables)**：
+   在部署前，必須在 Vercel 專案設定中加入以下兩個 Supabase 環境變數（這能確保前端能夠在瀏覽器安全地與資料庫通訊）：
+   - `VITE_SUPABASE_URL` : 您的 Supabase 專案 URL。
+   - `VITE_SUPABASE_ANON_KEY` : 您的 Supabase 專案 Anon 公開金鑰。
+4. **重新部署 (Redeploy)**：
+   - ⚠️ **重要提示**：因為 Vite 的 `VITE_` 開頭變數是在**編譯階段 (Build time)** 被直接靜態寫入程式碼中的。若您在部署後才修改環境變數，請務必手動在 Vercel 上點擊 **Redeploy**，讓 Vite 重新將環境變數編譯打包進網頁，否則變數將不會生效。
+
+### 3. 分支部署與持續整合 (CI/CD)
+- **Production 部署**：凡是推送（Push）到 `main` 分支的程式碼，會自動觸發 Vercel Production 建置並更新線上網址。
+- **Preview 測試部署**：凡是推送至其餘非 `main` 分支（如 `feature/*`），Vercel 會建立獨立的 Preview 預覽網址以供測試，且不會影響生產環境。
 
 ---
 

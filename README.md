@@ -85,18 +85,18 @@
 
 ---
 
-## 🚀 部署至 GitHub Pages 建議
+## 🚀 雲端部署指南 (Vercel & GitHub Pages)
 
-如果您想部署到 GitHub Pages，可以參考以下步驟：
+本專案是一個純靜態前端應用，非常適合託管在 **Vercel** 上，可享受自動化的 CI/CD 流程：
 
-1. 建立一個 GitHub 儲存庫（例如 `baby-tracker`）。
-2. 在您的本機專案執行以下指令以連結 GitHub：
-   ```bash
-   git add .
-   git commit -m "feat: init baby tracker app with IndexedDB and camera support"
-   git branch -M main
-   git remote add origin https://github.com/您的帳號/baby-tracker.git
-   git push -u origin main
-   ```
-3. 在 `vite.config.js` 中，將 `base` 設定為您的 repo 名稱（如 `/baby-tracker/`）。
-4. 使用 `gh-pages` 套件或 GitHub Actions 自動進行部署。
+### 1. 部署至 Vercel (推薦)
+1. **GitHub 推送**：建立一個 GitHub 儲存庫，將本地程式碼推送上去。
+2. **導入專案**：登入 Vercel 後台，導入您的 GitHub 儲存庫。
+3. **環境變數設定**：在 Vercel 專案設定的 **Environment Variables** 中，新增以下兩個變數：
+   - `VITE_SUPABASE_URL` : 您的 Supabase 專案 URL。
+   - `VITE_SUPABASE_ANON_KEY` : 您的 Supabase 專案 Anon 公開金鑰。
+4. **⚠️ 重要注意**：因為 Vite 的 `VITE_` 開頭變數是在**打包編譯時 (Build time)** 被打包進靜態 JavaScript 檔案中的。所以在 Vercel 設定或更新環境變數後，**必須在 Vercel 上點擊「Redeploy」（重新部署）**，該變數才會真正生效。
+
+### 2. 部署至 GitHub Pages (替代方案)
+1. 在 `vite.config.js` 中，將 `base` 修改為您的 GitHub 專案名稱（例如：`base: '/baby-care-tracker/'`）。
+2. 可利用 `gh-pages` npm 套件，或設定 GitHub Actions 自動將 `dist` 編譯內容部署至 `gh-pages` 分支。
