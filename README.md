@@ -2,7 +2,7 @@
 
 這是一個專為父母設計的純前端嬰兒作息記錄器。旨在提供一個優雅、溫馨且流暢的介面，幫助父母隨手記錄與追蹤嬰兒的**喝奶量**與**睡眠作息**。
 
-本專案採用 **Vue 3 (Composition API) + Vite + TailwindCSS** 開發，並整合了 **BenQ Design System (Qtify)** 元件與 **Vuetify** 進行排版。
+本專案採用 **Vue 3 (Composition API) + Vite + TailwindCSS** 開發，並整合了 **Vuetify** 進行元件開發與排版。
 
 ---
 
