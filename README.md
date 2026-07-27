@@ -87,49 +87,19 @@
 
 ---
 
-## 🚀 雲端部署指南 (GitHub + Supabase + Vercel)
+## 🚀 雲端快速部署指南 (適合其它家長架設，完全免費)
 
-本專案是一個純靜態前端應用，非常適合託管在 **Vercel** 上，可享受自動化的雙向即時同步。跟著以下步驟，您就能建立出一個免費且私人的專屬線上寶寶作息記錄儀！
-
----
-
-### 1. 建立您的 GitHub 儲存庫並上傳程式碼
-
-請先將程式碼發佈至您個人的 GitHub 雲端儲存庫中：
-
-1. **註冊 GitHub 帳號**：前往 [GitHub 官網 (github.com)](https://github.com/) 註冊一個免費帳號。
-2. **建立新的儲存庫 (Repository)**：
-   - 點選網頁右上角的 **`+`** 號，選擇 **New repository**。
-   - 輸入儲存庫名稱（例如：`baby-care-tracker`）。
-   - 選擇 **Private**（私有儲存庫，這能保護您的寶寶數據與密鑰不公開，僅限自己與家人訪問）。
-   - ⚠️ **重要提示**：請**不要**勾選 "Add a README file"、"Add .gitignore" 或選擇任何 License，保持它完全空白。
-   - 點選最下方的 **Create repository** 按鈕。
-3. **上傳程式碼（二選一，推薦新手使用圖形介面）**：
-   - **方式 A：使用 GitHub Desktop（最簡單，免打代碼）**
-     1. 下載並安裝 [GitHub Desktop 官方軟體](https://desktop.github.com/)。
-     2. 登入您的 GitHub 帳號。
-     3. 點選選單 `File` > `Add Local Repository`，選擇本專案在您電腦上的資料夾。
-     4. 點選 **Publish Repository**，在彈出視窗中保持勾選 Keep this code private，確認後點擊發佈即可！
-   - **方式 B：使用 Git 指令（適合熟悉指令的使用者）**
-     在您的專案根目錄下開啟終端機（PowerShell 或 Git Bash），依序執行以下指令：
-     ```bash
-     git init
-     git add .
-     git commit -m "feat: init baby tracker"
-     git branch -M main
-     git remote add origin https://github.com/您的帳號名稱/您的儲存庫名稱.git
-     git push -u origin main
-     ```
+如果您想將這個好用的工具分享給其他新手爸媽，他們不需要懂任何程式碼，只要完成以下兩個步驟，即可建立出個人專屬、跨裝置同步的線上寶寶作息記錄儀！
 
 ---
 
-### 2. 建立免費的 Supabase 資料庫
+### 第一步：建立免費的 Supabase 資料庫
 
-為了讓您和家人（多個裝置）可以同時登入並即時同步，請跟著以下步驟建立您的資料庫：
+為了儲存您和家人（多個裝置）的作息記錄，請先建立您的專屬雲端資料庫：
 
-1. **註冊帳號**：前往 [Supabase 官網 (supabase.com)](https://supabase.com/)，點選 **Sign Up** 註冊。您可以使用您的 GitHub 帳號一鍵登入。
+1. **註冊帳號**：前往 [Supabase 官網 (supabase.com)](https://supabase.com/) 點選 **Sign Up**。使用您的 GitHub 帳號一鍵登入即可。
 2. **建立新專案**：
-   - 進入控制台後，點選 **New Project**。
+   - 點選 **New Project**。
    - 設定專案名稱（例如：`my-baby-tracker`）。
    - 設定一個安全的資料庫密碼（請先記在備忘錄中）。
    - 區域（Region）選擇離您最近的地方（例如：亞洲選 `Singapore` 或 `Tokyo`）。
@@ -137,41 +107,53 @@
 3. **建立資料表 (Records Table)**：
    - 專案建立完成後，在左側選單中點選 **SQL Editor**（一個像大於 `>` 符號的圖示）。
    - 點選右上角的 **New query** 按鈕建立一個新輸入視窗。
-   - 複製您專案目錄下的 [supabase_schema.sql](file:///D:/Projects/baby-tracker/supabase_schema.sql) 檔案裡面的所有 SQL 程式碼。
+   - 複製此專案根目錄下 [supabase_schema.sql](file:///D:/Projects/baby-tracker/supabase_schema.sql) 檔案裡面的所有 SQL 程式碼。
    - 將程式碼貼入 Supabase 網頁的編輯器中，點選右下角的 **Run** 按鈕。
    - 看到綠色的 `Success` 提示即代表資料表與即時同步政策已成功建立！
 4. **取得金鑰資訊**：
-   - 點選左下角的 **Project Settings**（齒輪圖示）。
-   - 點選選單中的 **API**。
-   - 您會看到以下兩個重要欄位，請將它們複製備用：
-     - **Project URL**（對應環境變數中的 `VITE_SUPABASE_URL`）
-     - **anon public** (JWT 欄位下方的 Anon 金鑰，對應環境變數中的 `VITE_SUPABASE_ANON_KEY`)
+   - 點選左下角的 **Project Settings**（齒輪圖示） > **API**。
+   - 複製以下兩個重要金鑰以備在第二步使用：
+     - **Project URL**（對應 Vercel 中的 `VITE_SUPABASE_URL`）
+     - **anon public** (對應 Vercel 中的 `VITE_SUPABASE_ANON_KEY`)
 
 ---
 
-### 3. 部署至 Vercel (推薦，完全免費且最簡單)
+### 第二步：一鍵部署至 Vercel
 
-將程式碼發佈至線上，讓全家人用手機隨時開啟，步驟如下：
+請點選下方的 **「Deploy to Vercel」** 按鈕，系統會自動在您的 GitHub 帳號下複製（Fork）該專案並完成線上部署發佈：
 
-1. **註冊 Vercel 帳號**：前往 [Vercel 官網 (vercel.com)](https://vercel.com/)，點選 **Sign Up**。選擇使用 **GitHub** 帳號登入（這會自動與您剛才上傳的寶寶專案連動，最省時）。
-2. **匯入您的專案**：
-   - 登入 Vercel 後，點選右上角的 **Add New** 按鈕，選擇 **Project**。
-   - 畫面會顯示您的 GitHub 專案清單，找到寶寶作息專案（例如：`baby-care-tracker`），點選旁邊的 **Import** 按鈕。
-3. **設定連線密鑰 (重要！)**：
-   - 進入部署配置頁面，請往下滾動，找到 **Environment Variables**（環境變數）摺疊選單點開它。
-   - 依序新增您在 Supabase 步驟 4 複製的兩組資訊：
-     - **第一組**：名稱（Name）輸入 `VITE_SUPABASE_URL`，值（Value）貼上您的 Supabase `Project URL`。點選右側的 **Add** 按鈕。
-     - **第二組**：名稱（Name）輸入 `VITE_SUPABASE_ANON_KEY`，值（Value）貼上您的 Supabase `anon public` 金鑰。點選右側的 **Add** 按鈕。
-4. **一鍵部署**：
-   - 填寫完上述兩組金鑰後，直接點選最下方的 **Deploy** 按鈕！
-   - Vercel 會自動下載程式碼並在雲端打包。大約等候 1 分鐘，當畫面上出現滿天的五彩紙花特效時，代表網頁已經成功上線囉！
-   - 點選畫面上的預覽圖，就能打開您的專屬寶寶作息儀網頁（網址類似：`https://your-baby-tracker.vercel.app`），您可以直接將此網址加到手機桌面上方便隨手點開。
-5. **⚠️ 貼心提醒 (若未來修改金鑰)**：
-   - 由於網頁安全連線機制，金鑰資訊是在網頁打包時「包進」網頁代碼中的。若您未來在 Vercel 更改了上述的變數值，請務必到 Vercel 該專案控制台的 **Deployments** 頁面，點選最新一次部署右邊的三個點 `...`，再點選 **Redeploy**（重新部署），網頁上的連線設定才會真正更新生效。
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fse795646%2Fbaby-care-tracker&env=VITE_SUPABASE_URL,VITE_SUPABASE_ANON_KEY)
+
+1. **點擊上方按鈕**，登入您的 Vercel 帳號（直接用 GitHub 帳號登入）。
+2. 在 **Create Git Repository** 欄位中，設定您複製過去的儲存庫名稱（可選擇勾選 **Create private Git Repository**，將網頁代碼設為私有以保護代碼隱私）。
+3. 展開下方 **Environment Variables**（環境變數）摺疊選單，填入您在第一步取得的兩個數值：
+   - `VITE_SUPABASE_URL` : 貼上您的 Supabase Project URL。
+   - `VITE_SUPABASE_ANON_KEY` : 貼上您的 Supabase anon public 金鑰。
+4. 點選下方的 **Create** 鈕開始部署。大約等候 1 分鐘，當網頁出現滿天五彩紙花特效時，代表您的專屬網站已經架設完畢！
+5. 點選預覽圖即可進入您的專屬作息記錄儀（例如：`https://your-project.vercel.app`），將網址加入手機桌面即可當作 App 隨時使用。
+
+> ⚠️ **貼心提醒 (若未來修改金鑰)**：
+> 由於安全機制，連線金鑰是在打包時「包進」網頁中的。若您未來在 Vercel 更改了上述的變數值，請務必到 Vercel 該專案控制台的 **Deployments** 頁面，點選最新一次部署右側的三個點 `...`，再點選 **Redeploy**，新設定才會生效。
 
 ---
 
-### 4. 部署至 GitHub Pages (替代方案)
+## 🛠️ 自訂修改：進階開發與本機建置指南
 
+如果您想修改網頁代碼（例如調整配色、新增其它自訂記錄欄位），請參考以下步驟進行：
+
+### 1. 建立您的 GitHub 儲存庫並手動上傳
+1. 在 GitHub 建立一個全新的 Repository，設為 **Private (私有)** 或 **Public (公開)**。
+2. 本地開發使用 `.env` 管理環境變數，並加入 `.gitignore` 避免外洩。
+3. 在您的本機專案根目錄執行以下 Git 指令上傳代碼：
+   ```bash
+   git init
+   git add .
+   git commit -m "feat: init baby tracker"
+   git branch -M main
+   git remote add origin https://github.com/您的帳號名稱/您的儲存庫名稱.git
+   git push -u origin main
+   ```
+
+### 2. 手動部署至 GitHub Pages (替代託管方案)
 1. 在 `vite.config.js` 中，將 `base` 修改為您的 GitHub 專案名稱（例如：`base: '/baby-care-tracker/'`）。
 2. 可利用 `gh-pages` npm 套件，或設定 GitHub Actions 自動將 `dist` 編譯內容部署至 `gh-pages` 分支。
