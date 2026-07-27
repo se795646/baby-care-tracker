@@ -26,6 +26,11 @@
   - 採用溫馨配色與 SVG 動態圓環進度條展示今日累計喝奶量與睡眠時長。
   - 協助快速掌握寶寶今天的作息與達成率是否達標。
 
+- **📈 體重記錄與成長曲線**
+  - 支援家長隨手記錄寶寶的體重資料（公斤 kg）。
+  - 使用輕量化、無套件依賴的 SVG 向量圖表繪製精美、流暢的**寶寶體重成長趨勢曲線**。
+  - **科學化動態奶量目標**：依小兒科醫師建議之公式（體重 kg × 150 ml）自動計算每日建議攝取總奶量，並即時連動首頁的喝奶目標與進度。
+
 - **🔍 歷史日誌與搜尋篩選**
   - 以精美卡片和時間線形式呈現所有歷史記錄。
   - 支援按照「全部」、「餵奶」、「睡眠」進行類別篩選，以及依備註關鍵字搜尋。
@@ -72,6 +77,7 @@
 主要的核心程式碼位於以下路徑：
 
 - [src/views/Dashboard/Overview.vue](file:///D:/Projects/baby-tracker/src/views/Dashboard/Overview.vue) - 作息記錄的主控面板 (Dashboard) 與對話框邏輯。
+- [src/views/Dashboard/Growth.vue](file:///D:/Projects/baby-tracker/src/views/Dashboard/Growth.vue) - 體重記錄與 SVG 成長曲線趨勢頁面。
 - [src/components/CameraPicker.vue](file:///D:/Projects/baby-tracker/src/components/CameraPicker.vue) - 結合 Web Cam 與原生拍照的相機選擇器元件，支援前端圖片縮圖壓縮。
 - [src/helpers/db.js](file:///D:/Projects/baby-tracker/src/helpers/db.js) - 基於 Promise 的 IndexedDB 儲存封裝，並提供 localStorage/記憶體降級 fallback，以確保離線與單元測試環境穩定運行。
 - [test/unit/helpers/db.spec.js](file:///D:/Projects/baby-tracker/test/unit/helpers/db.spec.js) - 針對 IndexedDB 封裝的 CRUD 單元測試。

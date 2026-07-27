@@ -57,16 +57,16 @@
 
 ## 四、 資料庫 Schema 設計 (Data Schema)
 
-本系統之 JSON 資料欄位與 Notion Database 欄位屬性對照表如下：
+本系統之 JSON 資料欄位與 Notion Database / Supabase 欄位屬性對照表如下：
 
 ### 1. JSON 資料結構
 ```json
 {
   "id": "uuid-v4",
   "user_id": "user_12345",
-  "event_type": "MILK", // 必填：MILK (喝奶) | SLEEP_START (入睡) | SLEEP_END (醒來) | DIAPER (換尿布)
+  "event_type": "MILK", // 必填：MILK (喝奶) | SLEEP_START (入睡) | SLEEP_END (醒來) | DIAPER (換尿布) | WEIGHT (體重)
   "timestamp": "2026-07-24T14:30:00Z", // 事件時間
-  "amount_ml": 150, // 喝奶量 (ml)，僅 MILK 事件使用
+  "amount_ml": 150, // 數值：喝奶量 (ml) 或是 寶寶體重 (kg，僅 WEIGHT 事件使用)
   "duration_minutes": 120, // 睡眠時數 (分鐘)，僅 SLEEP_END 事件計算
   "diaper_status": "WET", // 尿布狀態，僅 DIAPER 事件使用，可選值：WET (濕) | DIRTY (乾) | BOTH (乾濕)
   "image_url": "https://storage.example.com/photos/abc.jpg", // 拍照照片備份網址
@@ -75,19 +75,19 @@
 }
 ```
 
-### 2. Notion 資料庫屬性對照
-| Notion 屬性名稱 | 屬性類型 | 對應 JSON 欄位 | 說明 |
+### 2. 資料庫屬性對照
+| 欄位名稱 | 資料庫類型 | 對應 JSON 欄位 | 說明 |
 | :--- | :--- | :--- | :--- |
-| **ID** | Title | `id` | 唯一的記錄 ID (Notion 主鍵，必填) |
-| **事件類型** | Select | `event_type` | 可選值：MILK, SLEEP_START, SLEEP_END, DIAPER |
-| **時間** | Date | `timestamp` | 事件發生時間 |
-| **奶量(ml)** | Number | `amount_ml` | 喝奶容量 (ml) |
-| **睡眠時數(分)** | Number | `duration_minutes` | 睡眠時間 (分鐘) |
-| **尿布狀態** | Select | `diaper_status` | 可選值：WET, DIRTY, BOTH |
-| **照片網址** | URL | `image_url` | 雲端照片儲存網址 |
-| **使用者ID** | Rich text | `user_id` | 使用者 ID |
-| **備註** | Rich text | `note` | 記錄備註資訊 |
-| **建立時間** | Date | `created_at` | 系統記錄建立時間 |
+| **ID** | Text / Title | `id` | 唯一的記錄 ID (主鍵，必填) |
+| **事件類型** | Text / Select | `event_type` | 可選值：MILK, SLEEP_START, SLEEP_END, DIAPER, WEIGHT |
+| **時間** | Bigint / Date | `timestamp` | 事件發生時間 |
+| **數值(奶量/體重)**| Numeric / Number| `amount_ml` | 喝奶容量 (ml) 或是 寶寶體重 (kg) |
+| **睡眠時數(分)** | Numeric / Number| `duration_minutes` | 睡眠時間 (分鐘) |
+| **尿布狀態** | Text / Select | `diaper_status` | 可選值：WET, DIRTY, BOTH |
+| **照片網址** | Text / URL | `image_url` | 雲端照片儲存網址 |
+| **使用者ID** | Text / Rich text | `user_id` | 使用者 ID |
+| **備註** | Text / Rich text | `note` | 記錄備註資訊 |
+| **更新時間** | Bigint / Date | `updated_at` | 系統記錄更新時間 |
 
 ---
 
@@ -234,6 +234,8 @@ export default async function handler(req, res) {
 - **第二階段 (UI/UX 強化與統計)：**
   - 新增辨識結果預覽與人工手動校正介面。
   - 實作當日奶量與睡眠時間總計圖表。
+  - 實作體重與成長曲線頁面（以無套件依賴之 SVG 繪製線條與陰影面積圖）。
+  - 實作基於體重之每日建議奶量動態調整（公式：體重 × 150 ml），即時與首頁目標喝奶進度條連動。
   - 支援 PWA (Progressive Web App)，讓手機可新增至主畫面當作原生 App 使用。
 
 - **第三階段 (多使用者與優化 - 選配)：**
