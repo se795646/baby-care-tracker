@@ -69,7 +69,7 @@ function saveMemoryStore(store) {
  */
 export async function saveRecord(record) {
     const db = await initDB();
-    
+
     // Add/Update metadata for syncing
     const updatedRecord = {
         ...record,
@@ -129,10 +129,15 @@ export async function deleteRecord(id, skipLog = false) {
     if (!skipLog) {
         // Record deleted ID in localStorage to sync delete to Supabase
         try {
-            const deletedIds = JSON.parse(localStorage.getItem('baby_tracker_deleted_ids') || '[]');
+            const deletedIds = JSON.parse(
+                localStorage.getItem('baby_tracker_deleted_ids') || '[]'
+            );
             if (!deletedIds.includes(id)) {
                 deletedIds.push(id);
-                localStorage.setItem('baby_tracker_deleted_ids', JSON.stringify(deletedIds));
+                localStorage.setItem(
+                    'baby_tracker_deleted_ids',
+                    JSON.stringify(deletedIds)
+                );
             }
         } catch (e) {
             console.error('Failed to log deleted ID for syncing:', e);

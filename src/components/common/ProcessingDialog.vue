@@ -9,11 +9,15 @@
                     size="40"
                     width="4"
                 ></v-progress-circular>
-                
+
                 <div class="bq-text-sm bq-font-bold bq-text-gray-700">
-                    {{ progressValue >= 0 ? `載入中 (${progressValue}%)` : '處理中，請稍候...' }}
+                    {{
+                        progressValue >= 0
+                            ? `載入中 (${progressValue}%)`
+                            : '處理中，請稍候...'
+                    }}
                 </div>
-                
+
                 <v-progress-linear
                     v-if="progressValue >= 0"
                     :model-value="progressValue"

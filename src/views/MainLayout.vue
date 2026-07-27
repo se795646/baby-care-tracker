@@ -17,7 +17,11 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import AppHeader from '@/components/layout/Header.vue';
-import { getNavList, NAV_ROUTE_MAP, DEFAULT_NAV_ID } from '@/configs/navigation';
+import {
+    getNavList,
+    NAV_ROUTE_MAP,
+    DEFAULT_NAV_ID
+} from '@/configs/navigation';
 
 export default {
     name: 'MainLayout',

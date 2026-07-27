@@ -1,15 +1,18 @@
 <template>
     <div class="camera-picker">
-        <div v-if="photoPreview" class="photo-preview-container bq-relative bq-mb-3">
+        <div
+            v-if="photoPreview"
+            class="photo-preview-container bq-relative bq-mb-3"
+        >
             <img
                 :src="photoPreview"
-                class="photo-preview bq-w-full bq-rounded-8 bq-object-cover"
-                style="max-height: 240px;"
+                class="photo-preview bq-rounded-8 bq-w-full bq-object-cover"
+                style="max-height: 240px"
                 alt="寶寶相片"
             />
             <button
                 type="button"
-                class="remove-btn bq-absolute bq-top-2 bq-right-2 bq-bg-red-500 bq-text-white bq-rounded-full bq-w-8 bq-h-8 bq-flex bq-items-center bq-justify-center bq-shadow-md hover:bq-bg-red-600 bq-transition"
+                class="remove-btn bq-absolute bq-right-2 bq-top-2 bq-flex bq-h-8 bq-w-8 bq-items-center bq-justify-center bq-rounded-full bq-bg-red-500 bq-text-white bq-shadow-md bq-transition hover:bq-bg-red-600"
                 @click="removePhoto"
             >
                 ✕
@@ -19,9 +22,11 @@
         <div v-else class="camera-actions bq-flex bq-gap-3">
             <!-- 傳統相片上傳/手機原生相機拍照 -->
             <label
-                class="upload-label bq-flex bq-items-center bq-justify-center bq-flex-1 bq-py-4 bq-px-4 bq-border-2 bq-border-dashed bq-border-gray-300 bq-rounded-8 bq-cursor-pointer hover:bq-bg-gray-50 bq-transition"
+                class="upload-label bq-rounded-8 bq-flex bq-flex-1 bq-cursor-pointer bq-items-center bq-justify-center bq-border-2 bq-border-dashed bq-border-gray-300 bq-px-4 bq-py-4 bq-transition hover:bq-bg-gray-50"
             >
-                <span class="bq-text-sm bq-text-gray-600 bq-flex bq-items-center bq-gap-2">
+                <span
+                    class="bq-flex bq-items-center bq-gap-2 bq-text-sm bq-text-gray-600"
+                >
                     <span class="mdi mdi-camera bq-text-xl"></span>
                     拍照 / 上傳照片
                 </span>
@@ -38,7 +43,7 @@
             <button
                 v-if="hasWebcam"
                 type="button"
-                class="webcam-btn bq-flex bq-items-center bq-justify-center bq-py-4 bq-px-5 bq-bg-gray-100 hover:bq-bg-gray-200 bq-text-gray-800 bq-rounded-8 bq-transition"
+                class="webcam-btn bq-rounded-8 bq-flex bq-items-center bq-justify-center bq-bg-gray-100 bq-px-5 bq-py-4 bq-text-gray-800 bq-transition hover:bq-bg-gray-200"
                 title="開啟視訊拍照"
                 @click="openWebcam"
             >
@@ -49,7 +54,9 @@
         <!-- Web Camera 即時拍照 Modal -->
         <v-dialog v-model="showWebcamModal" max-width="500px" persistent>
             <v-card class="bq-rounded-12">
-                <v-card-title class="bq-flex bq-justify-between bq-items-center bq-p-4 bq-border-b">
+                <v-card-title
+                    class="bq-flex bq-items-center bq-justify-between bq-border-b bq-p-4"
+                >
                     <span class="bq-text-lg bq-font-medium">相機拍照</span>
                     <button
                         type="button"
@@ -61,28 +68,30 @@
                 </v-card-title>
                 <v-card-text class="bq-p-4">
                     <div
-                        class="video-container bq-relative bq-bg-black bq-rounded-8 bq-overflow-hidden bq-flex bq-items-center bq-justify-center"
-                        style="height: 320px;"
+                        class="video-container bq-rounded-8 bq-relative bq-flex bq-items-center bq-justify-center bq-overflow-hidden bq-bg-black"
+                        style="height: 320px"
                     >
                         <video
                             ref="videoRef"
                             autoplay
                             playsinline
-                            class="bq-w-full bq-h-full bq-object-cover"
+                            class="bq-h-full bq-w-full bq-object-cover"
                         ></video>
                     </div>
                 </v-card-text>
-                <v-card-actions class="bq-p-4 bq-flex bq-justify-center bq-gap-3">
+                <v-card-actions
+                    class="bq-flex bq-justify-center bq-gap-3 bq-p-4"
+                >
                     <button
                         type="button"
-                        class="bq-bg-gray-100 hover:bq-bg-gray-200 bq-text-gray-700 bq-px-5 bq-py-2 bq-rounded-8 bq-font-bold bq-transition bq-text-sm"
+                        class="bq-rounded-8 bq-bg-gray-100 bq-px-5 bq-py-2 bq-text-sm bq-font-bold bq-text-gray-700 bq-transition hover:bq-bg-gray-200"
                         @click="closeWebcam"
                     >
                         取消
                     </button>
                     <button
                         type="button"
-                        class="bq-bg-pink-500 hover:bq-bg-pink-600 bq-text-white bq-px-5 bq-py-2 bq-rounded-8 bq-font-bold bq-transition bq-text-sm bq-shadow-sm"
+                        class="bq-rounded-8 bq-bg-pink-500 bq-px-5 bq-py-2 bq-text-sm bq-font-bold bq-text-white bq-shadow-sm bq-transition hover:bq-bg-pink-600"
                         @click="capturePhoto"
                     >
                         拍照
@@ -95,7 +104,6 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
-
 
 const props = defineProps({
     modelValue: {
@@ -115,10 +123,7 @@ let mediaStream = null;
 // 檢查是否支援 Web Camera
 onMounted(() => {
     photoPreview.value = props.modelValue;
-    if (
-        navigator.mediaDevices &&
-        navigator.mediaDevices.getUserMedia
-    ) {
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         hasWebcam.value = true;
     }
 });

@@ -50,7 +50,9 @@ async function uploadPhoto(recordId, base64Photo) {
         if (error) throw error;
 
         // Get public URL
-        const { data: { publicUrl } } = supabase.storage
+        const {
+            data: { publicUrl }
+        } = supabase.storage
             .from('baby-photos')
             .getPublicUrl(`records/${fileName}`);
 
@@ -80,36 +82,48 @@ export async function syncWithSupabase() {
 
     try {
         // 1. Process Local Deletes
-        const deletedIds = JSON.parse(localStorage.getItem('baby_tracker_deleted_ids') || '[]');
+        const deletedIds = JSON.parse(
+            localStorage.getItem('baby_tracker_deleted_ids') || '[]'
+        );
         if (deletedIds.length > 0) {
             console.log(`Syncing ${deletedIds.length} deletions...`);
             const successfulDeletes = [];
-            
+
             for (const id of deletedIds) {
                 try {
                     const { error } = await supabase
                         .from('records')
                         .delete()
                         .eq('id', id);
-                    
+
                     if (error) throw error;
                     successfulDeletes.push(id);
                 } catch (err) {
-                    console.error(`Failed to delete record ${id} from Supabase:`, err);
+                    console.error(
+                        `Failed to delete record ${id} from Supabase:`,
+                        err
+                    );
                 }
             }
-            
+
             // Clean up successfully synced deletes from localStorage
-            const remainingDeletes = deletedIds.filter(id => !successfulDeletes.includes(id));
-            localStorage.setItem('baby_tracker_deleted_ids', JSON.stringify(remainingDeletes));
+            const remainingDeletes = deletedIds.filter(
+                (id) => !successfulDeletes.includes(id)
+            );
+            localStorage.setItem(
+                'baby_tracker_deleted_ids',
+                JSON.stringify(remainingDeletes)
+            );
         }
 
         // 2. Upload Unsynced Local Records
         const localRecords = await getRecords();
-        const unsyncedRecords = localRecords.filter(r => r.synced === false);
+        const unsyncedRecords = localRecords.filter((r) => r.synced === false);
 
         if (unsyncedRecords.length > 0) {
-            console.log(`Uploading ${unsyncedRecords.length} unsynced records...`);
+            console.log(
+                `Uploading ${unsyncedRecords.length} unsynced records...`
+            );
             for (const record of unsyncedRecords) {
                 try {
                     // Upload photo first if it's base64
@@ -123,11 +137,21 @@ export async function syncWithSupabase() {
                         type: record.type,
                         timestamp: record.timestamp,
                         milkType: record.milkType || null,
-                        amount: record.amount !== undefined ? record.amount : null,
-                        leftDuration: record.leftDuration !== undefined ? record.leftDuration : null,
-                        rightDuration: record.rightDuration !== undefined ? record.rightDuration : null,
+                        amount:
+                            record.amount !== undefined ? record.amount : null,
+                        leftDuration:
+                            record.leftDuration !== undefined
+                                ? record.leftDuration
+                                : null,
+                        rightDuration:
+                            record.rightDuration !== undefined
+                                ? record.rightDuration
+                                : null,
                         endTime: record.endTime || null,
-                        duration: record.duration !== undefined ? record.duration : null,
+                        duration:
+                            record.duration !== undefined
+                                ? record.duration
+                                : null,
                         photo: photoUrl || null,
                         note: record.note || null,
                         updatedAt: record.updatedAt || Date.now()
@@ -162,13 +186,13 @@ export async function syncWithSupabase() {
 
         // Fetch refreshed local records
         const freshLocalRecords = await getRecords();
-        const localRecordMap = new Map(freshLocalRecords.map(r => [r.id, r]));
-        const remoteRecordMap = new Map(remoteRecords.map(r => [r.id, r]));
+        const localRecordMap = new Map(freshLocalRecords.map((r) => [r.id, r]));
+        const remoteRecordMap = new Map(remoteRecords.map((r) => [r.id, r]));
 
         // Merge remote records to local IndexedDB
         for (const remoteRecord of remoteRecords) {
             const localRecord = localRecordMap.get(remoteRecord.id);
-            
+
             if (!localRecord) {
                 // Not present locally, save it
                 await saveRecord({
@@ -179,7 +203,7 @@ export async function syncWithSupabase() {
                 // Present locally, check timestamps to resolve conflict
                 const remoteUpdatedAt = remoteRecord.updatedAt || 0;
                 const localUpdatedAt = localRecord.updatedAt || 0;
-                
+
                 if (remoteUpdatedAt > localUpdatedAt) {
                     // Remote is newer, update local
                     await saveRecord({
@@ -194,8 +218,13 @@ export async function syncWithSupabase() {
         // If a local record is marked as synced (meaning it has been successfully synced before),
         // but it is NOT found in the remote records map, it means another client deleted it.
         for (const localRecord of freshLocalRecords) {
-            if (localRecord.synced === true && !remoteRecordMap.has(localRecord.id)) {
-                console.log(`Deleting local record ${localRecord.id} due to remote deletion.`);
+            if (
+                localRecord.synced === true &&
+                !remoteRecordMap.has(localRecord.id)
+            ) {
+                console.log(
+                    `Deleting local record ${localRecord.id} due to remote deletion.`
+                );
                 await deleteRecord(localRecord.id, true); // skipLog = true to avoid adding to deleted logs list
             }
         }
@@ -227,7 +256,11 @@ export function subscribeToRealtime(onSyncRequired) {
                 table: 'records'
             },
             (payload) => {
-                console.log('Realtime change detected:', payload.eventType, payload.new?.id || payload.old?.id);
+                console.log(
+                    'Realtime change detected:',
+                    payload.eventType,
+                    payload.new?.id || payload.old?.id
+                );
                 onSyncRequired();
             }
         )

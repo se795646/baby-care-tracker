@@ -31,7 +31,11 @@ export default {
     },
     actions: {
         async getMyInfoByApi({ commit }) {
-            commit('setMember', { name: '寶寶爸媽', email: 'parents@babytracker.com', id: 'parent-1' });
+            commit('setMember', {
+                name: '寶寶爸媽',
+                email: 'parents@babytracker.com',
+                id: 'parent-1'
+            });
             commit('setMemberId', 'parent-1');
             commit('setIsLogin', true);
             commit('setIsInfoReady', true);

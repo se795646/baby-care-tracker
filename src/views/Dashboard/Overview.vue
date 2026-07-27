@@ -540,6 +540,24 @@
                         </div>
                     </div>
                 </button>
+
+                <button
+                    class="action-card-btn bq-rounded-12 bq-flex bq-items-center bq-gap-4 bq-bg-gradient-to-r bq-from-teal-100 bq-to-emerald-100 bq-p-4 bq-text-left bq-text-gray-800 bq-shadow-sm bq-transition hover:bq-from-teal-200 hover:bq-to-emerald-200 hover:bq-shadow"
+                    @click="openVoiceDialog"
+                >
+                    <span
+                        class="bq-flex bq-h-12 bq-w-12 bq-items-center bq-justify-center bq-rounded-full bq-bg-white bq-text-2xl bq-shadow-sm"
+                        >🎙️</span
+                    >
+                    <div>
+                        <div class="bq-text-base bq-font-bold">
+                            語音智慧記錄
+                        </div>
+                        <div class="bq-text-xs bq-text-gray-500">
+                            說出「餵奶 120cc」或「睡了一小時」
+                        </div>
+                    </div>
+                </button>
             </div>
         </div>
 
@@ -927,6 +945,12 @@
             </v-card>
         </v-dialog>
 
+        <!-- 語音智慧記錄 Dialog -->
+        <VoiceRecordDialog
+            v-model="showVoiceDialog"
+            @save-record="handleVoiceSaveRecord"
+        />
+
         <!-- 3. 查看大圖 Dialog -->
         <v-dialog v-model="showPhotoDialog" max-width="700px">
             <v-card class="bq-rounded-16 bq-overflow-hidden">
@@ -1149,6 +1173,7 @@
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue';
 import LayoutItem from '@/components/layout/LayoutItem.vue';
 import CameraPicker from '@/components/CameraPicker.vue';
+import VoiceRecordDialog from '@/components/VoiceRecordDialog.vue';
 import { saveRecord, getRecords, deleteRecord } from '@/helpers/db.js';
 import { syncWithSupabase, subscribeToRealtime } from '@/helpers/sync.js';
 
@@ -1581,6 +1606,66 @@ const saveSleepRecord = async () => {
         syncWithSupabase().then(() => loadRecords());
     } catch {
         alert('儲存失敗，請重試');
+    }
+};
+
+// ─── 語音智慧記錄處理 ───
+const showVoiceDialog = ref(false);
+const openVoiceDialog = () => {
+    showVoiceDialog.value = true;
+};
+
+const handleVoiceSaveRecord = async (parsedResult) => {
+    if (!parsedResult) return;
+
+    let record = null;
+    if (parsedResult.type === 'milk') {
+        const timestamp = Date.now();
+        record = {
+            id: `milk-${Date.now()}`,
+            type: 'milk',
+            milkType: parsedResult.milkType,
+            amount:
+                parsedResult.milkType === 'breast_direct'
+                    ? 0
+                    : Number(parsedResult.amount),
+            leftDuration:
+                parsedResult.milkType === 'breast_direct'
+                    ? Number(parsedResult.leftDuration)
+                    : 0,
+            rightDuration:
+                parsedResult.milkType === 'breast_direct'
+                    ? Number(parsedResult.rightDuration)
+                    : 0,
+            timestamp,
+            photo: '',
+            note: parsedResult.note
+        };
+    } else if (parsedResult.type === 'sleep') {
+        const end = Date.now();
+        const start = end - parsedResult.duration * 60 * 1000;
+        record = {
+            id: `sleep-${Date.now()}`,
+            type: 'sleep',
+            timestamp: start,
+            endTime: end,
+            duration: parsedResult.duration,
+            photo: '',
+            note: parsedResult.note
+        };
+    }
+
+    if (record) {
+        try {
+            await saveRecord(record);
+            await loadRecords();
+            if (record.type === 'sleep') {
+                stopSleepTimer();
+            }
+            syncWithSupabase().then(() => loadRecords());
+        } catch {
+            alert('語音記錄儲存失敗，請重試');
+        }
     }
 };
 
