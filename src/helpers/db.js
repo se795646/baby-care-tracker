@@ -69,19 +69,27 @@ function saveMemoryStore(store) {
  */
 export async function saveRecord(record) {
     const db = await initDB();
+    
+    // Add/Update metadata for syncing
+    const updatedRecord = {
+        ...record,
+        updatedAt: record.updatedAt || Date.now(),
+        synced: record.synced !== undefined ? record.synced : false
+    };
+
     if (!db) {
         const store = getMemoryStore();
-        store[record.id] = record;
+        store[updatedRecord.id] = updatedRecord;
         saveMemoryStore(store);
-        return record;
+        return updatedRecord;
     }
 
     return new Promise((resolve, reject) => {
         const transaction = db.transaction([STORE_NAME], 'readwrite');
         const store = transaction.objectStore(STORE_NAME);
-        const request = store.put(record);
+        const request = store.put(updatedRecord);
 
-        request.onsuccess = () => resolve(record);
+        request.onsuccess = () => resolve(updatedRecord);
         request.onerror = (event) => reject(event.target.error);
     });
 }
@@ -114,9 +122,23 @@ export async function getRecords() {
 /**
  * Delete a baby record by ID.
  * @param {string} id - The record ID.
+ * @param {boolean} [skipLog=false] - If true, do not log the ID for cloud sync deletion.
  * @returns {Promise<string>} The deleted record ID.
  */
-export async function deleteRecord(id) {
+export async function deleteRecord(id, skipLog = false) {
+    if (!skipLog) {
+        // Record deleted ID in localStorage to sync delete to Supabase
+        try {
+            const deletedIds = JSON.parse(localStorage.getItem('baby_tracker_deleted_ids') || '[]');
+            if (!deletedIds.includes(id)) {
+                deletedIds.push(id);
+                localStorage.setItem('baby_tracker_deleted_ids', JSON.stringify(deletedIds));
+            }
+        } catch (e) {
+            console.error('Failed to log deleted ID for syncing:', e);
+        }
+    }
+
     const db = await initDB();
     if (!db) {
         const store = getMemoryStore();

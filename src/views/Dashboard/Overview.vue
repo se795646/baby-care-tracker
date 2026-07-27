@@ -475,6 +475,7 @@ import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue';
 import LayoutItem from '@/components/layout/LayoutItem.vue';
 import CameraPicker from '@/components/CameraPicker.vue';
 import { saveRecord, getRecords, deleteRecord } from '@/helpers/db.js';
+import { syncWithSupabase, subscribeToRealtime } from '@/helpers/sync.js';
 
 // ─── 今日日期相關 ───
 const todayString = computed(() => {
@@ -501,9 +502,26 @@ const loadRecords = async () => {
     }
 };
 
-onMounted(() => {
-    loadRecords();
+let realtimeChannel = null;
+
+onMounted(async () => {
+    // 1. Load local records first for instant display
+    await loadRecords();
     checkActiveSleepTimer();
+
+    // 2. Perform background sync with Supabase and reload records
+    try {
+        await syncWithSupabase();
+        await loadRecords();
+    } catch (e) {
+        console.error('Background sync failed:', e);
+    }
+
+    // 3. Subscribe to realtime updates for multi-user sync
+    realtimeChannel = subscribeToRealtime(async () => {
+        await syncWithSupabase();
+        await loadRecords();
+    });
 });
 
 // ─── 今日統計計算 ───
@@ -704,6 +722,9 @@ const stopSleepTimer = () => {
 
 onBeforeUnmount(() => {
     if (sleepInterval) clearInterval(sleepInterval);
+    if (realtimeChannel) {
+        realtimeChannel.unsubscribe();
+    }
 });
 
 // ─── 餵奶記錄 Dialog 處理 ───
@@ -769,6 +790,8 @@ const saveMilkRecord = async () => {
         await saveRecord(record);
         await loadRecords();
         showMilkDialog.value = false;
+        // Trigger background sync with Supabase
+        syncWithSupabase().then(() => loadRecords());
     } catch (e) {
         alert('儲存失敗，請重試');
     }
@@ -818,6 +841,8 @@ const saveSleepRecord = async () => {
         await loadRecords();
         stopSleepTimer(); // 如果是從實時睡眠計時器過來的，清除計時器
         showSleepDialog.value = false;
+        // Trigger background sync with Supabase
+        syncWithSupabase().then(() => loadRecords());
     } catch (e) {
         alert('儲存失敗，請重試');
     }
@@ -829,6 +854,8 @@ const confirmDeleteRecord = async (id) => {
         try {
             await deleteRecord(id);
             await loadRecords();
+            // Trigger background sync with Supabase
+            syncWithSupabase().then(() => loadRecords());
         } catch (e) {
             alert('刪除失敗，請重試');
         }

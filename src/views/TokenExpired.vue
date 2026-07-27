@@ -23,8 +23,10 @@ export default {
     components: { QBtn },
     methods: {
         goToLogin() {
-            // TODO: Redirect to your login service
-            window.location.href = '/login';
+            // Determine active language (Default to 'zh-TW', use 'en' only if locale is explicitly 'en')
+            const activeLang = this.$i18n?.locale === 'en' ? 'en' : 'zh-TW';
+            // Force the login service to render in Chinese/English by appending common locale query parameters
+            window.location.href = `/login?lang=${activeLang}&locale=${activeLang}&ui_locales=${activeLang}`;
         }
     }
 };
