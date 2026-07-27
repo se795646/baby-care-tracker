@@ -2,14 +2,14 @@
   "name": "寶寶作息記錄儀",
   "short_name": "寶寶作息",
   "description": "專為爸爸媽媽設計的純前端嬰兒作息記錄器。透過拍照快速記錄寶寶的睡眠與喝奶狀況，提供貼心的實時睡眠計時器與今日作息統計圖表，支援離線儲存與 IndexedDB 相片持久化。",
-  "start_url": "/frontend/",
+  "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#f9f9f9",
   "theme_color": "#f9f9f9",
   "icons": [
     {
-      "src": "/frontend/favicon.svg",
+      "src": "/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml"
     }
