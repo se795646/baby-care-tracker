@@ -1,206 +1,136 @@
 # 嬰兒照護紀錄 Web App 系統架構與開發實作指南
 
-本文件為「嬰兒拍照自動化照護紀錄 (Milk & Sleep Tracker)」的完整系統架構與實作計畫指南，說明如何利用照片分析、Serverless 後端、Notion API 資料庫，以及 GitHub / Vercel CI/CD 流程來完成自動化紀錄與統計分析。
+本文件為「嬰兒拍照自動化照護紀錄 (Baby Tracker)」的完整系統架構與實作指南，說明如何利用本地端離線儲存 (IndexedDB)、雲端資料庫 (Supabase)、即時資料變更訂閱 (Supabase Realtime) 以及 GitHub / Vercel 的 CI/CD 流程，來完成自動化紀錄與跨裝置多使用者即時同步。
 
 ---
 
 ## 一、 系統整體架構圖 (System Architecture)
 
 ```
-[使用者手機/前端 (Vue 3 / PWA)]
-        │
-        ├── 1. 拍照 / 上傳照片 (奶瓶/睡眠狀態)
-        ▼
-[ Serverless API / 後端中介層 (Vercel Functions) ]
-        │
-        ├── 2. 影像辨識與結構化萃取 (OpenAI GPT-4o / Claude Vision API)
-        │      └── 辨識出：時間、事件類型 (飲奶/睡眠)、容量(ml)、備註
-        │
-        ├── 3. 寫入資料庫 (Notion Database)
-        │      └── Notion API (方便手動檢視與修正，無須建置後台)
-        │
-        └── 4. 統計與報表聚合 (Aggregated Insights)
-               └── 產出每日總奶量、睡眠時數、時間間隔趨勢分析
+[使用者手機/前端 (Vue 3 / PWA / IndexedDB)] ◄───► [Supabase Realtime 訂閱] (即時推播通知)
+         │
+         ├── 1. 離線優先 (Offline-First)：所有記錄立即存入本地 IndexedDB，相片經壓縮後以 Base64 格式儲存
+         ├── 2. 背景雙向同步 (Bi-directional Sync)：自動上傳未同步項目、下載雲端更新、處理刪除日誌
+         ▼
+[ Supabase 雲端服務 (BaaS - Backend as a Service) ]
+         │
+         ├── 3. PostgreSQL 資料庫：儲存結構化作息資料 (records 資料表)
+         ├── 4. Storage 雲端儲存空間：儲存寶寶相片 (baby-photos 公開 bucket)
+         └── 5. Realtime 即時頻道：監聽資料表變更 (postgres_changes)，即時同步給其它正在使用網頁的家人
 ```
 
 ---
 
 ## 二、 完整作業流程設計 (End-to-End Workflow)
 
-### 流程 1：拍照上傳與 AI 結構化萃取
-1. **拍照上傳：** 家長在 Web App 點擊拍照（例如拍攝奶瓶剩餘刻度，或是嬰兒在床上睡覺/醒來的照片）。
-2. **傳送至後端：** 前端將照片（Base64 或 Blob）透過 POST 請求發送至 Serverless API (`/api/recognize`)。
-3. **AI Vision 判讀：** 後端呼叫 Vision API 並帶入專屬 Prompt，自動擷取事件資訊：
-   - **喝奶範例：** 「辨識奶瓶刻度，輸出剩餘與總奶量，算出本次喝奶量」。
-   - **睡眠範例：** 「辨識照片狀況判斷入睡/醒來，結合目前時間標記事件」。
-4. **回傳與確認：** API 回傳 JSON 結構給前端，前端顯示辨識結果供家長快速確認（可微調刻度或時間），確認後寫入資料庫。
+### 流程 1：離線優先寫入與相片壓縮
+1. **新增作息**：家長在前端填寫餵奶（配方奶量、親餵時間等）、睡眠（起訖時間）或體重記錄，並可拍照。
+2. **相片壓縮**：若有拍照，前端會自動透過 `<canvas>` 對相片進行等比例縮放與壓縮（輸出品質為 0.7 的 JPEG），防止負擔 IndexedDB 與雲端儲存空間。
+3. **寫入本地**：資料以暫時標記 `synced: false` 寫入本地 IndexedDB，相片暫以 Base64 格式保存，確保離線時也能秒速顯示。
 
-### 流程 2：資料庫儲存與維護
-- **事件寫入**：將確認後的紀錄透過 Notion API 寫入 Notion 資料庫。
-- **人工修正機制**：若家長事後發現記錄有誤，可以直接在 Web App 介面編修，或直接開啟 Notion 頁面進行手動修正與刪除。
+### 流程 2：雙向背景同步 (Bi-directional Synchronization)
+1. **處理本地刪除**：將記錄在 `localStorage` 的已刪除 ID 傳送至 Supabase 進行刪除，完成後清除本地刪除日誌。
+2. **上傳相片與記錄**：
+   - 提取本地 `synced: false` 的未同步記錄。
+   - 若記錄包含 Base64 相片，先將其轉換為 Blob，上傳至 Supabase Storage `baby-photos` bucket，取得公開圖片 URL 並替換。
+   - 將完整的記錄（含圖片 URL）以 `upsert` 方式寫入 Supabase 的 `records` 資料表，並將本地記錄更新為 `synced: true`。
+3. **下載雲端更新與合併**：
+   - 從 Supabase 下載所有最新記錄。
+   - 比對本地與雲端記錄，若本地不存在則直接寫入；若均存在，則比較 `updatedAt` 時間戳記，保留較新的版本（解決衝突）。
+4. **同步雲端刪除**：若本地標記為 `synced: true` 的記錄在雲端已被刪除，則本地 IndexedDB 也會同步將其刪除。
 
-
-### 流程 3：統計分析與可視化
-- **每日總結：** 計算當日累計喝奶量 (ml)、總喝奶次數、平均間隔時間、總睡眠時數。
-- **圖表繪製：** 前端使用 **Chart.js** 或 **Recharts** 繪製「24小時時序圖」與「每日趨勢圖」，方便觀察寶寶的作息規律。
+### 流程 3：多裝置即時同步 (Real-time Broadcast)
+- 使用者開啟網頁後，前端會向 Supabase 建立 WebSocket 長連接並訂閱 `public.records` 資料表的任何變更 (`INSERT`, `UPDATE`, `DELETE`)。
+- 當爸爸在外面用手機記了一筆餵奶，Supabase 會即時向媽媽的手機網頁發送通知，媽媽的手機便會自動觸發 `syncWithSupabase()` 下載最新資料並更新圖表。
 
 ---
 
-## 三、 資料庫選擇與優勢 (Notion Database)
+## 三、 資料庫選擇與優勢 (Supabase Database)
 
-本系統全面採用 **Notion Database** 作為主要儲存資料庫，其核心優勢包括：
-1. **現成的視覺化界面**：家長無需任何額外的後台管理系統，直接用手機打開 Notion App 就能以表格（Table View）或日曆（Calendar View）直觀檢視與修改記錄。
-2. **零建置成本**：提供免費的雲端儲存空間，API 文件豐富且設定簡單，非常適合個人與家庭日常使用。
-3. **靈活度高**：家長可隨意在 Notion 中新增自訂欄位，不影響前端核心 API 運作。
+本系統全面採用 **Supabase** 作為後端資料庫解決方案，核心優勢包括：
+1. **離線優先與雙向同步**：結合客戶端的 IndexedDB，即使在網路訊號差的臥室或離線狀態，家長依然能正常記錄；一旦回復網路，便能與 Supabase 進行完整同步。
+2. **多裝置即時推播 (Realtime)**：內建基於 PostgreSQL 邏輯複製的 WebSocket 即時通知，不需輪詢 (polling) 即可達成家人共用、即時同步。
+3. **雲端檔案儲存 (Storage)**：自帶 Storage 服務，能無縫儲存寶寶照片並產生公開 CDN URL，省去另建圖床的麻煩。
+4. **無需後端代碼 (Serverless Client-Side SDK)**：前端直接透過 Supabase JS Client 即可安全讀寫資料庫，不需要維護伺服器。
 
 ---
 
 ## 四、 資料庫 Schema 設計 (Data Schema)
 
-本系統之 JSON 資料欄位與 Notion Database / Supabase 欄位屬性對照表如下：
+資料庫主要包含一個儲存作息與體重數據的 `records` 資料表，其定義如下：
 
-### 1. JSON 資料結構
-```json
-{
-  "id": "uuid-v4",
-  "user_id": "user_12345",
-  "event_type": "MILK", // 必填：MILK (喝奶) | SLEEP_START (入睡) | SLEEP_END (醒來) | DIAPER (換尿布) | WEIGHT (體重)
-  "timestamp": "2026-07-24T14:30:00Z", // 事件時間
-  "amount_ml": 150, // 數值：喝奶量 (ml) 或是 寶寶體重 (kg，僅 WEIGHT 事件使用)
-  "duration_minutes": 120, // 睡眠時數 (分鐘)，僅 SLEEP_END 事件計算
-  "diaper_status": "WET", // 尿布狀態，僅 DIAPER 事件使用，可選值：WET (濕) | DIRTY (乾) | BOTH (乾濕)
-  "image_url": "https://storage.example.com/photos/abc.jpg", // 拍照照片備份網址
-  "note": "喝得比較慢，有打嗝", // 備註
-  "created_at": "2026-07-24T14:31:05Z"
-}
+### 1. PostgreSQL 資料表 Schema
+```sql
+-- 1. 建立 records 資料表
+create table public.records (
+    id text primary key,                   -- 唯一記錄 ID (例如: milk-1627000000000)
+    type text not null,                   -- 記錄類型: milk (餵奶) | sleep (睡眠) | weight (體重)
+    timestamp bigint not null,            -- 事件開始時間戳記 (例如: 1627000000000)
+    "milkType" text,                      -- 喝奶種類: formula (配方) | breast_bottle (瓶餵) | breast_direct (親餵) | solid (副食品)
+    amount numeric,                       -- 數值：喝奶容量 (ml) 或 寶寶體重 (kg)
+    "leftDuration" numeric,               -- 左乳親餵時長 (分鐘)
+    "rightDuration" numeric,              -- 右乳親餵時長 (分鐘)
+    "endTime" bigint,                     -- 睡眠結束時間戳記
+    duration numeric,                     -- 睡眠總時長 (分鐘)
+    photo text,                           -- 雲端照片 URL 或本地 Base64 暫存
+    note text,                            -- 家長備註
+    "updatedAt" bigint not null           -- 最後更新時間戳記 (用於同步衝突排解)
+);
+
+-- 啟用 RLS (Row Level Security) 政策以提供安全防護
+alter table public.records enable row level security;
+
+-- 允許任何人進行讀取與寫入 (適用於免登入的家庭共用模式)
+create policy "Allow public access" on public.records for all using (true) with check (true);
+
+-- 2. 啟用即時訂閱機制 (Realtime)
+alter publication supabase_realtime add table public.records;
 ```
-
-### 2. 資料庫屬性對照
-| 欄位名稱 | 資料庫類型 | 對應 JSON 欄位 | 說明 |
-| :--- | :--- | :--- | :--- |
-| **ID** | Text / Title | `id` | 唯一的記錄 ID (主鍵，必填) |
-| **事件類型** | Text / Select | `event_type` | 可選值：MILK, SLEEP_START, SLEEP_END, DIAPER, WEIGHT |
-| **時間** | Bigint / Date | `timestamp` | 事件發生時間 |
-| **數值(奶量/體重)**| Numeric / Number| `amount_ml` | 喝奶容量 (ml) 或是 寶寶體重 (kg) |
-| **睡眠時數(分)** | Numeric / Number| `duration_minutes` | 睡眠時間 (分鐘) |
-| **尿布狀態** | Text / Select | `diaper_status` | 可選值：WET, DIRTY, BOTH |
-| **照片網址** | Text / URL | `image_url` | 雲端照片儲存網址 |
-| **使用者ID** | Text / Rich text | `user_id` | 使用者 ID |
-| **備註** | Text / Rich text | `note` | 記錄備註資訊 |
-| **更新時間** | Bigint / Date | `updated_at` | 系統記錄更新時間 |
 
 ---
 
-## 五、 核心程式碼範例 (Code Snippets)
+## 五、 核心程式碼實作
 
-### 1. Vision API 辨識照片 API (`api/recognize.js`)
-
+### 1. Supabase 用戶端初始化 (`src/helpers/supabase.js`)
 ```javascript
-import { OpenAI } from 'openai';
+import { createClient } from '@supabase/supabase-js';
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
+export const supabase = (supabaseUrl && supabaseAnonKey)
+    ? createClient(supabaseUrl, supabaseAnonKey)
+    : null;
 
-  const { imageBase64 } = req.body;
-
-  try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "system",
-          content: `你是一個嬰兒照護辨識助手。請分析照片並輸出 JSON 格式：
-          {
-            "event_type": "MILK" | "SLEEP_START" | "SLEEP_END" | "DIAPER" | "UNKNOWN",
-            "amount_ml": 數字(若為奶瓶刻度，請辨識並計算出喝奶量毫升數，否則為 null),
-            "diaper_status": "WET" | "DIRTY" | "BOTH" (若是尿布照片，否則為 null),
-            "confidence": 0.0~1.0,
-            "description": "簡短的辨識結果描述，例如：'奶瓶剩餘 50ml，估算喝了 150ml' 或 '寶寶入睡中' 或 '尿布濕了'"
-          } 只能回傳符合 Schema 的 JSON，不要有任何 Markdown 標記或其它多餘文字。`
-        },
-        {
-          role: "user",
-          content: [
-            { type: "image_url", image_url: { url: `data:image/jpeg;base64,${imageBase64}` } }
-          ]
-        }
-      ],
-      response_format: { type: "json_object" }
-    });
-
-    const result = JSON.parse(response.choices[0].message.content);
-    return res.status(200).json({ success: true, data: result });
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
+export function isSupabaseConfigured() {
+    return !!supabase;
 }
 ```
 
-### 2. 寫入 Notion Database API (`api/log-event.js`)
-
+### 2. 即時監聽與訂閱 (`src/helpers/sync.js`)
 ```javascript
-import { Client } from '@notionhq/client';
+import { supabase, isSupabaseConfigured } from './supabase.js';
 
-const notion = new Client({ auth: process.env.NOTION_KEY });
-const databaseId = process.env.NOTION_DATABASE_ID;
+export function subscribeToRealtime(onSyncRequired) {
+    if (!isSupabaseConfigured()) return null;
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
+    const channel = supabase
+        .channel('schema-db-changes')
+        .on(
+            'postgres_changes',
+            {
+                event: '*',
+                schema: 'public',
+                table: 'records'
+            },
+            (payload) => {
+                console.log('偵測到雲端資料變更:', payload.eventType);
+                onSyncRequired(); // 觸發背景同步並重新整理畫面
+            }
+        )
+        .subscribe();
 
-  const {
-    id,
-    user_id,
-    event_type,
-    timestamp,
-    amount_ml,
-    duration_minutes,
-    diaper_status,
-    image_url,
-    note,
-    created_at
-  } = req.body;
-
-  try {
-    const properties = {
-      "ID": { title: [{ text: { content: id || `event-${Date.now()}` } }] },
-      "事件類型": { select: { name: event_type } },
-      "時間": { date: { start: timestamp } }
-    };
-
-    // 依據事件類型與資料內容動態寫入可選欄位，避免空值錯誤
-    if (amount_ml !== undefined && amount_ml !== null) {
-      properties["奶量(ml)"] = { number: Number(amount_ml) };
-    }
-    if (duration_minutes !== undefined && duration_minutes !== null) {
-      properties["睡眠時數(分)"] = { number: Number(duration_minutes) };
-    }
-    if (diaper_status) {
-      properties["尿布狀態"] = { select: { name: diaper_status } };
-    }
-    if (image_url) {
-      properties["照片網址"] = { url: image_url };
-    }
-    if (user_id) {
-      properties["使用者ID"] = { rich_text: [{ text: { content: user_id } }] };
-    }
-    if (note) {
-      properties["備註"] = { rich_text: [{ text: { content: note } }] };
-    }
-    if (created_at) {
-      properties["建立時間"] = { date: { start: created_at } };
-    }
-
-    await notion.pages.create({
-      parent: { database_id: databaseId },
-      properties
-    });
-
-    return res.status(200).json({ success: true, message: '成功寫入 Notion！' });
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
+    return channel;
 }
 ```
 
@@ -221,32 +151,30 @@ export default async function handler(req, res) {
    - **Build Command**: `npm run build`
    - **Output Directory**: `dist`
 3. **設定環境變數 (Environment Variables)**：
-   在部署前，必須在 Vercel 專案設定中加入以下兩個 Supabase 環境變數（這能確保前端能夠在瀏覽器安全地與資料庫通訊）：
+   在部署前，必須在 Vercel 專案設定中加入以下兩個 Supabase 環境變數：
    - `VITE_SUPABASE_URL` : 您的 Supabase 專案 URL。
    - `VITE_SUPABASE_ANON_KEY` : 您的 Supabase 專案 Anon 公開金鑰。
 4. **重新部署 (Redeploy)**：
    - ⚠️ **重要提示**：因為 Vite 的 `VITE_` 開頭變數是在**編譯階段 (Build time)** 被直接靜態寫入程式碼中的。若您在部署後才修改環境變數，請務必手動在 Vercel 上點擊 **Redeploy**，讓 Vite 重新將環境變數編譯打包進網頁，否則變數將不會生效。
 
-### 3. 分支部署與持續整合 (CI/CD)
-- **Production 部署**：凡是推送（Push）到 `main` 分支的程式碼，會自動觸發 Vercel Production 建置並更新線上網址。
-- **Preview 測試部署**：凡是推送至其餘非 `main` 分支（如 `feature/*`），Vercel 會建立獨立的 Preview 預覽網址以供測試，且不會影響生產環境。
-
 ---
 
 ## 七、 專案實作時程規劃 (Milestones)
 
-- **第一階段 (MVP - 核心驗證)：**
-  - 建立前端相機拍攝/檔案選擇介面。
-  - 串接 Vision API 成功辨識刻度與時間。
-  - 串接 Notion API 實現單筆紀錄自動寫入。
+- **第一階段 (MVP - 核心驗證與離線儲存)：**
+  - 建立前端首頁作息記錄介面與計時器。
+  - 實作 CameraPicker 元件進行相機拍照與前端相片縮圖壓縮。
+  - 基於 Promise 封裝本地 IndexedDB，實現無網狀態下的資料讀寫與相片持久化儲存。
 
-- **第二階段 (UI/UX 強化與統計)：**
-  - 新增辨識結果預覽與人工手動校正介面。
-  - 實作當日奶量與睡眠時間總計圖表。
+- **第二階段 (Supabase 雲端整合與即時同步 - 目前階段)：**
+  - 整合 Supabase 資料庫，建立結構化的 `records` 資料表。
+  - 設計 `baby-photos` Storage Bucket 與對應的安全性存取政策。
+  - 實作雙向背景同步演算法，處理上傳相片、寫入記錄、比對 `updatedAt` 排除衝突與雲端同步刪除。
+  - 實作 WebSocket 即時監聽機制，在多裝置開啟時能自動同步，不需要手動重整網頁。
   - 實作體重與成長曲線頁面（以無套件依賴之 SVG 繪製線條與陰影面積圖）。
   - 實作基於體重之每日建議奶量動態調整（公式：體重 × 150 ml），即時與首頁目標喝奶進度條連動。
-  - 支援 PWA (Progressive Web App)，讓手機可新增至主畫面當作原生 App 使用。
 
-- **第三階段 (多使用者與優化 - 選配)：**
-  - 若有其他家庭成員/保母共同記錄，可透過 Notion 團隊共享資料庫，或由後端 API 進行多帳號權限過濾。
-  - 增加快取與即時推送通知 (例：距離上次喝奶已過 4 小時提醒)。
+- **第三階段 (多使用者權限與安全性強化 - 未來規劃)：**
+  - 在前端將 `auth.enabled` 改為 `true`，並串接登入頁面。
+  - 串接 Supabase Auth 認證，支援家長註冊與登入。
+  - 修改 RLS 政策，將公眾讀寫改為：僅限登入之家庭成員帳號可以對屬於同一個寶寶的使用者群組資料進行讀寫。
