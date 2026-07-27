@@ -46,6 +46,11 @@
   - 支援按照「全部」、「餵奶」、「睡眠」進行類別篩選，以及依備註關鍵字搜尋。
   - 支援點擊相片縮圖展開大圖檢視，並可隨時刪除錯誤記錄。
 
+- **🎙️ 語音智慧記錄 (新功能！)**
+  - 透過瀏覽器原生 Web Speech API 實現免設定的語音辨識，安全且完全免費。
+  - **行動端優化體驗**：支援 Haptic 物理輕震回饋、手機版 Bottom Sheet 底部抽屜版型，以及加大 touch targets 防呆微調。
+  - **口語指令解析**：智慧辨識「餵奶 120cc」、「睡了半小時」、「親餵左邊十分鐘」等，自動將口語中文數字轉換並生成結構化作息記錄。
+
 ---
 
 ## 🛠️ 開發與建置指令
@@ -87,9 +92,12 @@
 主要的核心程式碼位於以下路徑：
 
 - [src/views/Dashboard/Overview.vue](file:///D:/Projects/baby-tracker/src/views/Dashboard/Overview.vue) - 作息記錄的主控面板 (Dashboard) 與對話框邏輯。
+- [src/components/VoiceRecordDialog.vue](file:///D:/Projects/baby-tracker/src/components/VoiceRecordDialog.vue) - 語音錄音與行動端優化 UI 的智慧對話盒元件。
+- [src/helpers/voiceParser.js](file:///D:/Projects/baby-tracker/src/helpers/voiceParser.js) - 智慧口語指令解析器，支援中文數字與睡眠、餵奶時長提取。
 - [src/views/Dashboard/Growth.vue](file:///D:/Projects/baby-tracker/src/views/Dashboard/Growth.vue) - 體重記錄與 SVG 成長曲線趨勢頁面。
 - [src/components/CameraPicker.vue](file:///D:/Projects/baby-tracker/src/components/CameraPicker.vue) - 結合 Web Cam 與原生拍照的相機選擇器元件，支援前端圖片縮圖壓縮。
 - [src/helpers/db.js](file:///D:/Projects/baby-tracker/src/helpers/db.js) - 基於 Promise 的 IndexedDB 儲存封裝，並提供 localStorage/記憶體降級 fallback，以確保離線與單元測試環境穩定運行。
+- [test/unit/helpers/voiceParser.spec.js](file:///D:/Projects/baby-tracker/test/unit/helpers/voiceParser.spec.js) - 語音解析器的 13 項自然語言單元測試。
 - [test/unit/helpers/db.spec.js](file:///D:/Projects/baby-tracker/test/unit/helpers/db.spec.js) - 針對 IndexedDB 封裝的 CRUD 單元測試。
 - [test/unit/SampleMain.spec.js](file:///D:/Projects/baby-tracker/test/unit/SampleMain.spec.js) - 針對主控面板渲染與基本文字的單元測試。
 
