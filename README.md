@@ -117,15 +117,25 @@
 
 ---
 
-### 2. 部署至 Vercel (推薦)
+### 2. 部署至 Vercel (推薦，完全免費且最簡單)
 
-1. **GitHub 推送**：建立一個 GitHub 儲存庫，將本地程式碼推送上去。
-2. **導入專案**：登入 Vercel 後台，點選 **Add New** > **Project**，導入您的 GitHub 儲存庫。
-3. **環境變數設定 (Environment Variables)**：
-   在部署前的環境變數設定區塊，新增以下兩個變數，並填入您在 Supabase 取得的值：
-   - `VITE_SUPABASE_URL` : 貼上您的 Supabase Project URL。
-   - `VITE_SUPABASE_ANON_KEY` : 貼上您的 Supabase anon public 金鑰。
-4. **⚠️ 重要注意**：因為 Vite 的 `VITE_` 開頭變數是在**打包編譯時 (Build time)** 被直接靜態寫入 JavaScript 檔案中的。所以在 Vercel 設定或更新環境變數後，**必須在 Vercel 該部署控制台點擊「Redeploy」（重新部署）**，變數才會真正生效。
+將程式碼發佈至線上，讓全家人用手機隨時開啟，步驟如下：
+
+1. **註冊 Vercel 帳號**：前往 [Vercel 官網 (vercel.com)](https://vercel.com/)，點選 **Sign Up**。選擇使用 **GitHub** 帳號登入（這會自動與您剛才上傳的寶寶專案連動，最省時）。
+2. **匯入您的專案**：
+   - 登入 Vercel 後，點選右上角的 **Add New** 按鈕，選擇 **Project**。
+   - 畫面會顯示您的 GitHub 專案清單，找到寶寶作息專案（例如：`baby-care-tracker`），點選旁邊的 **Import** 按鈕。
+3. **設定連線密鑰 (重要！)**：
+   - 進入部署配置頁面，請往下滾動，找到 **Environment Variables**（環境變數）摺疊選單點開它。
+   - 依序新增您在 Supabase 步驟 4 複製的兩組資訊：
+     - **第一組**：名稱（Name）輸入 `VITE_SUPABASE_URL`，值（Value）貼上您的 Supabase `Project URL`。點選右側的 **Add** 按鈕。
+     - **第二組**：名稱（Name）輸入 `VITE_SUPABASE_ANON_KEY`，值（Value）貼上您的 Supabase `anon public` 金鑰。點選右側的 **Add** 按鈕。
+4. **一鍵部署**：
+   - 填寫完上述兩組金鑰後，直接點選最下方的 **Deploy** 按鈕！
+   - Vercel 會自動下載程式碼並在雲端打包。大約等候 1 分鐘，當畫面上出現滿天的五彩紙花特效時，代表網頁已經成功上線囉！
+   - 點選畫面上的預覽圖，就能打開您的專屬寶寶作息儀網頁（網址類似：`https://your-baby-tracker.vercel.app`），您可以直接將此網址加到手機桌面上方便隨手點開。
+5. **⚠️ 貼心提醒 (若未來修改金鑰)**：
+   - 由於網頁安全連線機制，金鑰資訊是在網頁打包時「包進」網頁代碼中的。若您未來在 Vercel 更改了上述的變數值，請務必到 Vercel 該專案控制台的 **Deployments** 頁面，點選最新一次部署右邊的三個點 `...`，再點選 **Redeploy**（重新部署），網頁上的連線設定才會真正更新生效。
 
 ---
 
