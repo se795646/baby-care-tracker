@@ -8,6 +8,10 @@ export default {
             NAME: 'DashboardOverview',
             PATH: 'dashboard/overview'
         },
+        GROWTH: {
+            NAME: 'DashboardGrowth',
+            PATH: 'dashboard/growth'
+        },
         COMPONENTS: {
             NAME: 'DashboardComponents',
             PATH: 'dashboard/components'

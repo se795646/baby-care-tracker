@@ -89,6 +89,9 @@
                 <div class="bq-text-center">
                     <div class="bq-text-sm bq-font-medium bq-text-gray-600">已餵奶 {{ todayMilkCount }} 次</div>
                     <div class="bq-text-xs bq-text-pink-500 bq-font-semibold bq-mt-1">{{ milkPercent }}% 已達成</div>
+                    <div v-if="latestWeight" class="bq-text-gray-400 bq-mt-0.5" style="font-size: 0.7rem;">
+                        依體重 {{ latestWeight }} kg 計算
+                    </div>
                 </div>
             </div>
 
@@ -525,7 +528,23 @@ onMounted(async () => {
 });
 
 // ─── 今日統計計算 ───
-const milkTarget = 1000; // 今日目標奶量 ml
+// 獲取最新體重
+const latestWeight = computed(() => {
+    const weightRecords = records.value.filter((r) => r.type === 'weight');
+    if (weightRecords.length > 0) {
+        return Number(weightRecords[0].amount);
+    }
+    return null;
+});
+
+// 動態目標奶量 (最新體重 * 150 ml，若無記錄則預設 750 ml)
+const milkTarget = computed(() => {
+    if (latestWeight.value) {
+        return Math.round(latestWeight.value * 150);
+    }
+    return 750;
+});
+
 const sleepTargetHours = 12; // 今日目標睡眠小時
 
 // 獲取今天日期的零點時間戳
@@ -554,7 +573,7 @@ const todayMilkCount = computed(() => {
 
 // 今日喝奶百分比
 const milkPercent = computed(() => {
-    return Math.round((todayMilkTotal.value / milkTarget) * 100) || 0;
+    return Math.round((todayMilkTotal.value / milkTarget.value) * 100) || 0;
 });
 
 // 今日睡眠總時長 (分鐘)
@@ -591,6 +610,9 @@ const filteredRecords = computed(() => {
     // 類別過濾
     if (filterType.value !== 'all') {
         list = list.filter((r) => r.type === filterType.value);
+    } else {
+        // 首頁日誌的 'all' 指的是餵奶與睡眠記錄，不包含體重記錄
+        list = list.filter((r) => r.type === 'milk' || r.type === 'sleep');
     }
 
     // 搜尋關鍵字過濾

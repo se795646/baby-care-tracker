@@ -16,6 +16,11 @@ const routes = [
                 path: Routes.DASHBOARD.OVERVIEW.PATH,
                 name: Routes.DASHBOARD.OVERVIEW.NAME,
                 component: () => import('@/views/Dashboard/Overview.vue')
+            },
+            {
+                path: Routes.DASHBOARD.GROWTH.PATH,
+                name: Routes.DASHBOARD.GROWTH.NAME,
+                component: () => import('@/views/Dashboard/Growth.vue')
             }
         ]
     },
