@@ -4,6 +4,14 @@
 
 本專案採用 **Vue 3 (Composition API) + Vite + TailwindCSS** 開發，並整合了 **Vuetify** 進行元件開發與排版。
 
+## 📱 系統畫面預覽 (UI Previews)
+
+<p align="center">
+  <img src="docs/images/dashboard_preview.png" width="48%" alt="作息與小睡主控台" />
+  &nbsp;&nbsp;
+  <img src="docs/images/growth_preview.png" width="48%" alt="WHO 成長百分位圖表與相減助手" />
+</p>
+
 ---
 
 ## ✨ 核心特色
