@@ -89,16 +89,47 @@
 
 ## 🚀 雲端部署指南 (Vercel & GitHub Pages)
 
-本專案是一個純靜態前端應用，非常適合託管在 **Vercel** 上，可享受自動化的 CI/CD 流程：
+本專案是一個純靜態前端應用，非常適合託管在 **Vercel** 上，可享受自動化的雙向即時同步。在部署前，您需要先準備一個**完全免費**的 Supabase 雲端資料庫來儲存寶寶的作息與體重數據：
 
-### 1. 部署至 Vercel (推薦)
+### 1. 準備工作：建立免費的 Supabase 資料庫
+
+為了讓您和家人（多個裝置）可以同時登入並即時同步，請跟著以下步驟建立您的資料庫：
+
+1. **註冊帳號**：前往 [Supabase 官網 (supabase.com)](https://supabase.com/)，點選 **Sign Up** 註冊。您可以使用您的 GitHub 帳號一鍵登入。
+2. **建立新專案**：
+   - 進入控制台後，點選 **New Project**。
+   - 設定專案名稱（例如：`my-baby-tracker`）。
+   - 設定一個安全的資料庫密碼（請先記在備忘錄中）。
+   - 區域（Region）選擇離您最近的地方（例如：亞洲選 `Singapore` 或 `Tokyo`）。
+   - 點選 **Create new project**，等待約 1-2 分鐘資料庫建立完成。
+3. **建立資料表 (Records Table)**：
+   - 專案建立完成後，在左側選單中點選 **SQL Editor**（一個像大於 `>` 符號的圖示）。
+   - 點選右上角的 **New query** 按鈕建立一個新輸入視窗。
+   - 複製您專案目錄下的 [supabase_schema.sql](file:///D:/Projects/baby-tracker/supabase_schema.sql) 檔案裡面的所有 SQL 程式碼。
+   - 將程式碼貼入 Supabase 網頁的編輯器中，點選右下角的 **Run** 按鈕。
+   - 看到綠色的 `Success` 提示即代表資料表與即時同步政策已成功建立！
+4. **取得金鑰資訊**：
+   - 點選左下角的 **Project Settings**（齒輪圖示）。
+   - 點選選單中的 **API**。
+   - 您會看到以下兩個重要欄位，請將它們複製備用：
+     - **Project URL**（對應環境變數中的 `VITE_SUPABASE_URL`）
+     - **anon public** (JWT 欄位下方的 Anon 金鑰，對應環境變數中的 `VITE_SUPABASE_ANON_KEY`)
+
+---
+
+### 2. 部署至 Vercel (推薦)
+
 1. **GitHub 推送**：建立一個 GitHub 儲存庫，將本地程式碼推送上去。
-2. **導入專案**：登入 Vercel 後台，導入您的 GitHub 儲存庫。
-3. **環境變數設定**：在 Vercel 專案設定的 **Environment Variables** 中，新增以下兩個變數：
-   - `VITE_SUPABASE_URL` : 您的 Supabase 專案 URL。
-   - `VITE_SUPABASE_ANON_KEY` : 您的 Supabase 專案 Anon 公開金鑰。
-4. **⚠️ 重要注意**：因為 Vite 的 `VITE_` 開頭變數是在**打包編譯時 (Build time)** 被打包進靜態 JavaScript 檔案中的。所以在 Vercel 設定或更新環境變數後，**必須在 Vercel 上點擊「Redeploy」（重新部署）**，該變數才會真正生效。
+2. **導入專案**：登入 Vercel 後台，點選 **Add New** > **Project**，導入您的 GitHub 儲存庫。
+3. **環境變數設定 (Environment Variables)**：
+   在部署前的環境變數設定區塊，新增以下兩個變數，並填入您在 Supabase 取得的值：
+   - `VITE_SUPABASE_URL` : 貼上您的 Supabase Project URL。
+   - `VITE_SUPABASE_ANON_KEY` : 貼上您的 Supabase anon public 金鑰。
+4. **⚠️ 重要注意**：因為 Vite 的 `VITE_` 開頭變數是在**打包編譯時 (Build time)** 被直接靜態寫入 JavaScript 檔案中的。所以在 Vercel 設定或更新環境變數後，**必須在 Vercel 該部署控制台點擊「Redeploy」（重新部署）**，變數才會真正生效。
 
-### 2. 部署至 GitHub Pages (替代方案)
+---
+
+### 3. 部署至 GitHub Pages (替代方案)
+
 1. 在 `vite.config.js` 中，將 `base` 修改為您的 GitHub 專案名稱（例如：`base: '/baby-care-tracker/'`）。
 2. 可利用 `gh-pages` npm 套件，或設定 GitHub Actions 自動將 `dist` 編譯內容部署至 `gh-pages` 分支。
