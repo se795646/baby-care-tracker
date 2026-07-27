@@ -139,21 +139,17 @@
 
 ## 🛠️ 自訂修改：進階開發與本機建置指南
 
-如果您想修改網頁代碼（例如調整配色、新增其它自訂記錄欄位），請參考以下步驟進行：
+如果您想要自訂修改網頁代碼（例如調整 UI 配色、新增記錄欄位），在專案公開後，您不需要手動拷貝檔案，可以直接採取標準的開源協作流程：
 
-### 1. 建立您的 GitHub 儲存庫並手動上傳
-1. 在 GitHub 建立一個全新的 Repository，設為 **Private (私有)** 或 **Public (公開)**。
-2. 本地開發使用 `.env` 管理環境變數，並加入 `.gitignore` 避免外洩。
-3. 在您的本機專案根目錄執行以下 Git 指令上傳代碼：
-   ```bash
-   git init
-   git add .
-   git commit -m "feat: init baby tracker"
-   git branch -M main
-   git remote add origin https://github.com/您的帳號名稱/您的儲存庫名稱.git
-   git push -u origin main
-   ```
+### 1. 取得程式碼進行本機開發
+1. **Fork 或 Clone 專案**：
+   - 點選專案右上角的 **`Fork`** 按鈕，將專案複製一份到您個人的 GitHub 帳號下。
+   - 或者，您也可以到本儲存庫右側的 **`Releases`** 頁面，直接下載最新發佈版（如 `v1.0.0`）的原始碼壓縮檔（Source code.zip）。
+2. **本機執行**：
+   - 下載或 Clone 至本機後，在專案目錄下執行 `npm install` 安裝依賴套件。
+   - 複製 `.env.example` 並命名為 `.env`，填入您的 Supabase 專案金鑰。
+   - 執行 `npm run dev` 啟動本機開發伺服器，在瀏覽器開啟 `http://localhost:5173` 即可進行開發與測試。
 
 ### 2. 手動部署至 GitHub Pages (替代託管方案)
 1. 在 `vite.config.js` 中，將 `base` 修改為您的 GitHub 專案名稱（例如：`base: '/baby-care-tracker/'`）。
-2. 可利用 `gh-pages` npm 套件，或設定 GitHub Actions 自動將 `dist` 編譯內容部署至 `gh-pages` 分支。
+2. 可利用 `gh-pages` npm 套件，或設定 GitHub Actions 自動將編譯產出的 `dist` 靜態檔案部署至 `gh-pages` 分支。
