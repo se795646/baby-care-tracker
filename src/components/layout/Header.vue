@@ -29,18 +29,6 @@
                 </a>
             </nav>
 
-            <!-- User Status -->
-            <div class="bq-flex bq-items-center bq-gap-4">
-                <div class="bq-flex bq-items-center bq-gap-2.5">
-                    <div class="bq-bg-indigo-50 bq-w-8 bq-h-8 bq-rounded-full bq-flex bq-items-center bq-justify-center bq-text-sm bq-font-bold bq-text-indigo-600">
-                        👪
-                    </div>
-                    <div class="bq-hidden sm:bq-block bq-text-left">
-                        <div class="bq-text-xs bq-font-bold bq-text-gray-700">{{ userName || '寶寶家長' }}</div>
-                        <div class="bq-text-3xs bq-text-gray-400">系統管理員</div>
-                    </div>
-                </div>
-            </div>
         </div>
     </header>
 </template>

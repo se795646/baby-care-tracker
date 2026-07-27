@@ -147,6 +147,33 @@
                     </div>
                 </div>
 
+                <!-- WHO Percentile Analysis -->
+                <div v-if="latestWeight && babyAgeDays !== null" class="bq-bg-gradient-to-r bq-from-teal-50 bq-to-emerald-50 bq-shadow-sm bq-rounded-16 bq-p-5 bq-border bq-border-teal-100 bq-flex bq-items-start bq-gap-3">
+                    <div class="bq-text-2xl">📈</div>
+                    <div>
+                        <h4 class="bq-font-bold bq-text-teal-800 bq-text-sm">本週健康與成長分析 (WHO 參考指標)</h4>
+                        <p class="bq-text-xs bq-text-teal-700 bq-mt-1.5 bq-leading-relaxed">
+                            寶寶目前已出月齡約 {{ (babyAgeDays / 30.4).toFixed(1) }} 個月 (共 {{ babyAgeDays }} 天大)。
+                            根據 WHO 世界衛生組織嬰兒成長曲線對照：
+                            <br />
+                            <span class="bq-font-bold">目前體重 {{ latestWeight }} kg 落在正常健康發育區間</span>。
+                            {{ growthAssessmentText }}
+                        </p>
+                    </div>
+                </div>
+                <div v-else-if="latestWeight" class="bq-bg-gradient-to-r bq-from-amber-50 bq-to-orange-50 bq-shadow-sm bq-rounded-16 bq-p-5 bq-border bq-border-orange-100 bq-flex bq-items-start bq-gap-3">
+                    <div class="bq-text-2xl">⚙️</div>
+                    <div class="bq-w-full">
+                        <h4 class="bq-font-bold bq-text-orange-800 bq-text-sm">想要啟用 WHO 生長曲線對照分析嗎？</h4>
+                        <p class="bq-text-xs bq-text-orange-700 bq-mt-1.5 bq-leading-relaxed bq-flex bq-justify-between bq-items-center bq-flex-wrap bq-gap-2">
+                            <span>請前往「首頁」點選右上角齒輪設定寶寶的生日，App 就會自動為您進行成長百分位與發育評估喔！</span>
+                            <router-link to="/dashboard/overview" class="bq-bg-orange-500 hover:bq-bg-orange-600 active:bq-scale-98 bq-text-white bq-px-3 bq-py-1 bq-rounded-8 bq-font-bold bq-transition bq-text-2xs bq-no-underline">
+                                前往設定
+                            </router-link>
+                        </p>
+                    </div>
+                </div>
+
                 <!-- History Log Card -->
                 <div class="bq-bg-white bq-shadow-sm bq-rounded-16 bq-p-6 bq-border bq-border-gray-100">
                     <h3 class="bq-text-lg bq-font-bold bq-text-gray-800 bq-mb-4">歷史體重日誌</h3>
@@ -209,6 +236,54 @@
                             />
                         </div>
 
+                        <!-- Calculator Helper -->
+                        <div class="bq-border bq-border-dashed bq-border-indigo-200 bq-rounded-10 bq-p-3 bq-bg-indigo-50/10">
+                            <button
+                                type="button"
+                                class="bq-text-xs bq-font-semibold bq-text-indigo-600 hover:bq-text-indigo-800 bq-flex bq-items-center bq-gap-1"
+                                @click="form.enableCalc = !form.enableCalc"
+                            >
+                                <span>💡 沒有嬰兒專用秤？使用「大人抱著秤」換算助手</span>
+                                <span>{{ form.enableCalc ? '▼' : '▶' }}</span>
+                            </button>
+                            
+                            <div v-show="form.enableCalc" class="bq-mt-3 bq-flex bq-flex-col bq-gap-2">
+                                <div class="bq-grid bq-grid-cols-2 bq-gap-3">
+                                    <div>
+                                        <label class="bq-block bq-text-2xs bq-text-gray-500 bq-mb-1">1. 大人抱寶寶重 (kg)</label>
+                                        <input
+                                            v-model="form.calcAdultAndBaby"
+                                            type="number"
+                                            step="0.01"
+                                            placeholder="例如：75.3"
+                                            class="bq-w-full bq-px-3 bq-py-1.5 bq-border bq-border-gray-200 bq-rounded-8 focus:bq-outline-none focus:bq-text-sm"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label class="bq-block bq-text-2xs bq-text-gray-500 bq-mb-1">2. 大人單獨體重 (kg)</label>
+                                        <input
+                                            v-model="form.calcAdultOnly"
+                                            type="number"
+                                            step="0.01"
+                                            placeholder="例如：69.1"
+                                            class="bq-w-full bq-px-3 bq-py-1.5 bq-border bq-border-gray-200 bq-rounded-8 focus:bq-outline-none focus:bq-text-sm"
+                                        />
+                                    </div>
+                                </div>
+                                <div class="bq-flex bq-justify-between bq-items-center bq-bg-white bq-p-2 bq-rounded-8 bq-border bq-border-gray-100 bq-mt-1">
+                                    <span class="bq-text-xs bq-text-gray-600">計算結果寶寶體重：<span class="bq-font-bold bq-text-indigo-600">{{ calculatedWeight }} kg</span></span>
+                                    <button
+                                        type="button"
+                                        class="bq-bg-indigo-500 hover:bq-bg-indigo-600 active:bq-scale-98 bq-text-white bq-px-3 bq-py-1 bq-rounded-6 bq-font-bold bq-transition bq-text-xs"
+                                        :disabled="calculatedWeight <= 0"
+                                        @click="applyCalculatedWeight"
+                                    >
+                                        帶入寶寶體重
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Date & Time -->
                         <div>
                             <label class="bq-block bq-text-sm bq-font-bold bq-text-gray-600 bq-mb-1">
@@ -261,7 +336,10 @@ export default {
         const form = reactive({
             weight: '',
             time: '',
-            note: ''
+            note: '',
+            enableCalc: false,
+            calcAdultAndBaby: '',
+            calcAdultOnly: ''
         });
 
         // SVG Chart Dimensions
@@ -280,6 +358,9 @@ export default {
             form.weight = '';
             form.time = formatDateTimeLocal(Date.now());
             form.note = '';
+            form.enableCalc = false;
+            form.calcAdultAndBaby = '';
+            form.calcAdultOnly = '';
         };
 
         // Load records from IndexedDB and Supabase
@@ -476,6 +557,65 @@ export default {
             return `${yr}-${mo}-${day}T${hr}:${min}`;
         };
 
+        // 計算寶寶年齡天數
+        const babyAgeDays = computed(() => {
+            const bday = localStorage.getItem('baby_birthday');
+            if (!bday) return null;
+            const birth = new Date(bday);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            birth.setHours(0, 0, 0, 0);
+            const diffTime = today - birth;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays >= 0 ? diffDays : 0;
+        });
+
+        // 根據月齡給予溫馨發育評估回饋 (WHO百分位標準)
+        const growthAssessmentText = computed(() => {
+            if (!latestWeight.value || babyAgeDays.value === null) return '';
+            const months = babyAgeDays.value / 30.4;
+            const weight = latestWeight.value;
+
+            // 簡易的 WHO 3% ~ 97% 體重標準界線
+            let minNormal = 3.0;
+            let maxNormal = 12.0;
+
+            if (months <= 1) { minNormal = 3.2; maxNormal = 5.0; }
+            else if (months <= 2) { minNormal = 4.0; maxNormal = 6.2; }
+            else if (months <= 3) { minNormal = 4.8; maxNormal = 7.2; }
+            else if (months <= 4) { minNormal = 5.3; maxNormal = 8.0; }
+            else if (months <= 5) { minNormal = 5.8; maxNormal = 8.6; }
+            else if (months <= 6) { minNormal = 6.2; maxNormal = 9.2; }
+            else if (months <= 8) { minNormal = 6.8; maxNormal = 10.2; }
+            else if (months <= 10) { minNormal = 7.3; maxNormal = 11.0; }
+            else if (months <= 12) { minNormal = 7.7; maxNormal = 11.8; }
+            else { minNormal = 8.5; maxNormal = 14.0; }
+
+            if (weight < minNormal) {
+                return '目前體重略低於同月齡發育標準。建議增加每餐餵奶量或餵養頻率，並可於健檢時諮詢小兒科醫師進行健康評估。爸媽辛苦了，我們一起加油！❤️';
+            } else if (weight > maxNormal) {
+                return '目前體重高於同月齡發育標準上限，代表寶寶營養吸收非常充沛、體格健壯！只要活動力與精神良好即可，若有疑慮可於下次健檢時詢問醫師確認。🌟';
+            } else {
+                return '體重發育非常標準且穩定，曲線正常爬升中。這代表您的餵養非常成功，繼續保持穩定的照顧與充足奶量喔！👍🎉';
+            }
+        });
+
+        // 換算助手計算屬性
+        const calculatedWeight = computed(() => {
+            const bab = Number(form.calcAdultAndBaby);
+            const ad = Number(form.calcAdultOnly);
+            if (bab && ad && bab > ad) {
+                return Number((bab - ad).toFixed(2));
+            }
+            return 0;
+        });
+
+        const applyCalculatedWeight = () => {
+            if (calculatedWeight.value > 0) {
+                form.weight = calculatedWeight.value;
+            }
+        };
+
         return {
             form,
             weightRecords,
@@ -492,7 +632,11 @@ export default {
             paddingBottom,
             saveWeightEntry,
             deleteWeightRecord,
-            formatDate
+            formatDate,
+            babyAgeDays,
+            growthAssessmentText,
+            calculatedWeight,
+            applyCalculatedWeight
         };
     }
 };

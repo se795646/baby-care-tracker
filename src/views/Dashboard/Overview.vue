@@ -5,17 +5,58 @@
             <div>
                 <h1 class="bq-text-2xl bq-font-bold bq-text-gray-800 bq-flex bq-items-center bq-gap-2">
                     👶 寶寶作息記錄儀
-                    <button type="button" class="bq-text-gray-400 hover:bq-text-gray-600 bq-text-lg bq-ml-1" @click="showSettingsDialog = true" title="設定寶寶生日與耐累度">⚙️</button>
                 </h1>
                 <p class="bq-text-sm bq-text-gray-500 bq-mt-1">
                     今天也是充滿愛與耐心的一天！讓我們一起記錄寶寶的成長足跡。
                 </p>
             </div>
-            <div class="bq-bg-white bq-shadow-sm bq-rounded-12 bq-px-4 bq-py-2 bq-border bq-border-gray-100 bq-text-right">
-                <div class="bq-text-xs bq-text-gray-400">今天是</div>
-                <div class="bq-text-sm bq-font-bold bq-text-gray-700">{{ todayString }}</div>
+            <div class="bq-flex bq-items-center bq-gap-3">
+                <div class="bq-bg-white bq-shadow-sm bq-rounded-12 bq-px-4 bq-py-2 bq-border bq-border-gray-100 bq-text-right">
+                    <div class="bq-text-xs bq-text-gray-400">今天是 {{ todayString }}</div>
+                    <div v-if="babyAgeDays !== null" class="bq-text-xs bq-font-bold bq-text-teal-600 bq-mt-0.5">
+                        寶寶已出生 {{ babyAgeDays }} 天 (約 {{ (babyAgeDays / 30.4).toFixed(1) }} 個月)
+                    </div>
+                    <div v-else class="bq-text-xs bq-text-orange-500 bq-font-bold bq-mt-0.5">
+                        尚未設定寶寶生日
+                    </div>
+                </div>
+                <button
+                    type="button"
+                    class="bq-bg-white hover:bq-bg-slate-50 bq-shadow-sm bq-border bq-border-gray-200 bq-w-10 bq-h-10 bq-rounded-12 bq-flex bq-items-center bq-justify-center bq-text-base bq-transition"
+                    @click="showSettingsDialog = true"
+                    title="設定寶寶生日與耐累度"
+                >
+                    ⚙️
+                </button>
             </div>
         </div>
+
+        <!-- 每週體重更新提醒 -->
+        <transition name="slide-fade">
+            <div
+                v-if="showWeeklyWeightReminder"
+                class="bq-mb-6 bq-bg-gradient-to-r bq-from-amber-500 bq-to-orange-600 bq-text-white bq-rounded-16 bq-p-5 bq-shadow-md bq-relative bq-overflow-hidden"
+            >
+                <div class="bq-absolute -bq-right-10 -bq-bottom-10 bq-opacity-10 bq-text-9xl">📈</div>
+                <div class="bq-flex bq-flex-col sm:bq-flex-row bq-justify-between bq-items-center bq-gap-4 bq-relative bq-z-10">
+                    <div class="bq-text-center sm:bq-text-left">
+                        <h2 class="bq-text-base bq-font-bold">寶寶又過了一週囉！👶✨</h2>
+                        <p class="bq-text-xs bq-text-white/90 bq-mt-1" style="font-size: 0.75rem;">
+                            更新當前體重，App 將為您自動計算本週最新的『建議奶量』與『生長曲線』喔！📈
+                            <span v-if="lastWeightRecord" class="bq-font-semibold"> (距離上次更新已過 {{ daysSinceLastWeight }} 天)</span>
+                            <span v-else class="bq-font-semibold"> (尚未有體重記錄)</span>
+                        </p>
+                    </div>
+                    <button
+                        type="button"
+                        class="bq-bg-white hover:bq-bg-yellow-50 active:bq-scale-98 bq-text-orange-700 bq-px-4 bq-py-2 bq-rounded-10 bq-font-bold bq-transition bq-shadow-sm bq-text-xs"
+                        @click="openQuickWeightDialog"
+                    >
+                        快速更新體重 ⚖️
+                    </button>
+                </div>
+            </div>
+        </transition>
 
         <!-- 實時睡眠計時器 (當寶寶正在睡覺時顯示) -->
         <transition name="slide-fade">
@@ -588,6 +629,136 @@
                 </div>
             </v-card>
         </v-dialog>
+
+        <!-- 4. 快速更新體重 Dialog -->
+        <v-dialog v-model="showQuickWeightDialog" max-width="500px">
+            <v-card class="bq-rounded-16 bq-overflow-hidden">
+                <v-card-title class="bq-bg-gradient-to-r bq-from-amber-100 bq-to-orange-100 bq-p-4 bq-flex bq-justify-between bq-items-center">
+                    <span class="bq-font-bold bq-text-gray-800">⚖️ 快速更新寶寶體重</span>
+                    <button type="button" class="bq-text-gray-500 hover:bq-text-gray-800" @click="showQuickWeightDialog = false">✕</button>
+                </v-card-title>
+                
+                <v-card-text class="bq-p-5 bq-flex bq-flex-col bq-gap-4">
+                    <!-- Weight Input -->
+                    <div>
+                        <label class="bq-block bq-text-sm bq-font-bold bq-text-gray-600 bq-mb-1">寶寶目前體重 (kg)</label>
+                        <input
+                            v-model="quickWeightForm.weight"
+                            type="number"
+                            step="0.01"
+                            placeholder="例如：6.2"
+                            class="bq-w-full bq-px-4 bq-py-2.5 bq-border bq-border-gray-200 bq-rounded-10 focus:bq-outline-none focus:bq-border-orange-300 bq-text-sm bq-transition"
+                        />
+                    </div>
+
+                    <!-- Calculator Helper -->
+                    <div class="bq-border bq-border-dashed bq-border-orange-200 bq-rounded-10 bq-p-3 bq-bg-orange-50/20">
+                        <button
+                            type="button"
+                            class="bq-text-xs bq-font-semibold bq-text-orange-600 hover:bq-text-orange-800 bq-flex bq-items-center bq-gap-1"
+                            @click="quickWeightForm.enableCalc = !quickWeightForm.enableCalc"
+                        >
+                            <span>💡 沒有嬰兒專用秤？使用「大人抱著秤」換算助手</span>
+                            <span>{{ quickWeightForm.enableCalc ? '▼' : '▶' }}</span>
+                        </button>
+                        
+                        <div v-show="quickWeightForm.enableCalc" class="bq-mt-3 bq-flex bq-flex-col bq-gap-2">
+                            <div class="bq-grid bq-grid-cols-2 bq-gap-3">
+                                <div>
+                                    <label class="bq-block bq-text-2xs bq-text-gray-500 bq-mb-1">1. 大人抱寶寶重 (kg)</label>
+                                    <input
+                                        v-model="quickWeightForm.calcAdultAndBaby"
+                                        type="number"
+                                        step="0.01"
+                                        placeholder="例如：75.3"
+                                        class="bq-w-full bq-px-3 bq-py-1.5 bq-border bq-border-gray-200 bq-rounded-8 focus:bq-outline-none focus:bq-text-sm"
+                                    />
+                                </div>
+                                <div>
+                                    <label class="bq-block bq-text-2xs bq-text-gray-500 bq-mb-1">2. 大人單獨體重 (kg)</label>
+                                    <input
+                                        v-model="quickWeightForm.calcAdultOnly"
+                                        type="number"
+                                        step="0.01"
+                                        placeholder="例如：69.1"
+                                        class="bq-w-full bq-px-3 bq-py-1.5 bq-border bq-border-gray-200 bq-rounded-8 focus:bq-outline-none focus:bq-text-sm"
+                                    />
+                                </div>
+                            </div>
+                            <div class="bq-flex bq-justify-between bq-items-center bq-bg-white bq-p-2 bq-rounded-8 bq-border bq-border-gray-100 bq-mt-1">
+                                <span class="bq-text-xs bq-text-gray-600">計算結果寶寶體重：<span class="bq-font-bold bq-text-orange-600">{{ calculatedWeight }} kg</span></span>
+                                <button
+                                    type="button"
+                                    class="bq-bg-orange-500 hover:bq-bg-orange-600 active:bq-scale-98 bq-text-white bq-px-3 bq-py-1 bq-rounded-6 bq-font-bold bq-transition bq-text-xs"
+                                    :disabled="calculatedWeight <= 0"
+                                    @click="applyCalculatedWeight"
+                                >
+                                    帶入寶寶體重
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Note -->
+                    <div>
+                        <label class="bq-block bq-text-sm bq-font-bold bq-text-gray-600 bq-mb-1">備註 (可選)</label>
+                        <textarea
+                            v-model="quickWeightForm.note"
+                            placeholder="例如：打疫苗量體重、吃飽後秤..."
+                            rows="2"
+                            class="bq-w-full bq-px-4 bq-py-2.5 bq-border bq-border-gray-200 bq-rounded-10 focus:bq-outline-none focus:bq-border-orange-300 bq-text-sm bq-transition"
+                        ></textarea>
+                    </div>
+                </v-card-text>
+
+                <v-card-actions class="bq-p-5 bq-bg-gray-50 bq-flex bq-justify-end bq-gap-3">
+                    <button
+                        type="button"
+                        class="bq-bg-gray-200 hover:bq-bg-gray-300 active:bq-scale-98 bq-text-gray-700 bq-px-5 bq-py-2.5 bq-rounded-10 bq-font-bold bq-transition bq-text-sm"
+                        @click="showQuickWeightDialog = false"
+                    >
+                        取消
+                    </button>
+                    <button
+                        type="button"
+                        class="bq-bg-orange-500 hover:bq-bg-orange-600 active:bq-scale-98 bq-text-white bq-px-5 bq-py-2.5 bq-rounded-10 bq-font-bold bq-transition bq-text-sm bq-shadow-sm"
+                        @click="saveQuickWeight"
+                    >
+                        儲存體重
+                    </button>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
+        <!-- 5. 體重更新成功 & 建議奶量反饋 Dialog -->
+        <v-dialog v-model="showSuccessFeedback" max-width="500px">
+            <v-card class="bq-rounded-16 bq-overflow-hidden">
+                <v-card-title class="bq-bg-gradient-to-r bq-from-emerald-500 bq-to-teal-600 bq-text-white bq-p-4 bq-flex bq-justify-between bq-items-center">
+                    <span class="bq-font-bold">✨ 更新成功，奶量公式已自動升級！</span>
+                    <button type="button" class="bq-text-white/80 hover:bq-text-white" @click="showSuccessFeedback = false">✕</button>
+                </v-card-title>
+                
+                <v-card-text class="bq-p-6 bq-text-center">
+                    <div class="bq-text-5xl bq-mb-4">🍼📈</div>
+                    <p class="bq-text-base bq-text-gray-800 bq-font-medium bq-leading-relaxed bq-mb-2">
+                        {{ feedbackMsg }}
+                    </p>
+                    <p class="bq-text-xs bq-text-gray-400" style="font-size: 0.75rem;">
+                        (依小兒科醫生建議「每日總奶量 = 體重 × 150 ml」公式換算)
+                    </p>
+                </v-card-text>
+
+                <v-card-actions class="bq-p-4 bq-bg-gray-50 bq-flex bq-justify-center">
+                    <button
+                        type="button"
+                        class="bq-bg-emerald-500 hover:bq-bg-emerald-600 active:bq-scale-98 bq-text-white bq-px-8 bq-py-2.5 bq-rounded-10 bq-font-bold bq-transition bq-text-sm bq-shadow-sm"
+                        @click="showSuccessFeedback = false"
+                    >
+                        太棒了！
+                    </button>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </layout-item>
 </template>
 
@@ -1044,6 +1215,92 @@ const saveBabySettings = () => {
     localStorage.setItem('baby_birthday', babySettings.birthday);
     localStorage.setItem('baby_fatigue_tolerance', babySettings.fatigueTolerance);
     showSettingsDialog.value = false;
+};
+
+// 每週體重更新提醒邏輯與快速對話框
+const showQuickWeightDialog = ref(false);
+const showSuccessFeedback = ref(false);
+const feedbackMsg = ref('');
+
+const quickWeightForm = reactive({
+    weight: '',
+    note: '',
+    enableCalc: false,
+    calcAdultAndBaby: '',
+    calcAdultOnly: ''
+});
+
+const lastWeightRecord = computed(() => {
+    const weightRecords = records.value.filter(r => r.type === 'weight');
+    return weightRecords.length > 0 ? weightRecords[0] : null;
+});
+
+const daysSinceLastWeight = computed(() => {
+    if (!lastWeightRecord.value) return 999;
+    const diffMs = nowTimestamp.value - lastWeightRecord.value.timestamp;
+    return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+});
+
+const showWeeklyWeightReminder = computed(() => {
+    return daysSinceLastWeight.value >= 7;
+});
+
+const calculatedWeight = computed(() => {
+    const bab = Number(quickWeightForm.calcAdultAndBaby);
+    const ad = Number(quickWeightForm.calcAdultOnly);
+    if (bab && ad && bab > ad) {
+        return Number((bab - ad).toFixed(2));
+    }
+    return 0;
+});
+
+const applyCalculatedWeight = () => {
+    if (calculatedWeight.value > 0) {
+        quickWeightForm.weight = calculatedWeight.value;
+    }
+};
+
+const openQuickWeightDialog = () => {
+    quickWeightForm.weight = '';
+    quickWeightForm.note = '';
+    quickWeightForm.enableCalc = false;
+    quickWeightForm.calcAdultAndBaby = '';
+    quickWeightForm.calcAdultOnly = '';
+    showQuickWeightDialog.value = true;
+};
+
+const saveQuickWeight = async () => {
+    const weightVal = Number(quickWeightForm.weight);
+    if (!weightVal || weightVal <= 0) {
+        alert('請輸入有效的寶寶體重！');
+        return;
+    }
+    
+    const record = {
+        id: `weight-${Date.now()}`,
+        type: 'weight',
+        amount: weightVal,
+        timestamp: Date.now(),
+        note: quickWeightForm.note || null
+    };
+    
+    try {
+        await saveRecord(record);
+        await loadRecords();
+        showQuickWeightDialog.value = false;
+        
+        // Calculate milk target change for feedback
+        const newTarget = Math.round(weightVal * 150);
+        const singleMeal = Math.round(newTarget / 6);
+        
+        feedbackMsg.value = `體重已更新為 ${weightVal} kg！系統已自動為您將每日建議總奶量調整為 ${newTarget} ml（若每日餵 6 餐，單餐建議約 ${singleMeal} ml）。`;
+        showSuccessFeedback.value = true;
+        
+        // Trigger background sync
+        syncWithSupabase().then(() => loadRecords());
+    } catch (e) {
+        alert('儲存失敗，請重試');
+    }
 };
 
 // 計算寶寶年齡 (天數)
