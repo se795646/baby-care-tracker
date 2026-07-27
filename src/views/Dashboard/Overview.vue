@@ -1,28 +1,43 @@
 <template>
     <layout-item>
         <!-- 頂部溫馨問候與日期 -->
-        <div class="bq-mb-6 bq-flex bq-flex-col md:bq-flex-row bq-justify-between bq-items-start md:bq-items-center bq-gap-4">
+        <div
+            class="bq-mb-6 bq-flex bq-flex-col bq-items-start bq-justify-between bq-gap-4 md:bq-flex-row md:bq-items-center"
+        >
             <div>
-                <h1 class="bq-text-2xl bq-font-bold bq-text-gray-800 bq-flex bq-items-center bq-gap-2">
+                <h1
+                    class="bq-flex bq-items-center bq-gap-2 bq-text-2xl bq-font-bold bq-text-gray-800"
+                >
                     👶 寶寶作息記錄儀
                 </h1>
-                <p class="bq-text-sm bq-text-gray-500 bq-mt-1">
+                <p class="bq-mt-1 bq-text-sm bq-text-gray-500">
                     今天也是充滿愛與耐心的一天！讓我們一起記錄寶寶的成長足跡。
                 </p>
             </div>
             <div class="bq-flex bq-items-center bq-gap-3">
-                <div class="bq-bg-white bq-shadow-sm bq-rounded-12 bq-px-4 bq-py-2 bq-border bq-border-gray-100 bq-text-right">
-                    <div class="bq-text-xs bq-text-gray-400">今天是 {{ todayString }}</div>
-                    <div v-if="babyAgeDays !== null" class="bq-text-xs bq-font-bold bq-text-teal-600 bq-mt-0.5">
-                        寶寶已出生 {{ babyAgeDays }} 天 (約 {{ (babyAgeDays / 30.4).toFixed(1) }} 個月)
+                <div
+                    class="bq-rounded-12 bq-border bq-border-gray-100 bq-bg-white bq-px-4 bq-py-2 bq-text-right bq-shadow-sm"
+                >
+                    <div class="bq-text-xs bq-text-gray-400">
+                        今天是 {{ todayString }}
                     </div>
-                    <div v-else class="bq-text-xs bq-text-orange-500 bq-font-bold bq-mt-0.5">
+                    <div
+                        v-if="babyAgeDays !== null"
+                        class="bq-mt-0.5 bq-text-xs bq-font-bold bq-text-teal-600"
+                    >
+                        寶寶已出生 {{ babyAgeDays }} 天 (約
+                        {{ (babyAgeDays / 30.4).toFixed(1) }} 個月)
+                    </div>
+                    <div
+                        v-else
+                        class="bq-mt-0.5 bq-text-xs bq-font-bold bq-text-orange-500"
+                    >
                         尚未設定寶寶生日
                     </div>
                 </div>
                 <button
                     type="button"
-                    class="bq-bg-white hover:bq-bg-slate-50 bq-shadow-sm bq-border bq-border-gray-200 bq-w-10 bq-h-10 bq-rounded-12 bq-flex bq-items-center bq-justify-center bq-text-base bq-transition"
+                    class="bq-rounded-12 bq-flex bq-h-10 bq-w-10 bq-items-center bq-justify-center bq-border bq-border-gray-200 bq-bg-white bq-text-base bq-shadow-sm bq-transition hover:bq-bg-slate-50"
                     @click="showSettingsDialog = true"
                     title="設定寶寶生日與耐累度"
                 >
@@ -35,21 +50,41 @@
         <transition name="slide-fade">
             <div
                 v-if="showWeeklyWeightReminder"
-                class="bq-mb-6 bq-bg-gradient-to-r bq-from-amber-500 bq-to-orange-600 bq-text-white bq-rounded-16 bq-p-5 bq-shadow-md bq-relative bq-overflow-hidden"
+                class="bq-rounded-16 bq-relative bq-mb-6 bq-overflow-hidden bq-bg-gradient-to-r bq-from-amber-500 bq-to-orange-600 bq-p-5 bq-text-white bq-shadow-md"
             >
-                <div class="bq-absolute -bq-right-10 -bq-bottom-10 bq-opacity-10 bq-text-9xl">📈</div>
-                <div class="bq-flex bq-flex-col sm:bq-flex-row bq-justify-between bq-items-center bq-gap-4 bq-relative bq-z-10">
+                <div
+                    class="bq-absolute -bq-bottom-10 -bq-right-10 bq-text-9xl bq-opacity-10"
+                >
+                    📈
+                </div>
+                <div
+                    class="bq-relative bq-z-10 bq-flex bq-flex-col bq-items-center bq-justify-between bq-gap-4 sm:bq-flex-row"
+                >
                     <div class="bq-text-center sm:bq-text-left">
-                        <h2 class="bq-text-base bq-font-bold">寶寶又過了一週囉！👶✨</h2>
-                        <p class="bq-text-xs bq-text-white/90 bq-mt-1" style="font-size: 0.75rem;">
-                            更新當前體重，App 將為您自動計算本週最新的『建議奶量』與『生長曲線』喔！📈
-                            <span v-if="lastWeightRecord" class="bq-font-semibold"> (距離上次更新已過 {{ daysSinceLastWeight }} 天)</span>
-                            <span v-else class="bq-font-semibold"> (尚未有體重記錄)</span>
+                        <h2 class="bq-text-base bq-font-bold">
+                            寶寶又過了一週囉！👶✨
+                        </h2>
+                        <p
+                            class="bq-mt-1 bq-text-xs bq-text-white/90"
+                            style="font-size: 0.75rem"
+                        >
+                            更新當前體重，App
+                            將為您自動計算本週最新的『建議奶量』與『生長曲線』喔！📈
+                            <span
+                                v-if="lastWeightRecord"
+                                class="bq-font-semibold"
+                            >
+                                (距離上次更新已過
+                                {{ daysSinceLastWeight }} 天)</span
+                            >
+                            <span v-else class="bq-font-semibold">
+                                (尚未有體重記錄)</span
+                            >
                         </p>
                     </div>
                     <button
                         type="button"
-                        class="bq-bg-white hover:bq-bg-yellow-50 active:bq-scale-98 bq-text-orange-700 bq-px-4 bq-py-2 bq-rounded-10 bq-font-bold bq-transition bq-shadow-sm bq-text-xs"
+                        class="active:bq-scale-98 bq-rounded-10 bq-bg-white bq-px-4 bq-py-2 bq-text-xs bq-font-bold bq-text-orange-700 bq-shadow-sm bq-transition hover:bq-bg-yellow-50"
                         @click="openQuickWeightDialog"
                     >
                         快速更新體重 ⚖️
@@ -62,30 +97,43 @@
         <transition name="slide-fade">
             <div
                 v-if="activeSleepStartTime"
-                class="bq-mb-6 bq-bg-gradient-to-r bq-from-indigo-500 bq-to-purple-600 bq-text-white bq-rounded-16 bq-p-6 bq-shadow-md bq-relative bq-overflow-hidden"
+                class="bq-rounded-16 bq-relative bq-mb-6 bq-overflow-hidden bq-bg-gradient-to-r bq-from-indigo-500 bq-to-purple-600 bq-p-6 bq-text-white bq-shadow-md"
             >
-                <div class="bq-absolute -bq-right-10 -bq-bottom-10 bq-opacity-10 bq-text-9xl">💤</div>
-                <div class="bq-flex bq-flex-col md:bq-flex-row bq-justify-between bq-items-center bq-gap-4 bq-relative bq-z-10">
+                <div
+                    class="bq-absolute -bq-bottom-10 -bq-right-10 bq-text-9xl bq-opacity-10"
+                >
+                    💤
+                </div>
+                <div
+                    class="bq-relative bq-z-10 bq-flex bq-flex-col bq-items-center bq-justify-between bq-gap-4 md:bq-flex-row"
+                >
                     <div class="bq-text-center md:bq-text-left">
-                        <span class="bq-bg-white/20 bq-text-xs bq-font-bold bq-px-3 bq-py-1 bq-rounded-full bq-uppercase bq-tracking-wider">
+                        <span
+                            class="bq-rounded-full bq-bg-white/20 bq-px-3 bq-py-1 bq-text-xs bq-font-bold bq-uppercase bq-tracking-wider"
+                        >
                             睡眠計時中
                         </span>
-                        <h2 class="bq-text-xl bq-font-bold bq-mt-2">寶寶正在香甜地睡覺呢... 👶💤</h2>
-                        <p class="bq-text-sm bq-text-white/80 bq-mt-1">
-                            開始時間：{{ formatTimeOnly(activeSleepStartTime) }} (已入睡 {{ sleepTimerString }})
+                        <h2 class="bq-mt-2 bq-text-xl bq-font-bold">
+                            寶寶正在香甜地睡覺呢... 👶💤
+                        </h2>
+                        <p class="bq-mt-1 bq-text-sm bq-text-white/80">
+                            開始時間：{{
+                                formatTimeOnly(activeSleepStartTime)
+                            }}
+                            (已入睡 {{ sleepTimerString }})
                         </p>
                     </div>
                     <div class="bq-flex bq-gap-3">
                         <button
                             type="button"
-                            class="bq-bg-white hover:bq-bg-yellow-50 active:bq-scale-98 bq-text-indigo-600 bq-px-5 bq-py-2.5 bq-rounded-10 bq-font-bold bq-transition bq-shadow-sm bq-text-sm"
+                            class="active:bq-scale-98 bq-rounded-10 bq-bg-white bq-px-5 bq-py-2.5 bq-text-sm bq-font-bold bq-text-indigo-600 bq-shadow-sm bq-transition hover:bq-bg-yellow-50"
                             @click="handleWakeUp"
                         >
                             寶寶醒了 ☀️
                         </button>
                         <button
                             type="button"
-                            class="bq-bg-indigo-600 hover:bq-bg-indigo-700 active:bq-scale-98 bq-text-white bq-px-5 bq-py-2.5 bq-rounded-10 bq-font-bold bq-transition bq-text-sm"
+                            class="active:bq-scale-98 bq-rounded-10 bq-bg-indigo-600 bq-px-5 bq-py-2.5 bq-text-sm bq-font-bold bq-text-white bq-transition hover:bq-bg-indigo-700"
                             @click="cancelSleepTimer"
                         >
                             取消計時
@@ -99,45 +147,78 @@
         <transition name="slide-fade">
             <div
                 v-if="!activeSleepStartTime"
-                class="bq-mb-6 bq-bg-gradient-to-r bq-from-teal-500 bq-to-emerald-600 bq-text-white bq-rounded-16 bq-p-6 bq-shadow-md bq-relative bq-overflow-hidden"
+                class="bq-rounded-16 bq-relative bq-mb-6 bq-overflow-hidden bq-bg-gradient-to-r bq-from-teal-500 bq-to-emerald-600 bq-p-6 bq-text-white bq-shadow-md"
             >
-                <div class="bq-absolute -bq-right-10 -bq-bottom-10 bq-opacity-10 bq-text-9xl">☀️</div>
-                <div class="bq-flex bq-flex-col md:bq-flex-row bq-justify-between bq-items-center bq-gap-4 bq-relative bq-z-10">
-                    <div class="bq-text-center md:bq-text-left" v-if="wakeSuggestion">
-                        <span class="bq-bg-white/20 bq-text-xs bq-font-bold bq-px-3 bq-py-1 bq-rounded-full bq-uppercase bq-tracking-wider">
+                <div
+                    class="bq-absolute -bq-bottom-10 -bq-right-10 bq-text-9xl bq-opacity-10"
+                >
+                    ☀️
+                </div>
+                <div
+                    class="bq-relative bq-z-10 bq-flex bq-flex-col bq-items-center bq-justify-between bq-gap-4 md:bq-flex-row"
+                >
+                    <div
+                        class="bq-text-center md:bq-text-left"
+                        v-if="wakeSuggestion"
+                    >
+                        <span
+                            class="bq-rounded-full bq-bg-white/20 bq-px-3 bq-py-1 bq-text-xs bq-font-bold bq-uppercase bq-tracking-wider"
+                        >
                             智慧清醒追蹤
                         </span>
-                        <h2 class="bq-text-xl bq-font-bold bq-mt-2">寶寶目前清醒中 👶☀️</h2>
-                        <p class="bq-text-sm bq-text-white/80 bq-mt-1">
-                            已清醒：<span class="bq-font-bold">{{ wakeDurationString }}</span>
-                            {{ wakeSuggestion.minutesRemaining > 0 ? `(預計 ${wakeSuggestion.minutesRemaining} 分鐘後該小睡囉！)` : `(已超出建議清醒時間 ${Math.abs(wakeSuggestion.minutesRemaining)} 分鐘，快帶寶寶去小睡吧！)` }}
+                        <h2 class="bq-mt-2 bq-text-xl bq-font-bold">
+                            寶寶目前清醒中 👶☀️
+                        </h2>
+                        <p class="bq-mt-1 bq-text-sm bq-text-white/80">
+                            已清醒：<span class="bq-font-bold">{{
+                                wakeDurationString
+                            }}</span>
+                            {{
+                                wakeSuggestion.minutesRemaining > 0
+                                    ? `(預計 ${wakeSuggestion.minutesRemaining} 分鐘後該小睡囉！)`
+                                    : `(已超出建議清醒時間 ${Math.abs(wakeSuggestion.minutesRemaining)} 分鐘，快帶寶寶去小睡吧！)`
+                            }}
                         </p>
-                        <p class="bq-text-xs bq-text-white/70 bq-mt-1" style="font-size: 0.75rem;">
-                            💡 建議下一次小睡時間：<span class="bq-font-bold">{{ wakeSuggestion.suggestedRange }}</span> 
-                            (依寶寶目前 {{ babyAgeDays }} 天大，耐累程度：{{ fatigueToleranceText }} 計算)
+                        <p
+                            class="bq-mt-1 bq-text-xs bq-text-white/70"
+                            style="font-size: 0.75rem"
+                        >
+                            💡 建議下一次小睡時間：<span class="bq-font-bold">{{
+                                wakeSuggestion.suggestedRange
+                            }}</span>
+                            (依寶寶目前 {{ babyAgeDays }} 天大，耐累程度：{{
+                                fatigueToleranceText
+                            }}
+                            計算)
                         </p>
                     </div>
                     <div class="bq-text-center md:bq-text-left" v-else>
-                        <span class="bq-bg-white/20 bq-text-xs bq-font-bold bq-px-3 bq-py-1 bq-rounded-full bq-uppercase bq-tracking-wider">
+                        <span
+                            class="bq-rounded-full bq-bg-white/20 bq-px-3 bq-py-1 bq-text-xs bq-font-bold bq-uppercase bq-tracking-wider"
+                        >
                             智慧清醒追蹤
                         </span>
-                        <h2 class="bq-text-xl bq-font-bold bq-mt-2">歡迎使用智慧清醒追蹤 👶✨</h2>
-                        <p class="bq-text-sm bq-text-white/80 bq-mt-1">
+                        <h2 class="bq-mt-2 bq-text-xl bq-font-bold">
+                            歡迎使用智慧清醒追蹤 👶✨
+                        </h2>
+                        <p class="bq-mt-1 bq-text-sm bq-text-white/80">
                             請點選齒輪或右側按鈕設定寶寶的生日，並記錄一筆「睡眠記錄」，系統便會自動推算清醒時間與下一次小睡建議！
                         </p>
                     </div>
-                    
-                    <div class="bq-flex bq-gap-3 bq-flex-wrap bq-justify-center">
+
+                    <div
+                        class="bq-flex bq-flex-wrap bq-justify-center bq-gap-3"
+                    >
                         <button
                             type="button"
-                            class="bq-bg-white hover:bq-bg-yellow-50 active:bq-scale-98 bq-text-teal-700 bq-px-5 bq-py-2.5 bq-rounded-10 bq-font-bold bq-transition bq-shadow-sm bq-text-sm"
+                            class="active:bq-scale-98 bq-rounded-10 bq-bg-white bq-px-5 bq-py-2.5 bq-text-sm bq-font-bold bq-text-teal-700 bq-shadow-sm bq-transition hover:bq-bg-yellow-50"
                             @click="startSleepTimer"
                         >
                             寶寶睡覺了 💤
                         </button>
                         <button
                             type="button"
-                            class="bq-bg-teal-600 hover:bq-bg-teal-700 active:bq-scale-98 bq-text-white bq-px-4 bq-py-2.5 bq-rounded-10 bq-font-bold bq-transition bq-text-sm"
+                            class="active:bq-scale-98 bq-rounded-10 bq-bg-teal-600 bq-px-4 bq-py-2.5 bq-text-sm bq-font-bold bq-text-white bq-transition hover:bq-bg-teal-700"
                             @click="showSettingsDialog = true"
                         >
                             設定寶寶 ⚙️
@@ -150,32 +231,57 @@
         <!-- 寶寶設定對話框 -->
         <v-dialog v-model="showSettingsDialog" max-width="500px">
             <v-card class="bq-rounded-16 bq-overflow-hidden">
-                <v-card-title class="bq-bg-gradient-to-r bq-from-teal-100 bq-to-emerald-100 bq-p-4 bq-flex bq-justify-between bq-items-center">
-                    <span class="bq-font-bold bq-text-gray-800">⚙️ 寶寶基本設定</span>
-                    <button type="button" class="bq-text-gray-500 hover:bq-text-gray-800" @click="showSettingsDialog = false">✕</button>
+                <v-card-title
+                    class="bq-flex bq-items-center bq-justify-between bq-bg-gradient-to-r bq-from-teal-100 bq-to-emerald-100 bq-p-4"
+                >
+                    <span class="bq-font-bold bq-text-gray-800"
+                        >⚙️ 寶寶基本設定</span
+                    >
+                    <button
+                        type="button"
+                        class="bq-text-gray-500 hover:bq-text-gray-800"
+                        @click="showSettingsDialog = false"
+                    >
+                        ✕
+                    </button>
                 </v-card-title>
-                
-                <v-card-text class="bq-p-5 bq-flex bq-flex-col bq-gap-4">
+
+                <v-card-text class="bq-flex bq-flex-col bq-gap-4 bq-p-5">
                     <!-- Birthday -->
                     <div>
-                        <label class="bq-block bq-text-sm bq-font-bold bq-text-gray-600 bq-mb-1">寶寶生日</label>
+                        <label
+                            class="bq-mb-1 bq-block bq-text-sm bq-font-bold bq-text-gray-600"
+                            >寶寶生日</label
+                        >
                         <input
                             v-model="babySettings.birthday"
                             type="date"
-                            class="bq-w-full bq-px-4 bq-py-2.5 bq-border bq-border-gray-200 bq-rounded-10 focus:bq-outline-none focus:bq-border-teal-300 bq-text-sm bq-transition"
+                            class="bq-rounded-10 bq-w-full bq-border bq-border-gray-200 bq-px-4 bq-py-2.5 bq-text-sm bq-transition focus:bq-border-teal-300 focus:bq-outline-none"
                         />
-                        <p class="bq-text-3xs bq-text-gray-400 bq-mt-1" style="font-size: 0.65rem;">設定生日後，系統會自動根據月齡提供小兒科建議的清醒時間。</p>
+                        <p
+                            class="bq-text-3xs bq-mt-1 bq-text-gray-400"
+                            style="font-size: 0.65rem"
+                        >
+                            設定生日後，系統會自動根據月齡提供小兒科建議的清醒時間。
+                        </p>
                     </div>
 
                     <!-- Fatigue Tolerance -->
                     <div>
-                        <label class="bq-block bq-text-sm bq-font-bold bq-text-gray-600 bq-mb-2">寶寶耐累程度</label>
+                        <label
+                            class="bq-mb-2 bq-block bq-text-sm bq-font-bold bq-text-gray-600"
+                            >寶寶耐累程度</label
+                        >
                         <div class="bq-flex bq-flex-col bq-gap-2">
                             <label
                                 v-for="opt in fatigueToleranceOptions"
                                 :key="opt.value"
-                                class="bq-flex bq-items-center bq-gap-3 bq-p-3 bq-border bq-rounded-10 bq-cursor-pointer hover:bq-bg-slate-50 bq-transition"
-                                :class="babySettings.fatigueTolerance === opt.value ? 'bq-border-teal-500 bq-bg-teal-50/30' : 'bq-border-gray-200'"
+                                class="bq-rounded-10 bq-flex bq-cursor-pointer bq-items-center bq-gap-3 bq-border bq-p-3 bq-transition hover:bq-bg-slate-50"
+                                :class="
+                                    babySettings.fatigueTolerance === opt.value
+                                        ? 'bq-border-teal-500 bq-bg-teal-50/30'
+                                        : 'bq-border-gray-200'
+                                "
                             >
                                 <input
                                     type="radio"
@@ -185,25 +291,36 @@
                                     class="bq-text-teal-600 focus:bq-ring-teal-500"
                                 />
                                 <div>
-                                    <div class="bq-text-xs bq-font-bold bq-text-gray-700">{{ opt.label }}</div>
-                                    <div class="bq-text-3xs bq-text-gray-400 bq-mt-0.5" style="font-size: 0.65rem;">{{ opt.description }}</div>
+                                    <div
+                                        class="bq-text-xs bq-font-bold bq-text-gray-700"
+                                    >
+                                        {{ opt.label }}
+                                    </div>
+                                    <div
+                                        class="bq-text-3xs bq-mt-0.5 bq-text-gray-400"
+                                        style="font-size: 0.65rem"
+                                    >
+                                        {{ opt.description }}
+                                    </div>
                                 </div>
                             </label>
                         </div>
                     </div>
                 </v-card-text>
 
-                <v-card-actions class="bq-p-5 bq-bg-gray-50 bq-flex bq-justify-end bq-gap-3">
+                <v-card-actions
+                    class="bq-flex bq-justify-end bq-gap-3 bq-bg-gray-50 bq-p-5"
+                >
                     <button
                         type="button"
-                        class="bq-bg-gray-200 hover:bq-bg-gray-300 active:bq-scale-98 bq-text-gray-700 bq-px-5 bq-py-2.5 bq-rounded-10 bq-font-bold bq-transition bq-text-sm"
+                        class="active:bq-scale-98 bq-rounded-10 bq-bg-gray-200 bq-px-5 bq-py-2.5 bq-text-sm bq-font-bold bq-text-gray-700 bq-transition hover:bq-bg-gray-300"
                         @click="showSettingsDialog = false"
                     >
                         取消
                     </button>
                     <button
                         type="button"
-                        class="bq-bg-teal-500 hover:bq-bg-teal-600 active:bq-scale-98 bq-text-white bq-px-5 bq-py-2.5 bq-rounded-10 bq-font-bold bq-transition bq-text-sm bq-shadow-sm"
+                        class="active:bq-scale-98 bq-rounded-10 bq-bg-teal-500 bq-px-5 bq-py-2.5 bq-text-sm bq-font-bold bq-text-white bq-shadow-sm bq-transition hover:bq-bg-teal-600"
                         @click="saveBabySettings"
                     >
                         儲存設定
@@ -213,14 +330,30 @@
         </v-dialog>
 
         <!-- 今日統計資料與操作卡片 -->
-        <div class="bq-grid bq-grid-cols-1 lg:bq-grid-cols-3 bq-gap-6 bq-mb-8">
+        <div class="bq-mb-8 bq-grid bq-grid-cols-1 bq-gap-6 lg:bq-grid-cols-3">
             <!-- 喝奶統計 -->
-            <div class="bq-bg-white bq-shadow-sm bq-rounded-16 bq-p-6 bq-border bq-border-gray-100 bq-flex bq-flex-col bq-items-center bq-relative bq-overflow-hidden">
-                <div class="bq-absolute bq-top-3 bq-left-4 bq-text-sm bq-font-bold bq-text-gray-500">今日喝奶</div>
-                <div class="bq-my-4 bq-relative bq-flex bq-items-center bq-justify-center" style="width: 140px; height: 140px;">
+            <div
+                class="bq-rounded-16 bq-relative bq-flex bq-flex-col bq-items-center bq-overflow-hidden bq-border bq-border-gray-100 bq-bg-white bq-p-6 bq-shadow-sm"
+            >
+                <div
+                    class="bq-absolute bq-left-4 bq-top-3 bq-text-sm bq-font-bold bq-text-gray-500"
+                >
+                    今日喝奶
+                </div>
+                <div
+                    class="bq-relative bq-my-4 bq-flex bq-items-center bq-justify-center"
+                    style="width: 140px; height: 140px"
+                >
                     <!-- SVG 圓環進度條 -->
-                    <svg class="bq-w-full bq-h-full -bq-rotate-90">
-                        <circle cx="70" cy="70" r="58" stroke="#F3F4F6" stroke-width="12" fill="transparent" />
+                    <svg class="bq-h-full bq-w-full -bq-rotate-90">
+                        <circle
+                            cx="70"
+                            cy="70"
+                            r="58"
+                            stroke="#F3F4F6"
+                            stroke-width="12"
+                            fill="transparent"
+                        />
                         <circle
                             cx="70"
                             cy="70"
@@ -229,38 +362,77 @@
                             stroke-width="12"
                             fill="transparent"
                             :stroke-dasharray="364.4"
-                            :stroke-dashoffset="364.4 - (364.4 * Math.min(milkPercent, 100)) / 100"
+                            :stroke-dashoffset="
+                                364.4 -
+                                (364.4 * Math.min(milkPercent, 100)) / 100
+                            "
                             stroke-linecap="round"
                             class="bq-transition-all bq-duration-1000"
                         />
                         <defs>
-                            <linearGradient id="milkGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <linearGradient
+                                id="milkGradient"
+                                x1="0%"
+                                y1="0%"
+                                x2="100%"
+                                y2="100%"
+                            >
                                 <stop offset="0%" stop-color="#FDBA74" />
                                 <stop offset="100%" stop-color="#F472B6" />
                             </linearGradient>
                         </defs>
                     </svg>
                     <div class="bq-absolute bq-text-center">
-                        <div class="bq-text-2xl bq-font-black bq-text-gray-800">{{ todayMilkTotal }}</div>
-                        <div class="bq-text-xs bq-text-gray-400">/ {{ milkTarget }} ml</div>
+                        <div class="bq-text-2xl bq-font-black bq-text-gray-800">
+                            {{ todayMilkTotal }}
+                        </div>
+                        <div class="bq-text-xs bq-text-gray-400">
+                            / {{ milkTarget }} ml
+                        </div>
                     </div>
                 </div>
                 <div class="bq-text-center">
-                    <div class="bq-text-sm bq-font-medium bq-text-gray-600">已餵奶 {{ todayMilkCount }} 次</div>
-                    <div class="bq-text-xs bq-text-pink-500 bq-font-semibold bq-mt-1">{{ milkPercent }}% 已達成</div>
-                    <div v-if="latestWeight" class="bq-text-gray-400 bq-mt-0.5" style="font-size: 0.7rem;">
+                    <div class="bq-text-sm bq-font-medium bq-text-gray-600">
+                        已餵奶 {{ todayMilkCount }} 次
+                    </div>
+                    <div
+                        class="bq-mt-1 bq-text-xs bq-font-semibold bq-text-pink-500"
+                    >
+                        {{ milkPercent }}% 已達成
+                    </div>
+                    <div
+                        v-if="latestWeight"
+                        class="bq-mt-0.5 bq-text-gray-400"
+                        style="font-size: 0.7rem"
+                    >
                         依體重 {{ latestWeight }} kg 計算
                     </div>
                 </div>
             </div>
 
             <!-- 睡眠統計 -->
-            <div class="bq-bg-white bq-shadow-sm bq-rounded-16 bq-p-6 bq-border bq-border-gray-100 bq-flex bq-flex-col bq-items-center bq-relative bq-overflow-hidden">
-                <div class="bq-absolute bq-top-3 bq-left-4 bq-text-sm bq-font-bold bq-text-gray-500">今日睡眠</div>
-                <div class="bq-my-4 bq-relative bq-flex bq-items-center bq-justify-center" style="width: 140px; height: 140px;">
+            <div
+                class="bq-rounded-16 bq-relative bq-flex bq-flex-col bq-items-center bq-overflow-hidden bq-border bq-border-gray-100 bq-bg-white bq-p-6 bq-shadow-sm"
+            >
+                <div
+                    class="bq-absolute bq-left-4 bq-top-3 bq-text-sm bq-font-bold bq-text-gray-500"
+                >
+                    今日睡眠
+                </div>
+                <div
+                    class="bq-relative bq-my-4 bq-flex bq-items-center bq-justify-center"
+                    style="width: 140px; height: 140px"
+                >
                     <!-- SVG 圓環進度條 -->
-                    <svg class="bq-w-full bq-h-full -bq-rotate-90">
-                        <circle cx="70" cy="70" r="58" stroke="#F3F4F6" stroke-width="12" fill="transparent" />
+                    <svg class="bq-h-full bq-w-full -bq-rotate-90">
+                        <circle
+                            cx="70"
+                            cy="70"
+                            r="58"
+                            stroke="#F3F4F6"
+                            stroke-width="12"
+                            fill="transparent"
+                        />
                         <circle
                             cx="70"
                             cy="70"
@@ -269,81 +441,137 @@
                             stroke-width="12"
                             fill="transparent"
                             :stroke-dasharray="364.4"
-                            :stroke-dashoffset="364.4 - (364.4 * Math.min(sleepPercent, 100)) / 100"
+                            :stroke-dashoffset="
+                                364.4 -
+                                (364.4 * Math.min(sleepPercent, 100)) / 100
+                            "
                             stroke-linecap="round"
                             class="bq-transition-all bq-duration-1000"
                         />
                         <defs>
-                            <linearGradient id="sleepGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <linearGradient
+                                id="sleepGradient"
+                                x1="0%"
+                                y1="0%"
+                                x2="100%"
+                                y2="100%"
+                            >
                                 <stop offset="0%" stop-color="#818CF8" />
                                 <stop offset="100%" stop-color="#C084FC" />
                             </linearGradient>
                         </defs>
                     </svg>
                     <div class="bq-absolute bq-text-center">
-                        <div class="bq-text-xl bq-font-black bq-text-gray-800">{{ todaySleepString }}</div>
-                        <div class="bq-text-xs bq-text-gray-400">/ {{ sleepTargetHours }} 小時</div>
+                        <div class="bq-text-xl bq-font-black bq-text-gray-800">
+                            {{ todaySleepString }}
+                        </div>
+                        <div class="bq-text-xs bq-text-gray-400">
+                            / {{ sleepTargetHours }} 小時
+                        </div>
                     </div>
                 </div>
                 <div class="bq-text-center">
-                    <div class="bq-text-sm bq-font-medium bq-text-gray-600">已睡眠 {{ todaySleepCount }} 次</div>
-                    <div class="bq-text-xs bq-text-indigo-500 bq-font-semibold bq-mt-1">{{ sleepPercent }}% 已達成</div>
+                    <div class="bq-text-sm bq-font-medium bq-text-gray-600">
+                        已睡眠 {{ todaySleepCount }} 次
+                    </div>
+                    <div
+                        class="bq-mt-1 bq-text-xs bq-font-semibold bq-text-indigo-500"
+                    >
+                        {{ sleepPercent }}% 已達成
+                    </div>
                 </div>
             </div>
 
             <!-- 快捷記錄與睡眠開關 -->
-            <div class="bq-bg-white bq-shadow-sm bq-rounded-16 bq-p-6 bq-border bq-border-gray-100 bq-flex bq-flex-col bq-justify-center bq-gap-4">
+            <div
+                class="bq-rounded-16 bq-flex bq-flex-col bq-justify-center bq-gap-4 bq-border bq-border-gray-100 bq-bg-white bq-p-6 bq-shadow-sm"
+            >
                 <button
-                    class="action-card-btn bq-bg-gradient-to-r bq-from-orange-100 bq-to-pink-100 hover:bq-from-orange-200 hover:bq-to-pink-200 bq-text-gray-800 bq-p-4 bq-rounded-12 bq-flex bq-items-center bq-gap-4 bq-transition bq-shadow-sm hover:bq-shadow bq-text-left"
+                    class="action-card-btn bq-rounded-12 bq-flex bq-items-center bq-gap-4 bq-bg-gradient-to-r bq-from-orange-100 bq-to-pink-100 bq-p-4 bq-text-left bq-text-gray-800 bq-shadow-sm bq-transition hover:bq-from-orange-200 hover:bq-to-pink-200 hover:bq-shadow"
                     @click="openMilkDialog"
                 >
-                    <span class="bq-bg-white bq-rounded-full bq-w-12 bq-h-12 bq-flex bq-items-center bq-justify-center bq-text-2xl bq-shadow-sm">🍼</span>
+                    <span
+                        class="bq-flex bq-h-12 bq-w-12 bq-items-center bq-justify-center bq-rounded-full bq-bg-white bq-text-2xl bq-shadow-sm"
+                        >🍼</span
+                    >
                     <div>
-                        <div class="bq-font-bold bq-text-base">新增餵奶記錄</div>
-                        <div class="bq-text-xs bq-text-gray-500">記錄配方奶、母乳或副食品</div>
+                        <div class="bq-text-base bq-font-bold">
+                            新增餵奶記錄
+                        </div>
+                        <div class="bq-text-xs bq-text-gray-500">
+                            記錄配方奶、母乳或副食品
+                        </div>
                     </div>
                 </button>
 
                 <button
                     v-if="!activeSleepStartTime"
-                    class="action-card-btn bq-bg-gradient-to-r bq-from-indigo-100 bq-to-purple-100 hover:bq-from-indigo-200 hover:bq-to-purple-200 bq-text-gray-800 bq-p-4 bq-rounded-12 bq-flex bq-items-center bq-gap-4 bq-transition bq-shadow-sm hover:bq-shadow bq-text-left"
+                    class="action-card-btn bq-rounded-12 bq-flex bq-items-center bq-gap-4 bq-bg-gradient-to-r bq-from-indigo-100 bq-to-purple-100 bq-p-4 bq-text-left bq-text-gray-800 bq-shadow-sm bq-transition hover:bq-from-indigo-200 hover:bq-to-purple-200 hover:bq-shadow"
                     @click="startSleepTimer"
                 >
-                    <span class="bq-bg-white bq-rounded-full bq-w-12 bq-h-12 bq-flex bq-items-center bq-justify-center bq-text-2xl bq-shadow-sm">💤</span>
+                    <span
+                        class="bq-flex bq-h-12 bq-w-12 bq-items-center bq-justify-center bq-rounded-full bq-bg-white bq-text-2xl bq-shadow-sm"
+                        >💤</span
+                    >
                     <div>
-                        <div class="bq-font-bold bq-text-base">寶寶開始睡覺</div>
-                        <div class="bq-text-xs bq-text-gray-500">開啟實時睡眠計時器</div>
+                        <div class="bq-text-base bq-font-bold">
+                            寶寶開始睡覺
+                        </div>
+                        <div class="bq-text-xs bq-text-gray-500">
+                            開啟實時睡眠計時器
+                        </div>
                     </div>
                 </button>
 
                 <button
-                    class="action-card-btn bq-bg-gradient-to-r bq-from-gray-100 bq-to-slate-100 hover:bq-from-gray-200 hover:bq-to-slate-200 bq-text-gray-800 bq-p-4 bq-rounded-12 bq-flex bq-items-center bq-gap-4 bq-transition bq-shadow-sm hover:bq-shadow bq-text-left"
+                    class="action-card-btn bq-rounded-12 bq-flex bq-items-center bq-gap-4 bq-bg-gradient-to-r bq-from-gray-100 bq-to-slate-100 bq-p-4 bq-text-left bq-text-gray-800 bq-shadow-sm bq-transition hover:bq-from-gray-200 hover:bq-to-slate-200 hover:bq-shadow"
                     @click="openSleepDialog"
                 >
-                    <span class="bq-bg-white bq-rounded-full bq-w-12 bq-h-12 bq-flex bq-items-center bq-justify-center bq-text-2xl bq-shadow-sm">📝</span>
+                    <span
+                        class="bq-flex bq-h-12 bq-w-12 bq-items-center bq-justify-center bq-rounded-full bq-bg-white bq-text-2xl bq-shadow-sm"
+                        >📝</span
+                    >
                     <div>
-                        <div class="bq-font-bold bq-text-base">補記睡眠時間</div>
-                        <div class="bq-text-xs bq-text-gray-500">手動輸入睡眠起訖時間</div>
+                        <div class="bq-text-base bq-font-bold">
+                            補記睡眠時間
+                        </div>
+                        <div class="bq-text-xs bq-text-gray-500">
+                            手動輸入睡眠起訖時間
+                        </div>
                     </div>
                 </button>
             </div>
         </div>
 
         <!-- 歷史清單區域 -->
-        <div class="bq-bg-white bq-shadow-sm bq-rounded-16 bq-p-6 bq-border bq-border-gray-100">
-            <div class="bq-flex bq-flex-col sm:bq-flex-row bq-justify-between bq-items-start sm:bq-items-center bq-gap-4 bq-mb-6">
-                <h3 class="bq-text-lg bq-font-bold bq-text-gray-800">作息歷史日誌</h3>
-                
+        <div
+            class="bq-rounded-16 bq-border bq-border-gray-100 bq-bg-white bq-p-6 bq-shadow-sm"
+        >
+            <div
+                class="bq-mb-6 bq-flex bq-flex-col bq-items-start bq-justify-between bq-gap-4 sm:bq-flex-row sm:bq-items-center"
+            >
+                <h3 class="bq-text-lg bq-font-bold bq-text-gray-800">
+                    作息歷史日誌
+                </h3>
+
                 <!-- 篩選器與搜尋 -->
-                <div class="bq-flex bq-flex-wrap bq-gap-3 bq-w-full sm:bq-w-auto">
+                <div
+                    class="bq-flex bq-w-full bq-flex-wrap bq-gap-3 sm:bq-w-auto"
+                >
                     <!-- Tab 切換 -->
-                    <div class="bq-bg-gray-100 bq-p-1 bq-rounded-8 bq-flex bq-items-center">
+                    <div
+                        class="bq-rounded-8 bq-flex bq-items-center bq-bg-gray-100 bq-p-1"
+                    >
                         <button
                             v-for="tab in filterTabs"
                             :key="tab.value"
                             type="button"
-                            class="bq-px-4 bq-py-1.5 bq-rounded-6 bq-text-xs bq-font-bold bq-transition"
-                            :class="filterType === tab.value ? 'bq-bg-white bq-text-gray-800 bq-shadow-sm' : 'bq-text-gray-500 hover:bq-text-gray-800'"
+                            class="bq-rounded-6 bq-px-4 bq-py-1.5 bq-text-xs bq-font-bold bq-transition"
+                            :class="
+                                filterType === tab.value
+                                    ? 'bq-bg-white bq-text-gray-800 bq-shadow-sm'
+                                    : 'bq-text-gray-500 hover:bq-text-gray-800'
+                            "
                             @click="filterType = tab.value"
                         >
                             {{ tab.label }}
@@ -355,14 +583,17 @@
                         v-model="searchQuery"
                         type="text"
                         placeholder="搜尋備註..."
-                        class="bq-text-xs bq-px-3 bq-py-1.5 bq-border bq-border-gray-200 bq-rounded-8 focus:bq-outline-none focus:bq-border-pink-300 bq-w-full sm:bq-w-40"
+                        class="bq-rounded-8 bq-w-full bq-border bq-border-gray-200 bq-px-3 bq-py-1.5 bq-text-xs focus:bq-border-pink-300 focus:bq-outline-none sm:bq-w-40"
                     />
                 </div>
             </div>
 
             <!-- 歷史日誌列表 -->
-            <div v-if="filteredRecords.length === 0" class="bq-py-12 bq-text-center bq-text-gray-400">
-                <div class="bq-text-4xl bq-mb-2">🍃</div>
+            <div
+                v-if="filteredRecords.length === 0"
+                class="bq-py-12 bq-text-center bq-text-gray-400"
+            >
+                <div class="bq-mb-2 bq-text-4xl">🍃</div>
                 <div>沒有符合條件的作息記錄喔！</div>
             </div>
 
@@ -370,13 +601,17 @@
                 <div
                     v-for="record in filteredRecords"
                     :key="record.id"
-                    class="record-card bq-bg-slate-50 hover:bq-bg-slate-100/70 bq-border bq-border-slate-100 bq-rounded-12 bq-p-4 bq-flex bq-flex-col md:bq-flex-row bq-justify-between bq-items-start md:bq-items-center bq-gap-4 bq-transition hover:bq-shadow-sm bq-relative"
+                    class="record-card bq-rounded-12 bq-relative bq-flex bq-flex-col bq-items-start bq-justify-between bq-gap-4 bq-border bq-border-slate-100 bq-bg-slate-50 bq-p-4 bq-transition hover:bq-bg-slate-100/70 hover:bq-shadow-sm md:bq-flex-row md:bq-items-center"
                 >
                     <div class="bq-flex bq-items-start bq-gap-4">
                         <!-- 類別 Icon -->
                         <span
-                            class="bq-rounded-full bq-w-12 bq-h-12 bq-flex bq-items-center bq-justify-center bq-text-2xl bq-shadow-sm"
-                            :class="record.type === 'milk' ? 'bq-bg-orange-100' : 'bq-bg-indigo-100'"
+                            class="bq-flex bq-h-12 bq-w-12 bq-items-center bq-justify-center bq-rounded-full bq-text-2xl bq-shadow-sm"
+                            :class="
+                                record.type === 'milk'
+                                    ? 'bq-bg-orange-100'
+                                    : 'bq-bg-indigo-100'
+                            "
                         >
                             {{ record.type === 'milk' ? '🍼' : '💤' }}
                         </span>
@@ -388,32 +623,49 @@
                                     {{ getRecordTitle(record) }}
                                 </span>
                                 <span
-                                    class="bq-text-2xs bq-font-bold bq-px-2 bq-py-0.5 bq-rounded-full"
-                                    :class="record.type === 'milk' ? 'bq-bg-orange-200 bq-text-orange-800' : 'bq-bg-indigo-200 bq-text-indigo-800'"
+                                    class="bq-text-2xs bq-rounded-full bq-px-2 bq-py-0.5 bq-font-bold"
+                                    :class="
+                                        record.type === 'milk'
+                                            ? 'bq-bg-orange-200 bq-text-orange-800'
+                                            : 'bq-bg-indigo-200 bq-text-indigo-800'
+                                    "
                                 >
-                                    {{ record.type === 'milk' ? '餵奶' : '睡眠' }}
+                                    {{
+                                        record.type === 'milk' ? '餵奶' : '睡眠'
+                                    }}
                                 </span>
                             </div>
-                            <div class="bq-text-xs bq-text-gray-500 bq-mt-1">
+                            <div class="bq-mt-1 bq-text-xs bq-text-gray-500">
                                 <span class="mdi mdi-clock-outline"></span>
                                 {{ formatRecordTime(record) }}
-                                <span v-if="record.duration" class="bq-ml-2 bq-text-indigo-600 bq-font-semibold">
+                                <span
+                                    v-if="record.duration"
+                                    class="bq-ml-2 bq-font-semibold bq-text-indigo-600"
+                                >
                                     ({{ formatDuration(record.duration) }})
                                 </span>
                             </div>
-                            <p v-if="record.note" class="bq-text-sm bq-text-gray-600 bq-mt-2 bq-italic">
+                            <p
+                                v-if="record.note"
+                                class="bq-mt-2 bq-text-sm bq-italic bq-text-gray-600"
+                            >
                                 「{{ record.note }}」
                             </p>
                         </div>
                     </div>
 
                     <!-- 縮圖與操作按鈕 -->
-                    <div class="bq-flex bq-items-center bq-gap-4 bq-w-full md:bq-w-auto bq-justify-between md:bq-justify-end">
+                    <div
+                        class="bq-flex bq-w-full bq-items-center bq-justify-between bq-gap-4 md:bq-w-auto md:bq-justify-end"
+                    >
                         <!-- 相片縮圖 -->
-                        <div v-if="record.photo" class="photo-thumbnail-container">
+                        <div
+                            v-if="record.photo"
+                            class="photo-thumbnail-container"
+                        >
                             <img
                                 :src="record.photo"
-                                class="bq-w-16 bq-h-16 bq-object-cover bq-rounded-8 bq-cursor-pointer bq-border bq-border-gray-200 hover:bq-scale-105 bq-transition"
+                                class="bq-rounded-8 bq-h-16 bq-w-16 bq-cursor-pointer bq-border bq-border-gray-200 bq-object-cover bq-transition hover:bq-scale-105"
                                 alt="寶寶作息相片"
                                 @click="viewFullPhoto(record.photo)"
                             />
@@ -422,7 +674,7 @@
                         <!-- 刪除按鈕 -->
                         <button
                             type="button"
-                            class="bq-text-red-500 hover:bq-text-red-700 bq-text-xs bq-font-bold bq-px-3 bq-py-1.5 hover:bq-bg-red-50 bq-rounded-8 bq-transition"
+                            class="bq-rounded-8 bq-px-3 bq-py-1.5 bq-text-xs bq-font-bold bq-text-red-500 bq-transition hover:bq-bg-red-50 hover:bq-text-red-700"
                             @click="confirmDeleteRecord(record.id)"
                         >
                             刪除
@@ -437,21 +689,38 @@
         <!-- 1. 新增喝奶記錄 Dialog -->
         <v-dialog v-model="showMilkDialog" max-width="500px" persistent>
             <v-card class="bq-rounded-16 bq-overflow-hidden">
-                <v-card-title class="bq-bg-gradient-to-r bq-from-orange-100 bq-to-pink-100 bq-p-4 bq-flex bq-justify-between bq-items-center">
-                    <span class="bq-font-bold bq-text-gray-800">🍼 記錄餵奶</span>
-                    <button type="button" class="bq-text-gray-500 hover:bq-text-gray-800" @click="showMilkDialog = false">✕</button>
+                <v-card-title
+                    class="bq-flex bq-items-center bq-justify-between bq-bg-gradient-to-r bq-from-orange-100 bq-to-pink-100 bq-p-4"
+                >
+                    <span class="bq-font-bold bq-text-gray-800"
+                        >🍼 記錄餵奶</span
+                    >
+                    <button
+                        type="button"
+                        class="bq-text-gray-500 hover:bq-text-gray-800"
+                        @click="showMilkDialog = false"
+                    >
+                        ✕
+                    </button>
                 </v-card-title>
-                <v-card-text class="bq-p-5 bq-flex bq-flex-col bq-gap-4">
+                <v-card-text class="bq-flex bq-flex-col bq-gap-4 bq-p-5">
                     <!-- 餵奶種類 -->
                     <div>
-                        <label class="bq-block bq-text-sm bq-font-bold bq-text-gray-600 bq-mb-2">喝奶種類</label>
-                        <div class="bq-bg-gray-100 bq-p-1 bq-rounded-8 bq-flex">
+                        <label
+                            class="bq-mb-2 bq-block bq-text-sm bq-font-bold bq-text-gray-600"
+                            >喝奶種類</label
+                        >
+                        <div class="bq-rounded-8 bq-flex bq-bg-gray-100 bq-p-1">
                             <button
                                 v-for="t in milkTypes"
                                 :key="t.value"
                                 type="button"
-                                class="bq-flex-1 bq-py-2 bq-rounded-6 bq-text-xs bq-font-bold bq-transition"
-                                :class="milkForm.type === t.value ? 'bq-bg-white bq-text-gray-800 bq-shadow-sm' : 'bq-text-gray-500'"
+                                class="bq-rounded-6 bq-flex-1 bq-py-2 bq-text-xs bq-font-bold bq-transition"
+                                :class="
+                                    milkForm.type === t.value
+                                        ? 'bq-bg-white bq-text-gray-800 bq-shadow-sm'
+                                        : 'bq-text-gray-500'
+                                "
                                 @click="milkForm.type = t.value"
                             >
                                 {{ t.label }}
@@ -461,20 +730,23 @@
 
                     <!-- 餵奶量 (配方奶/母乳瓶餵) -->
                     <div v-if="milkForm.type !== 'breast_direct'">
-                        <label class="bq-block bq-text-sm bq-font-bold bq-text-gray-600 bq-mb-1">喝奶量 (ml)</label>
+                        <label
+                            class="bq-mb-1 bq-block bq-text-sm bq-font-bold bq-text-gray-600"
+                            >喝奶量 (ml)</label
+                        >
                         <input
                             v-model="milkForm.amount"
                             type="number"
-                            class="bq-w-full bq-px-4 bq-py-2.5 bq-border bq-border-gray-200 bq-rounded-10 focus:bq-outline-none focus:bq-border-pink-300 bq-text-sm bq-transition"
+                            class="bq-rounded-10 bq-w-full bq-border bq-border-gray-200 bq-px-4 bq-py-2.5 bq-text-sm bq-transition focus:bq-border-pink-300 focus:bq-outline-none"
                             placeholder="請輸入毫升數"
                         />
                         <!-- 快速點擊按鈕 -->
-                        <div class="bq-flex bq-flex-wrap bq-gap-2 bq-mt-2">
+                        <div class="bq-mt-2 bq-flex bq-flex-wrap bq-gap-2">
                             <button
                                 v-for="amount in quickAmounts"
                                 :key="amount"
                                 type="button"
-                                class="bq-text-xs bq-bg-orange-50 hover:bq-bg-orange-100 bq-text-orange-700 bq-px-3 bq-py-1.5 bq-rounded-6 bq-transition bq-font-semibold"
+                                class="bq-rounded-6 bq-bg-orange-50 bq-px-3 bq-py-1.5 bq-text-xs bq-font-semibold bq-text-orange-700 bq-transition hover:bq-bg-orange-100"
                                 @click="milkForm.amount = amount"
                             >
                                 {{ amount }} ml
@@ -485,20 +757,26 @@
                     <!-- 親餵時間 (親餵時顯示) -->
                     <div v-else class="bq-grid bq-grid-cols-2 bq-gap-4">
                         <div>
-                            <label class="bq-block bq-text-sm bq-font-bold bq-text-gray-600 bq-mb-1">左乳時間 (分鐘)</label>
+                            <label
+                                class="bq-mb-1 bq-block bq-text-sm bq-font-bold bq-text-gray-600"
+                                >左乳時間 (分鐘)</label
+                            >
                             <input
                                 v-model="milkForm.leftDuration"
                                 type="number"
-                                class="bq-w-full bq-px-4 bq-py-2.5 bq-border bq-border-gray-200 bq-rounded-10 focus:bq-outline-none focus:bq-border-pink-300 bq-text-sm bq-transition"
+                                class="bq-rounded-10 bq-w-full bq-border bq-border-gray-200 bq-px-4 bq-py-2.5 bq-text-sm bq-transition focus:bq-border-pink-300 focus:bq-outline-none"
                                 placeholder="分鐘"
                             />
                         </div>
                         <div>
-                            <label class="bq-block bq-text-sm bq-font-bold bq-text-gray-600 bq-mb-1">右乳時間 (分鐘)</label>
+                            <label
+                                class="bq-mb-1 bq-block bq-text-sm bq-font-bold bq-text-gray-600"
+                                >右乳時間 (分鐘)</label
+                            >
                             <input
                                 v-model="milkForm.rightDuration"
                                 type="number"
-                                class="bq-w-full bq-px-4 bq-py-2.5 bq-border bq-border-gray-200 bq-rounded-10 focus:bq-outline-none focus:bq-border-pink-300 bq-text-sm bq-transition"
+                                class="bq-rounded-10 bq-w-full bq-border bq-border-gray-200 bq-px-4 bq-py-2.5 bq-text-sm bq-transition focus:bq-border-pink-300 focus:bq-outline-none"
                                 placeholder="分鐘"
                             />
                         </div>
@@ -506,42 +784,53 @@
 
                     <!-- 記錄時間 -->
                     <div>
-                        <label class="bq-block bq-text-sm bq-font-bold bq-text-gray-600 bq-mb-1">記錄時間</label>
+                        <label
+                            class="bq-mb-1 bq-block bq-text-sm bq-font-bold bq-text-gray-600"
+                            >記錄時間</label
+                        >
                         <input
                             v-model="milkForm.time"
                             type="datetime-local"
-                            class="bq-w-full bq-px-4 bq-py-2.5 bq-border bq-border-gray-200 bq-rounded-10 focus:bq-outline-none focus:bq-border-pink-300 bq-text-sm bq-transition"
+                            class="bq-rounded-10 bq-w-full bq-border bq-border-gray-200 bq-px-4 bq-py-2.5 bq-text-sm bq-transition focus:bq-border-pink-300 focus:bq-outline-none"
                         />
                     </div>
 
                     <!-- 拍照記錄 -->
                     <div>
-                        <label class="bq-block bq-text-sm bq-font-bold bq-text-gray-600 bq-mb-2">拍照留念 (可選)</label>
+                        <label
+                            class="bq-mb-2 bq-block bq-text-sm bq-font-bold bq-text-gray-600"
+                            >拍照留念 (可選)</label
+                        >
                         <CameraPicker v-model="milkForm.photo" />
                     </div>
 
                     <!-- 備註 -->
                     <div>
-                        <label class="bq-block bq-text-sm bq-font-bold bq-text-gray-600 bq-mb-1">備註</label>
+                        <label
+                            class="bq-mb-1 bq-block bq-text-sm bq-font-bold bq-text-gray-600"
+                            >備註</label
+                        >
                         <input
                             v-model="milkForm.note"
                             type="text"
-                            class="bq-w-full bq-px-4 bq-py-2.5 bq-border bq-border-gray-200 bq-rounded-10 focus:bq-outline-none focus:bq-border-pink-300 bq-text-sm bq-transition"
+                            class="bq-rounded-10 bq-w-full bq-border bq-border-gray-200 bq-px-4 bq-py-2.5 bq-text-sm bq-transition focus:bq-border-pink-300 focus:bq-outline-none"
                             placeholder="例如：喝奶狀況、吐奶、排便等狀況"
                         />
                     </div>
                 </v-card-text>
-                <v-card-actions class="bq-p-5 bq-bg-gray-50 bq-flex bq-justify-end bq-gap-3">
+                <v-card-actions
+                    class="bq-flex bq-justify-end bq-gap-3 bq-bg-gray-50 bq-p-5"
+                >
                     <button
                         type="button"
-                        class="bq-bg-gray-200 hover:bq-bg-gray-300 active:bq-scale-98 bq-text-gray-700 bq-px-5 bq-py-2.5 bq-rounded-10 bq-font-bold bq-transition bq-text-sm"
+                        class="active:bq-scale-98 bq-rounded-10 bq-bg-gray-200 bq-px-5 bq-py-2.5 bq-text-sm bq-font-bold bq-text-gray-700 bq-transition hover:bq-bg-gray-300"
                         @click="showMilkDialog = false"
                     >
                         取消
                     </button>
                     <button
                         type="button"
-                        class="bq-bg-pink-500 hover:bq-bg-pink-600 active:bq-scale-98 bq-text-white bq-px-5 bq-py-2.5 bq-rounded-10 bq-font-bold bq-transition bq-text-sm bq-shadow-sm"
+                        class="active:bq-scale-98 bq-rounded-10 bq-bg-pink-500 bq-px-5 bq-py-2.5 bq-text-sm bq-font-bold bq-text-white bq-shadow-sm bq-transition hover:bq-bg-pink-600"
                         @click="saveMilkRecord"
                     >
                         儲存記錄
@@ -553,59 +842,83 @@
         <!-- 2. 新增睡眠記錄 Dialog -->
         <v-dialog v-model="showSleepDialog" max-width="500px" persistent>
             <v-card class="bq-rounded-16 bq-overflow-hidden">
-                <v-card-title class="bq-bg-gradient-to-r bq-from-indigo-100 bq-to-purple-100 bq-p-4 bq-flex bq-justify-between bq-items-center">
-                    <span class="bq-font-bold bq-text-gray-800">💤 記錄睡眠</span>
-                    <button type="button" class="bq-text-gray-500 hover:bq-text-gray-800" @click="showSleepDialog = false">✕</button>
+                <v-card-title
+                    class="bq-flex bq-items-center bq-justify-between bq-bg-gradient-to-r bq-from-indigo-100 bq-to-purple-100 bq-p-4"
+                >
+                    <span class="bq-font-bold bq-text-gray-800"
+                        >💤 記錄睡眠</span
+                    >
+                    <button
+                        type="button"
+                        class="bq-text-gray-500 hover:bq-text-gray-800"
+                        @click="showSleepDialog = false"
+                    >
+                        ✕
+                    </button>
                 </v-card-title>
-                <v-card-text class="bq-p-5 bq-flex bq-flex-col bq-gap-4">
+                <v-card-text class="bq-flex bq-flex-col bq-gap-4 bq-p-5">
                     <!-- 入睡時間 -->
                     <div>
-                        <label class="bq-block bq-text-sm bq-font-bold bq-text-gray-600 bq-mb-1">開始入睡時間</label>
+                        <label
+                            class="bq-mb-1 bq-block bq-text-sm bq-font-bold bq-text-gray-600"
+                            >開始入睡時間</label
+                        >
                         <input
                             v-model="sleepForm.startTime"
                             type="datetime-local"
-                            class="bq-w-full bq-px-4 bq-py-2.5 bq-border bq-border-gray-200 bq-rounded-10 focus:bq-outline-none focus:bq-border-pink-300 bq-text-sm bq-transition"
+                            class="bq-rounded-10 bq-w-full bq-border bq-border-gray-200 bq-px-4 bq-py-2.5 bq-text-sm bq-transition focus:bq-border-pink-300 focus:bq-outline-none"
                         />
                     </div>
 
                     <!-- 醒來時間 -->
                     <div>
-                        <label class="bq-block bq-text-sm bq-font-bold bq-text-gray-600 bq-mb-1">醒來時間</label>
+                        <label
+                            class="bq-mb-1 bq-block bq-text-sm bq-font-bold bq-text-gray-600"
+                            >醒來時間</label
+                        >
                         <input
                             v-model="sleepForm.endTime"
                             type="datetime-local"
-                            class="bq-w-full bq-px-4 bq-py-2.5 bq-border bq-border-gray-200 bq-rounded-10 focus:bq-outline-none focus:bq-border-pink-300 bq-text-sm bq-transition"
+                            class="bq-rounded-10 bq-w-full bq-border bq-border-gray-200 bq-px-4 bq-py-2.5 bq-text-sm bq-transition focus:bq-border-pink-300 focus:bq-outline-none"
                         />
                     </div>
 
                     <!-- 拍照記錄 -->
                     <div>
-                        <label class="bq-block bq-text-sm bq-font-bold bq-text-gray-600 bq-mb-2">拍照留念 (可選)</label>
+                        <label
+                            class="bq-mb-2 bq-block bq-text-sm bq-font-bold bq-text-gray-600"
+                            >拍照留念 (可選)</label
+                        >
                         <CameraPicker v-model="sleepForm.photo" />
                     </div>
 
                     <!-- 備註 -->
                     <div>
-                        <label class="bq-block bq-text-sm bq-font-bold bq-text-gray-600 bq-mb-1">備註</label>
+                        <label
+                            class="bq-mb-1 bq-block bq-text-sm bq-font-bold bq-text-gray-600"
+                            >備註</label
+                        >
                         <input
                             v-model="sleepForm.note"
                             type="text"
-                            class="bq-w-full bq-px-4 bq-py-2.5 bq-border bq-border-gray-200 bq-rounded-10 focus:bq-outline-none focus:bq-border-pink-300 bq-text-sm bq-transition"
+                            class="bq-rounded-10 bq-w-full bq-border bq-border-gray-200 bq-px-4 bq-py-2.5 bq-text-sm bq-transition focus:bq-border-pink-300 focus:bq-outline-none"
                             placeholder="例如：睡得很安穩、驚醒哭鬧、打呼等"
                         />
                     </div>
                 </v-card-text>
-                <v-card-actions class="bq-p-5 bq-bg-gray-50 bq-flex bq-justify-end bq-gap-3">
+                <v-card-actions
+                    class="bq-flex bq-justify-end bq-gap-3 bq-bg-gray-50 bq-p-5"
+                >
                     <button
                         type="button"
-                        class="bq-bg-gray-200 hover:bq-bg-gray-300 active:bq-scale-98 bq-text-gray-700 bq-px-5 bq-py-2.5 bq-rounded-10 bq-font-bold bq-transition bq-text-sm"
+                        class="active:bq-scale-98 bq-rounded-10 bq-bg-gray-200 bq-px-5 bq-py-2.5 bq-text-sm bq-font-bold bq-text-gray-700 bq-transition hover:bq-bg-gray-300"
                         @click="showSleepDialog = false"
                     >
                         取消
                     </button>
                     <button
                         type="button"
-                        class="bq-bg-pink-500 hover:bq-bg-pink-600 active:bq-scale-98 bq-text-white bq-px-5 bq-py-2.5 bq-rounded-10 bq-font-bold bq-transition bq-text-sm bq-shadow-sm"
+                        class="active:bq-scale-98 bq-rounded-10 bq-bg-pink-500 bq-px-5 bq-py-2.5 bq-text-sm bq-font-bold bq-text-white bq-shadow-sm bq-transition hover:bq-bg-pink-600"
                         @click="saveSleepRecord"
                     >
                         儲存記錄
@@ -617,11 +930,18 @@
         <!-- 3. 查看大圖 Dialog -->
         <v-dialog v-model="showPhotoDialog" max-width="700px">
             <v-card class="bq-rounded-16 bq-overflow-hidden">
-                <div class="bq-relative bq-bg-black bq-flex bq-items-center bq-justify-center" style="min-height: 300px;">
-                    <img :src="photoViewUrl" class="bq-w-full bq-h-auto bq-max-h-80vh bq-object-contain" alt="寶寶大圖" />
+                <div
+                    class="bq-relative bq-flex bq-items-center bq-justify-center bq-bg-black"
+                    style="min-height: 300px"
+                >
+                    <img
+                        :src="photoViewUrl"
+                        class="bq-max-h-80vh bq-h-auto bq-w-full bq-object-contain"
+                        alt="寶寶大圖"
+                    />
                     <button
                         type="button"
-                        class="bq-absolute bq-top-3 bq-right-3 bq-bg-black/60 hover:bq-bg-black/80 bq-text-white bq-rounded-full bq-w-10 bq-h-10 bq-flex bq-items-center bq-justify-center bq-transition"
+                        class="bq-absolute bq-right-3 bq-top-3 bq-flex bq-h-10 bq-w-10 bq-items-center bq-justify-center bq-rounded-full bq-bg-black/60 bq-text-white bq-transition hover:bq-bg-black/80"
                         @click="showPhotoDialog = false"
                     >
                         ✕
@@ -633,63 +953,104 @@
         <!-- 4. 快速更新體重 Dialog -->
         <v-dialog v-model="showQuickWeightDialog" max-width="500px">
             <v-card class="bq-rounded-16 bq-overflow-hidden">
-                <v-card-title class="bq-bg-gradient-to-r bq-from-amber-100 bq-to-orange-100 bq-p-4 bq-flex bq-justify-between bq-items-center">
-                    <span class="bq-font-bold bq-text-gray-800">⚖️ 快速更新寶寶體重</span>
-                    <button type="button" class="bq-text-gray-500 hover:bq-text-gray-800" @click="showQuickWeightDialog = false">✕</button>
+                <v-card-title
+                    class="bq-flex bq-items-center bq-justify-between bq-bg-gradient-to-r bq-from-amber-100 bq-to-orange-100 bq-p-4"
+                >
+                    <span class="bq-font-bold bq-text-gray-800"
+                        >⚖️ 快速更新寶寶體重</span
+                    >
+                    <button
+                        type="button"
+                        class="bq-text-gray-500 hover:bq-text-gray-800"
+                        @click="showQuickWeightDialog = false"
+                    >
+                        ✕
+                    </button>
                 </v-card-title>
-                
-                <v-card-text class="bq-p-5 bq-flex bq-flex-col bq-gap-4">
+
+                <v-card-text class="bq-flex bq-flex-col bq-gap-4 bq-p-5">
                     <!-- Weight Input -->
                     <div>
-                        <label class="bq-block bq-text-sm bq-font-bold bq-text-gray-600 bq-mb-1">寶寶目前體重 (kg)</label>
+                        <label
+                            class="bq-mb-1 bq-block bq-text-sm bq-font-bold bq-text-gray-600"
+                            >寶寶目前體重 (kg)</label
+                        >
                         <input
                             v-model="quickWeightForm.weight"
                             type="number"
                             step="0.01"
                             placeholder="例如：6.2"
-                            class="bq-w-full bq-px-4 bq-py-2.5 bq-border bq-border-gray-200 bq-rounded-10 focus:bq-outline-none focus:bq-border-orange-300 bq-text-sm bq-transition"
+                            class="bq-rounded-10 bq-w-full bq-border bq-border-gray-200 bq-px-4 bq-py-2.5 bq-text-sm bq-transition focus:bq-border-orange-300 focus:bq-outline-none"
                         />
                     </div>
 
                     <!-- Calculator Helper -->
-                    <div class="bq-border bq-border-dashed bq-border-orange-200 bq-rounded-10 bq-p-3 bq-bg-orange-50/20">
+                    <div
+                        class="bq-rounded-10 bq-border bq-border-dashed bq-border-orange-200 bq-bg-orange-50/20 bq-p-3"
+                    >
                         <button
                             type="button"
-                            class="bq-text-xs bq-font-semibold bq-text-orange-600 hover:bq-text-orange-800 bq-flex bq-items-center bq-gap-1"
-                            @click="quickWeightForm.enableCalc = !quickWeightForm.enableCalc"
+                            class="bq-flex bq-items-center bq-gap-1 bq-text-xs bq-font-semibold bq-text-orange-600 hover:bq-text-orange-800"
+                            @click="
+                                quickWeightForm.enableCalc =
+                                    !quickWeightForm.enableCalc
+                            "
                         >
-                            <span>💡 沒有嬰兒專用秤？使用「大人抱著秤」換算助手</span>
-                            <span>{{ quickWeightForm.enableCalc ? '▼' : '▶' }}</span>
+                            <span
+                                >💡
+                                沒有嬰兒專用秤？使用「大人抱著秤」換算助手</span
+                            >
+                            <span>{{
+                                quickWeightForm.enableCalc ? '▼' : '▶'
+                            }}</span>
                         </button>
-                        
-                        <div v-show="quickWeightForm.enableCalc" class="bq-mt-3 bq-flex bq-flex-col bq-gap-2">
+
+                        <div
+                            v-show="quickWeightForm.enableCalc"
+                            class="bq-mt-3 bq-flex bq-flex-col bq-gap-2"
+                        >
                             <div class="bq-grid bq-grid-cols-2 bq-gap-3">
                                 <div>
-                                    <label class="bq-block bq-text-2xs bq-text-gray-500 bq-mb-1">1. 大人抱寶寶重 (kg)</label>
+                                    <label
+                                        class="bq-text-2xs bq-mb-1 bq-block bq-text-gray-500"
+                                        >1. 大人抱寶寶重 (kg)</label
+                                    >
                                     <input
-                                        v-model="quickWeightForm.calcAdultAndBaby"
+                                        v-model="
+                                            quickWeightForm.calcAdultAndBaby
+                                        "
                                         type="number"
                                         step="0.01"
                                         placeholder="例如：75.3"
-                                        class="bq-w-full bq-px-3 bq-py-1.5 bq-border bq-border-gray-200 bq-rounded-8 focus:bq-outline-none focus:bq-text-sm"
+                                        class="bq-rounded-8 bq-w-full bq-border bq-border-gray-200 bq-px-3 bq-py-1.5 focus:bq-text-sm focus:bq-outline-none"
                                     />
                                 </div>
                                 <div>
-                                    <label class="bq-block bq-text-2xs bq-text-gray-500 bq-mb-1">2. 大人單獨體重 (kg)</label>
+                                    <label
+                                        class="bq-text-2xs bq-mb-1 bq-block bq-text-gray-500"
+                                        >2. 大人單獨體重 (kg)</label
+                                    >
                                     <input
                                         v-model="quickWeightForm.calcAdultOnly"
                                         type="number"
                                         step="0.01"
                                         placeholder="例如：69.1"
-                                        class="bq-w-full bq-px-3 bq-py-1.5 bq-border bq-border-gray-200 bq-rounded-8 focus:bq-outline-none focus:bq-text-sm"
+                                        class="bq-rounded-8 bq-w-full bq-border bq-border-gray-200 bq-px-3 bq-py-1.5 focus:bq-text-sm focus:bq-outline-none"
                                     />
                                 </div>
                             </div>
-                            <div class="bq-flex bq-justify-between bq-items-center bq-bg-white bq-p-2 bq-rounded-8 bq-border bq-border-gray-100 bq-mt-1">
-                                <span class="bq-text-xs bq-text-gray-600">計算結果寶寶體重：<span class="bq-font-bold bq-text-orange-600">{{ calculatedWeight }} kg</span></span>
+                            <div
+                                class="bq-rounded-8 bq-mt-1 bq-flex bq-items-center bq-justify-between bq-border bq-border-gray-100 bq-bg-white bq-p-2"
+                            >
+                                <span class="bq-text-xs bq-text-gray-600"
+                                    >計算結果寶寶體重：<span
+                                        class="bq-font-bold bq-text-orange-600"
+                                        >{{ calculatedWeight }} kg</span
+                                    ></span
+                                >
                                 <button
                                     type="button"
-                                    class="bq-bg-orange-500 hover:bq-bg-orange-600 active:bq-scale-98 bq-text-white bq-px-3 bq-py-1 bq-rounded-6 bq-font-bold bq-transition bq-text-xs"
+                                    class="active:bq-scale-98 bq-rounded-6 bq-bg-orange-500 bq-px-3 bq-py-1 bq-text-xs bq-font-bold bq-text-white bq-transition hover:bq-bg-orange-600"
                                     :disabled="calculatedWeight <= 0"
                                     @click="applyCalculatedWeight"
                                 >
@@ -701,27 +1062,32 @@
 
                     <!-- Note -->
                     <div>
-                        <label class="bq-block bq-text-sm bq-font-bold bq-text-gray-600 bq-mb-1">備註 (可選)</label>
+                        <label
+                            class="bq-mb-1 bq-block bq-text-sm bq-font-bold bq-text-gray-600"
+                            >備註 (可選)</label
+                        >
                         <textarea
                             v-model="quickWeightForm.note"
                             placeholder="例如：打疫苗量體重、吃飽後秤..."
                             rows="2"
-                            class="bq-w-full bq-px-4 bq-py-2.5 bq-border bq-border-gray-200 bq-rounded-10 focus:bq-outline-none focus:bq-border-orange-300 bq-text-sm bq-transition"
+                            class="bq-rounded-10 bq-w-full bq-border bq-border-gray-200 bq-px-4 bq-py-2.5 bq-text-sm bq-transition focus:bq-border-orange-300 focus:bq-outline-none"
                         ></textarea>
                     </div>
                 </v-card-text>
 
-                <v-card-actions class="bq-p-5 bq-bg-gray-50 bq-flex bq-justify-end bq-gap-3">
+                <v-card-actions
+                    class="bq-flex bq-justify-end bq-gap-3 bq-bg-gray-50 bq-p-5"
+                >
                     <button
                         type="button"
-                        class="bq-bg-gray-200 hover:bq-bg-gray-300 active:bq-scale-98 bq-text-gray-700 bq-px-5 bq-py-2.5 bq-rounded-10 bq-font-bold bq-transition bq-text-sm"
+                        class="active:bq-scale-98 bq-rounded-10 bq-bg-gray-200 bq-px-5 bq-py-2.5 bq-text-sm bq-font-bold bq-text-gray-700 bq-transition hover:bq-bg-gray-300"
                         @click="showQuickWeightDialog = false"
                     >
                         取消
                     </button>
                     <button
                         type="button"
-                        class="bq-bg-orange-500 hover:bq-bg-orange-600 active:bq-scale-98 bq-text-white bq-px-5 bq-py-2.5 bq-rounded-10 bq-font-bold bq-transition bq-text-sm bq-shadow-sm"
+                        class="active:bq-scale-98 bq-rounded-10 bq-bg-orange-500 bq-px-5 bq-py-2.5 bq-text-sm bq-font-bold bq-text-white bq-shadow-sm bq-transition hover:bq-bg-orange-600"
                         @click="saveQuickWeight"
                     >
                         儲存體重
@@ -733,25 +1099,42 @@
         <!-- 5. 體重更新成功 & 建議奶量反饋 Dialog -->
         <v-dialog v-model="showSuccessFeedback" max-width="500px">
             <v-card class="bq-rounded-16 bq-overflow-hidden">
-                <v-card-title class="bq-bg-gradient-to-r bq-from-emerald-500 bq-to-teal-600 bq-text-white bq-p-4 bq-flex bq-justify-between bq-items-center">
-                    <span class="bq-font-bold">✨ 更新成功，奶量公式已自動升級！</span>
-                    <button type="button" class="bq-text-white/80 hover:bq-text-white" @click="showSuccessFeedback = false">✕</button>
+                <v-card-title
+                    class="bq-flex bq-items-center bq-justify-between bq-bg-gradient-to-r bq-from-emerald-500 bq-to-teal-600 bq-p-4 bq-text-white"
+                >
+                    <span class="bq-font-bold"
+                        >✨ 更新成功，奶量公式已自動升級！</span
+                    >
+                    <button
+                        type="button"
+                        class="bq-text-white/80 hover:bq-text-white"
+                        @click="showSuccessFeedback = false"
+                    >
+                        ✕
+                    </button>
                 </v-card-title>
-                
+
                 <v-card-text class="bq-p-6 bq-text-center">
-                    <div class="bq-text-5xl bq-mb-4">🍼📈</div>
-                    <p class="bq-text-base bq-text-gray-800 bq-font-medium bq-leading-relaxed bq-mb-2">
+                    <div class="bq-mb-4 bq-text-5xl">🍼📈</div>
+                    <p
+                        class="bq-mb-2 bq-text-base bq-font-medium bq-leading-relaxed bq-text-gray-800"
+                    >
                         {{ feedbackMsg }}
                     </p>
-                    <p class="bq-text-xs bq-text-gray-400" style="font-size: 0.75rem;">
+                    <p
+                        class="bq-text-xs bq-text-gray-400"
+                        style="font-size: 0.75rem"
+                    >
                         (依小兒科醫生建議「每日總奶量 = 體重 × 150 ml」公式換算)
                     </p>
                 </v-card-text>
 
-                <v-card-actions class="bq-p-4 bq-bg-gray-50 bq-flex bq-justify-center">
+                <v-card-actions
+                    class="bq-flex bq-justify-center bq-bg-gray-50 bq-p-4"
+                >
                     <button
                         type="button"
-                        class="bq-bg-emerald-500 hover:bq-bg-emerald-600 active:bq-scale-98 bq-text-white bq-px-8 bq-py-2.5 bq-rounded-10 bq-font-bold bq-transition bq-text-sm bq-shadow-sm"
+                        class="active:bq-scale-98 bq-rounded-10 bq-bg-emerald-500 bq-px-8 bq-py-2.5 bq-text-sm bq-font-bold bq-text-white bq-shadow-sm bq-transition hover:bq-bg-emerald-600"
                         @click="showSuccessFeedback = false"
                     >
                         太棒了！
@@ -789,6 +1172,29 @@ const filterTabs = [
 const loadRecords = async () => {
     try {
         records.value = await getRecords();
+
+        // 從資料庫載入寶寶基本設定並更新
+        const settingsRecord = records.value.find(
+            (r) => r.id === 'baby_settings'
+        );
+        if (settingsRecord && settingsRecord.note) {
+            try {
+                const settings = JSON.parse(settingsRecord.note);
+                if (settings.birthday) {
+                    babySettings.birthday = settings.birthday;
+                    localStorage.setItem('baby_birthday', settings.birthday);
+                }
+                if (settings.fatigueTolerance) {
+                    babySettings.fatigueTolerance = settings.fatigueTolerance;
+                    localStorage.setItem(
+                        'baby_fatigue_tolerance',
+                        settings.fatigueTolerance
+                    );
+                }
+            } catch (e) {
+                console.error('解析寶寶設定失敗:', e);
+            }
+        }
     } catch (e) {
         console.error('無法載入作息記錄:', e);
     }
@@ -936,8 +1342,12 @@ const getRecordTitle = (record) => {
         };
         const typeName = typeMap[record.milkType] || '喝奶';
         if (record.milkType === 'breast_direct') {
-            const left = record.leftDuration ? `${record.leftDuration}分` : '0分';
-            const right = record.rightDuration ? `${record.rightDuration}分` : '0分';
+            const left = record.leftDuration
+                ? `${record.leftDuration}分`
+                : '0分';
+            const right = record.rightDuration
+                ? `${record.rightDuration}分`
+                : '0分';
             return `${typeName} (左 ${left} / 右 ${right})`;
         }
         return `${typeName} ${record.amount} ml`;
@@ -1099,8 +1509,14 @@ const saveMilkRecord = async () => {
         type: 'milk',
         milkType: milkForm.type,
         amount: milkForm.type === 'breast_direct' ? 0 : Number(milkForm.amount),
-        leftDuration: milkForm.type === 'breast_direct' ? Number(milkForm.leftDuration) : 0,
-        rightDuration: milkForm.type === 'breast_direct' ? Number(milkForm.rightDuration) : 0,
+        leftDuration:
+            milkForm.type === 'breast_direct'
+                ? Number(milkForm.leftDuration)
+                : 0,
+        rightDuration:
+            milkForm.type === 'breast_direct'
+                ? Number(milkForm.rightDuration)
+                : 0,
         timestamp,
         photo: milkForm.photo,
         note: milkForm.note
@@ -1112,7 +1528,7 @@ const saveMilkRecord = async () => {
         showMilkDialog.value = false;
         // Trigger background sync with Supabase
         syncWithSupabase().then(() => loadRecords());
-    } catch (e) {
+    } catch {
         alert('儲存失敗，請重試');
     }
 };
@@ -1163,7 +1579,7 @@ const saveSleepRecord = async () => {
         showSleepDialog.value = false;
         // Trigger background sync with Supabase
         syncWithSupabase().then(() => loadRecords());
-    } catch (e) {
+    } catch {
         alert('儲存失敗，請重試');
     }
 };
@@ -1176,7 +1592,7 @@ const confirmDeleteRecord = async (id) => {
             await loadRecords();
             // Trigger background sync with Supabase
             syncWithSupabase().then(() => loadRecords());
-        } catch (e) {
+        } catch {
             alert('刪除失敗，請重試');
         }
     }
@@ -1201,19 +1617,54 @@ const babySettings = reactive({
 });
 
 const fatigueToleranceOptions = [
-    { value: 'sensitive', label: '容易累 (建議提前 15 分鐘睡)', description: '適合清醒後容易鬧脾氣、哭鬧的寶寶' },
+    {
+        value: 'sensitive',
+        label: '容易累 (建議提前 15 分鐘睡)',
+        description: '適合清醒後容易鬧脾氣、哭鬧的寶寶'
+    },
     { value: 'normal', label: '標準', description: '依照月齡標準推薦清醒時間' },
-    { value: 'tolerant', label: '耐累 (建議延後 15 分鐘睡)', description: '適合體力較佳、可清醒較久的寶寶' }
+    {
+        value: 'tolerant',
+        label: '耐累 (建議延後 15 分鐘睡)',
+        description: '適合體力較佳、可清醒較久的寶寶'
+    }
 ];
 
 const fatigueToleranceText = computed(() => {
-    const opt = fatigueToleranceOptions.find(o => o.value === babySettings.fatigueTolerance);
+    const opt = fatigueToleranceOptions.find(
+        (o) => o.value === babySettings.fatigueTolerance
+    );
     return opt ? opt.label : '標準';
 });
 
-const saveBabySettings = () => {
+const saveBabySettings = async () => {
     localStorage.setItem('baby_birthday', babySettings.birthday);
-    localStorage.setItem('baby_fatigue_tolerance', babySettings.fatigueTolerance);
+    localStorage.setItem(
+        'baby_fatigue_tolerance',
+        babySettings.fatigueTolerance
+    );
+
+    // 同步儲存至資料庫的 records 資料表（id 為 'baby_settings', type 為 'setting'）
+    try {
+        const settingsPayload = {
+            id: 'baby_settings',
+            type: 'setting',
+            timestamp: Date.now(),
+            note: JSON.stringify({
+                birthday: babySettings.birthday,
+                fatigueTolerance: babySettings.fatigueTolerance
+            }),
+            updatedAt: Date.now(),
+            synced: false
+        };
+        await saveRecord(settingsPayload);
+
+        // 觸發背景同步並重新整理載入
+        syncWithSupabase().then(() => loadRecords());
+    } catch (e) {
+        console.error('儲存設定至資料庫失敗:', e);
+    }
+
     showSettingsDialog.value = false;
 };
 
@@ -1231,7 +1682,7 @@ const quickWeightForm = reactive({
 });
 
 const lastWeightRecord = computed(() => {
-    const weightRecords = records.value.filter(r => r.type === 'weight');
+    const weightRecords = records.value.filter((r) => r.type === 'weight');
     return weightRecords.length > 0 ? weightRecords[0] : null;
 });
 
@@ -1275,7 +1726,7 @@ const saveQuickWeight = async () => {
         alert('請輸入有效的寶寶體重！');
         return;
     }
-    
+
     const record = {
         id: `weight-${Date.now()}`,
         type: 'weight',
@@ -1283,22 +1734,22 @@ const saveQuickWeight = async () => {
         timestamp: Date.now(),
         note: quickWeightForm.note || null
     };
-    
+
     try {
         await saveRecord(record);
         await loadRecords();
         showQuickWeightDialog.value = false;
-        
+
         // Calculate milk target change for feedback
         const newTarget = Math.round(weightVal * 150);
         const singleMeal = Math.round(newTarget / 6);
-        
+
         feedbackMsg.value = `體重已更新為 ${weightVal} kg！系統已自動為您將每日建議總奶量調整為 ${newTarget} ml（若每日餵 6 餐，單餐建議約 ${singleMeal} ml）。`;
         showSuccessFeedback.value = true;
-        
+
         // Trigger background sync
         syncWithSupabase().then(() => loadRecords());
-    } catch (e) {
+    } catch {
         alert('儲存失敗，請重試');
     }
 };
@@ -1322,12 +1773,12 @@ const defaultWakeWindow = computed(() => {
         // 若未設定生日，預設帶入 3 個月大的引導值 (60～90分鐘)
         return { min: 60, max: 90 };
     }
-    if (days <= 30) return { min: 45, max: 60 };       // 0-1 個月
-    if (days <= 90) return { min: 60, max: 90 };       // 1-3 個月
-    if (days <= 180) return { min: 90, max: 120 };     // 3-6 個月
-    if (days <= 270) return { min: 120, max: 150 };    // 6-9 個月
-    if (days <= 365) return { min: 150, max: 180 };    // 9-12 個月
-    return { min: 180, max: 240 };                     // 1歲以上
+    if (days <= 30) return { min: 45, max: 60 }; // 0-1 個月
+    if (days <= 90) return { min: 60, max: 90 }; // 1-3 個月
+    if (days <= 180) return { min: 90, max: 120 }; // 3-6 個月
+    if (days <= 270) return { min: 120, max: 150 }; // 6-9 個月
+    if (days <= 365) return { min: 150, max: 180 }; // 9-12 個月
+    return { min: 180, max: 240 }; // 1歲以上
 });
 
 // 家長自訂耐累度微調量 (分鐘)
@@ -1339,7 +1790,9 @@ const fatigueToleranceOffset = computed(() => {
 
 // 最新的一筆已結束睡眠記錄
 const lastCompletedSleep = computed(() => {
-    const sleepRecords = records.value.filter(r => r.type === 'sleep' && r.endTime);
+    const sleepRecords = records.value.filter(
+        (r) => r.type === 'sleep' && r.endTime
+    );
     return sleepRecords.length > 0 ? sleepRecords[0] : null;
 });
 
@@ -1364,22 +1817,24 @@ const wakeDurationString = computed(() => {
 const wakeSuggestion = computed(() => {
     if (!lastCompletedSleep.value) return null;
     const wokeUpAt = Number(lastCompletedSleep.value.endTime);
-    
+
     // 計算考慮了耐累程度後的最終建議清醒區間 (分鐘)
     const offset = fatigueToleranceOffset.value;
     const windowMin = defaultWakeWindow.value.min + offset;
     const windowMax = defaultWakeWindow.value.max + offset;
-    
+
     const suggestStartTimestamp = wokeUpAt + windowMin * 60 * 1000;
     const suggestEndTimestamp = wokeUpAt + windowMax * 60 * 1000;
-    
-    const minutesRemaining = Math.floor((suggestStartTimestamp - nowTimestamp.value) / (60 * 1000));
-    
+
+    const minutesRemaining = Math.floor(
+        (suggestStartTimestamp - nowTimestamp.value) / (60 * 1000)
+    );
+
     const formatTime = (ts) => {
         const d = new Date(ts);
         return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
     };
-    
+
     return {
         suggestedRange: `${formatTime(suggestStartTimestamp)} ~ ${formatTime(suggestEndTimestamp)}`,
         minutesRemaining
