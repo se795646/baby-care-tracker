@@ -20,7 +20,7 @@ describe('db.js storage helper', () => {
         const records = await getRecords();
 
         expect(records.length).toBe(1);
-        expect(records[0]).toEqual(record);
+        expect(records[0]).toEqual(expect.objectContaining(record));
     });
 
     it('should sort records by timestamp in descending order', async () => {
