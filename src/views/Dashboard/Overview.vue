@@ -5,6 +5,7 @@
             <div>
                 <h1 class="bq-text-2xl bq-font-bold bq-text-gray-800 bq-flex bq-items-center bq-gap-2">
                     👶 寶寶作息記錄儀
+                    <button type="button" class="bq-text-gray-400 hover:bq-text-gray-600 bq-text-lg bq-ml-1" @click="showSettingsDialog = true" title="設定寶寶生日與耐累度">⚙️</button>
                 </h1>
                 <p class="bq-text-sm bq-text-gray-500 bq-mt-1">
                     今天也是充滿愛與耐心的一天！讓我們一起記錄寶寶的成長足跡。
@@ -52,6 +53,123 @@
                 </div>
             </div>
         </transition>
+
+        <!-- 智能睡眠提示與清醒計時 (當寶寶清醒時顯示) -->
+        <transition name="slide-fade">
+            <div
+                v-if="!activeSleepStartTime"
+                class="bq-mb-6 bq-bg-gradient-to-r bq-from-teal-500 bq-to-emerald-600 bq-text-white bq-rounded-16 bq-p-6 bq-shadow-md bq-relative bq-overflow-hidden"
+            >
+                <div class="bq-absolute -bq-right-10 -bq-bottom-10 bq-opacity-10 bq-text-9xl">☀️</div>
+                <div class="bq-flex bq-flex-col md:bq-flex-row bq-justify-between bq-items-center bq-gap-4 bq-relative bq-z-10">
+                    <div class="bq-text-center md:bq-text-left" v-if="wakeSuggestion">
+                        <span class="bq-bg-white/20 bq-text-xs bq-font-bold bq-px-3 bq-py-1 bq-rounded-full bq-uppercase bq-tracking-wider">
+                            智慧清醒追蹤
+                        </span>
+                        <h2 class="bq-text-xl bq-font-bold bq-mt-2">寶寶目前清醒中 👶☀️</h2>
+                        <p class="bq-text-sm bq-text-white/80 bq-mt-1">
+                            已清醒：<span class="bq-font-bold">{{ wakeDurationString }}</span>
+                            {{ wakeSuggestion.minutesRemaining > 0 ? `(預計 ${wakeSuggestion.minutesRemaining} 分鐘後該小睡囉！)` : `(已超出建議清醒時間 ${Math.abs(wakeSuggestion.minutesRemaining)} 分鐘，快帶寶寶去小睡吧！)` }}
+                        </p>
+                        <p class="bq-text-xs bq-text-white/70 bq-mt-1" style="font-size: 0.75rem;">
+                            💡 建議下一次小睡時間：<span class="bq-font-bold">{{ wakeSuggestion.suggestedRange }}</span> 
+                            (依寶寶目前 {{ babyAgeDays }} 天大，耐累程度：{{ fatigueToleranceText }} 計算)
+                        </p>
+                    </div>
+                    <div class="bq-text-center md:bq-text-left" v-else>
+                        <span class="bq-bg-white/20 bq-text-xs bq-font-bold bq-px-3 bq-py-1 bq-rounded-full bq-uppercase bq-tracking-wider">
+                            智慧清醒追蹤
+                        </span>
+                        <h2 class="bq-text-xl bq-font-bold bq-mt-2">歡迎使用智慧清醒追蹤 👶✨</h2>
+                        <p class="bq-text-sm bq-text-white/80 bq-mt-1">
+                            請點選齒輪或右側按鈕設定寶寶的生日，並記錄一筆「睡眠記錄」，系統便會自動推算清醒時間與下一次小睡建議！
+                        </p>
+                    </div>
+                    
+                    <div class="bq-flex bq-gap-3 bq-flex-wrap bq-justify-center">
+                        <button
+                            type="button"
+                            class="bq-bg-white hover:bq-bg-yellow-50 active:bq-scale-98 bq-text-teal-700 bq-px-5 bq-py-2.5 bq-rounded-10 bq-font-bold bq-transition bq-shadow-sm bq-text-sm"
+                            @click="startSleepTimer"
+                        >
+                            寶寶睡覺了 💤
+                        </button>
+                        <button
+                            type="button"
+                            class="bq-bg-teal-600 hover:bq-bg-teal-700 active:bq-scale-98 bq-text-white bq-px-4 bq-py-2.5 bq-rounded-10 bq-font-bold bq-transition bq-text-sm"
+                            @click="showSettingsDialog = true"
+                        >
+                            設定寶寶 ⚙️
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </transition>
+
+        <!-- 寶寶設定對話框 -->
+        <v-dialog v-model="showSettingsDialog" max-width="500px">
+            <v-card class="bq-rounded-16 bq-overflow-hidden">
+                <v-card-title class="bq-bg-gradient-to-r bq-from-teal-100 bq-to-emerald-100 bq-p-4 bq-flex bq-justify-between bq-items-center">
+                    <span class="bq-font-bold bq-text-gray-800">⚙️ 寶寶基本設定</span>
+                    <button type="button" class="bq-text-gray-500 hover:bq-text-gray-800" @click="showSettingsDialog = false">✕</button>
+                </v-card-title>
+                
+                <v-card-text class="bq-p-5 bq-flex bq-flex-col bq-gap-4">
+                    <!-- Birthday -->
+                    <div>
+                        <label class="bq-block bq-text-sm bq-font-bold bq-text-gray-600 bq-mb-1">寶寶生日</label>
+                        <input
+                            v-model="babySettings.birthday"
+                            type="date"
+                            class="bq-w-full bq-px-4 bq-py-2.5 bq-border bq-border-gray-200 bq-rounded-10 focus:bq-outline-none focus:bq-border-teal-300 bq-text-sm bq-transition"
+                        />
+                        <p class="bq-text-3xs bq-text-gray-400 bq-mt-1" style="font-size: 0.65rem;">設定生日後，系統會自動根據月齡提供小兒科建議的清醒時間。</p>
+                    </div>
+
+                    <!-- Fatigue Tolerance -->
+                    <div>
+                        <label class="bq-block bq-text-sm bq-font-bold bq-text-gray-600 bq-mb-2">寶寶耐累程度</label>
+                        <div class="bq-flex bq-flex-col bq-gap-2">
+                            <label
+                                v-for="opt in fatigueToleranceOptions"
+                                :key="opt.value"
+                                class="bq-flex bq-items-center bq-gap-3 bq-p-3 bq-border bq-rounded-10 bq-cursor-pointer hover:bq-bg-slate-50 bq-transition"
+                                :class="babySettings.fatigueTolerance === opt.value ? 'bq-border-teal-500 bq-bg-teal-50/30' : 'bq-border-gray-200'"
+                            >
+                                <input
+                                    type="radio"
+                                    name="fatigueTolerance"
+                                    :value="opt.value"
+                                    v-model="babySettings.fatigueTolerance"
+                                    class="bq-text-teal-600 focus:bq-ring-teal-500"
+                                />
+                                <div>
+                                    <div class="bq-text-xs bq-font-bold bq-text-gray-700">{{ opt.label }}</div>
+                                    <div class="bq-text-3xs bq-text-gray-400 bq-mt-0.5" style="font-size: 0.65rem;">{{ opt.description }}</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </v-card-text>
+
+                <v-card-actions class="bq-p-5 bq-bg-gray-50 bq-flex bq-justify-end bq-gap-3">
+                    <button
+                        type="button"
+                        class="bq-bg-gray-200 hover:bq-bg-gray-300 active:bq-scale-98 bq-text-gray-700 bq-px-5 bq-py-2.5 bq-rounded-10 bq-font-bold bq-transition bq-text-sm"
+                        @click="showSettingsDialog = false"
+                    >
+                        取消
+                    </button>
+                    <button
+                        type="button"
+                        class="bq-bg-teal-500 hover:bq-bg-teal-600 active:bq-scale-98 bq-text-white bq-px-5 bq-py-2.5 bq-rounded-10 bq-font-bold bq-transition bq-text-sm bq-shadow-sm"
+                        @click="saveBabySettings"
+                    >
+                        儲存設定
+                    </button>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
 
         <!-- 今日統計資料與操作卡片 -->
         <div class="bq-grid bq-grid-cols-1 lg:bq-grid-cols-3 bq-gap-6 bq-mb-8">
@@ -507,10 +625,18 @@ const loadRecords = async () => {
 
 let realtimeChannel = null;
 
+let wakeTickInterval = null;
+
 onMounted(async () => {
     // 1. Load local records first for instant display
     await loadRecords();
     checkActiveSleepTimer();
+
+    // 啟動清醒計時滴答
+    nowTimestamp.value = Date.now();
+    wakeTickInterval = setInterval(() => {
+        nowTimestamp.value = Date.now();
+    }, 1000);
 
     // 2. Perform background sync with Supabase and reload records
     try {
@@ -744,6 +870,7 @@ const stopSleepTimer = () => {
 
 onBeforeUnmount(() => {
     if (sleepInterval) clearInterval(sleepInterval);
+    if (wakeTickInterval) clearInterval(wakeTickInterval);
     if (realtimeChannel) {
         realtimeChannel.unsubscribe();
     }
@@ -892,6 +1019,115 @@ const viewFullPhoto = (photoUrl) => {
     photoViewUrl.value = photoUrl;
     showPhotoDialog.value = true;
 };
+
+// ─── 智慧清醒追蹤與寶寶設定邏輯 ───
+const nowTimestamp = ref(Date.now());
+const showSettingsDialog = ref(false);
+
+const babySettings = reactive({
+    birthday: localStorage.getItem('baby_birthday') || '',
+    fatigueTolerance: localStorage.getItem('baby_fatigue_tolerance') || 'normal'
+});
+
+const fatigueToleranceOptions = [
+    { value: 'sensitive', label: '容易累 (建議提前 15 分鐘睡)', description: '適合清醒後容易鬧脾氣、哭鬧的寶寶' },
+    { value: 'normal', label: '標準', description: '依照月齡標準推薦清醒時間' },
+    { value: 'tolerant', label: '耐累 (建議延後 15 分鐘睡)', description: '適合體力較佳、可清醒較久的寶寶' }
+];
+
+const fatigueToleranceText = computed(() => {
+    const opt = fatigueToleranceOptions.find(o => o.value === babySettings.fatigueTolerance);
+    return opt ? opt.label : '標準';
+});
+
+const saveBabySettings = () => {
+    localStorage.setItem('baby_birthday', babySettings.birthday);
+    localStorage.setItem('baby_fatigue_tolerance', babySettings.fatigueTolerance);
+    showSettingsDialog.value = false;
+};
+
+// 計算寶寶年齡 (天數)
+const babyAgeDays = computed(() => {
+    if (!babySettings.birthday) return null;
+    const birth = new Date(babySettings.birthday);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    birth.setHours(0, 0, 0, 0);
+    const diffTime = today - birth;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays >= 0 ? diffDays : 0;
+});
+
+// 根據月齡推算預設建議清醒時間 (分鐘)
+const defaultWakeWindow = computed(() => {
+    const days = babyAgeDays.value;
+    if (days === null) {
+        // 若未設定生日，預設帶入 3 個月大的引導值 (60～90分鐘)
+        return { min: 60, max: 90 };
+    }
+    if (days <= 30) return { min: 45, max: 60 };       // 0-1 個月
+    if (days <= 90) return { min: 60, max: 90 };       // 1-3 個月
+    if (days <= 180) return { min: 90, max: 120 };     // 3-6 個月
+    if (days <= 270) return { min: 120, max: 150 };    // 6-9 個月
+    if (days <= 365) return { min: 150, max: 180 };    // 9-12 個月
+    return { min: 180, max: 240 };                     // 1歲以上
+});
+
+// 家長自訂耐累度微調量 (分鐘)
+const fatigueToleranceOffset = computed(() => {
+    if (babySettings.fatigueTolerance === 'sensitive') return -15;
+    if (babySettings.fatigueTolerance === 'tolerant') return 15;
+    return 0;
+});
+
+// 最新的一筆已結束睡眠記錄
+const lastCompletedSleep = computed(() => {
+    const sleepRecords = records.value.filter(r => r.type === 'sleep' && r.endTime);
+    return sleepRecords.length > 0 ? sleepRecords[0] : null;
+});
+
+// 計算已清醒時長 (分鐘)
+const wakeDurationMinutes = computed(() => {
+    if (!lastCompletedSleep.value) return 0;
+    const wokeUpAt = Number(lastCompletedSleep.value.endTime);
+    const diffMs = nowTimestamp.value - wokeUpAt;
+    return Math.max(0, Math.floor(diffMs / (1000 * 60)));
+});
+
+// 格式化已清醒時長字串
+const wakeDurationString = computed(() => {
+    const totalMins = wakeDurationMinutes.value;
+    if (totalMins < 60) return `${totalMins} 分鐘`;
+    const hrs = Math.floor(totalMins / 60);
+    const mins = totalMins % 60;
+    return `${hrs} 小時 ${mins} 分鐘`;
+});
+
+// 計算智慧睡眠建議 (下一次建議小睡的區間與剩餘時間)
+const wakeSuggestion = computed(() => {
+    if (!lastCompletedSleep.value) return null;
+    const wokeUpAt = Number(lastCompletedSleep.value.endTime);
+    
+    // 計算考慮了耐累程度後的最終建議清醒區間 (分鐘)
+    const offset = fatigueToleranceOffset.value;
+    const windowMin = defaultWakeWindow.value.min + offset;
+    const windowMax = defaultWakeWindow.value.max + offset;
+    
+    const suggestStartTimestamp = wokeUpAt + windowMin * 60 * 1000;
+    const suggestEndTimestamp = wokeUpAt + windowMax * 60 * 1000;
+    
+    const minutesRemaining = Math.floor((suggestStartTimestamp - nowTimestamp.value) / (60 * 1000));
+    
+    const formatTime = (ts) => {
+        const d = new Date(ts);
+        return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+    };
+    
+    return {
+        suggestedRange: `${formatTime(suggestStartTimestamp)} ~ ${formatTime(suggestEndTimestamp)}`,
+        minutesRemaining
+    };
+});
 
 // ─── 輔助函數 ───
 // 格式化為 datetime-local 所需格式：YYYY-MM-DDThh:mm

@@ -10,9 +10,6 @@
                     <span class="bq-text-lg bq-font-bold bq-bg-gradient-to-r bq-from-gray-800 bq-to-gray-600 bq-bg-clip-text bq-text-transparent">
                         寶寶作息記錄儀
                     </span>
-                    <span class="bq-hidden sm:bq-inline-block bq-text-xs bq-bg-pink-50 bq-text-pink-600 bq-px-2.5 bq-py-0.5 bq-rounded-full bq-ml-2 bq-font-bold">
-                        極簡版
-                    </span>
                 </div>
             </div>
 
