@@ -14,7 +14,7 @@
 
         <!-- 行動端底部導覽列 (Bottom Navigation Bar) -->
         <div
-            class="bq-fixed bq-bottom-0 bq-left-0 bq-right-0 bq-z-40 bq-flex bq-h-16 bq-border-t bq-border-gray-100 bq-bg-white/95 bq-backdrop-blur-md bq-px-4 bq-pb-safe bq-shadow-[0_-4px_12px_rgba(0,0,0,0.03)] md:bq-hidden"
+            class="bq-pb-safe bq-fixed bq-bottom-0 bq-left-0 bq-right-0 bq-z-40 bq-flex bq-h-16 bq-border-t bq-border-gray-100 bq-bg-white/95 bq-px-4 bq-shadow-[0_-4px_12px_rgba(0,0,0,0.03)] bq-backdrop-blur-md md:bq-hidden"
         >
             <button
                 v-for="item in mobileNavItems"
@@ -23,7 +23,7 @@
                 class="bq-flex bq-flex-1 bq-flex-col bq-items-center bq-justify-center bq-gap-1 bq-py-1 bq-transition-all bq-duration-200"
                 :class="
                     activeNavItemId === item.id
-                        ? 'bq-text-pink-500 bq-scale-105'
+                        ? 'bq-scale-105 bq-text-pink-500'
                         : 'bq-text-gray-400 hover:bq-text-gray-600'
                 "
                 @click="handleMobileNavClick(item)"
