@@ -584,83 +584,88 @@
                 <div
                     v-for="record in recentRecords"
                     :key="record.id"
-                    class="record-card bq-rounded-12 bq-relative bq-flex bq-flex-col bq-items-start bq-justify-between bq-gap-4 bq-border bq-border-slate-100 bq-bg-slate-50 bq-p-4 bq-transition hover:bq-bg-slate-100/70 hover:bq-shadow-sm md:bq-flex-row md:bq-items-center"
+                    class="record-card bq-rounded-16 bq-flex bq-items-center bq-gap-3 bq-border bq-p-4 bq-shadow-sm bq-transition hover:bq-shadow-md"
+                    :class="
+                        record.type === 'milk'
+                            ? 'bq-border-l-4 bq-border-y-gray-100 bq-border-l-amber-400 bq-border-r-gray-100 bq-bg-amber-50/20'
+                            : 'bq-border-l-4 bq-border-y-gray-100 bq-border-l-indigo-400 bq-border-r-gray-100 bq-bg-indigo-50/20'
+                    "
                 >
-                    <div class="bq-flex bq-items-start bq-gap-4">
+                    <!-- 左側資訊區 (Icon + Title/Time/Note) -->
+                    <div
+                        class="bq-flex bq-min-w-0 bq-flex-1 bq-items-start bq-gap-3.5"
+                    >
                         <!-- 類別 Icon -->
                         <span
-                            class="bq-flex bq-h-12 bq-w-12 bq-items-center bq-justify-center bq-rounded-full bq-text-2xl bq-shadow-sm"
+                            class="bq-flex bq-h-11 bq-w-11 bq-flex-shrink-0 bq-items-center bq-justify-center bq-rounded-full bq-text-xl bq-shadow-sm"
                             :class="
                                 record.type === 'milk'
-                                    ? 'bq-bg-orange-100'
+                                    ? 'bq-bg-amber-100'
                                     : 'bq-bg-indigo-100'
                             "
                         >
                             {{ record.type === 'milk' ? '🍼' : '💤' }}
                         </span>
 
-                        <!-- 記錄資訊 -->
-                        <div>
-                            <div class="bq-flex bq-items-center bq-gap-2">
-                                <span class="bq-font-bold bq-text-gray-800">
+                        <!-- 內容資訊 -->
+                        <div class="bq-min-w-0 bq-flex-1">
+                            <div
+                                class="bq-flex bq-flex-wrap bq-items-center bq-gap-2"
+                            >
+                                <span
+                                    class="bq-text-sm bq-font-bold bq-text-gray-800"
+                                >
                                     {{ getRecordTitle(record) }}
                                 </span>
+                                <!-- 時間標籤 -->
                                 <span
-                                    class="bq-text-2xs bq-rounded-full bq-px-2 bq-py-0.5 bq-font-bold"
-                                    :class="
-                                        record.type === 'milk'
-                                            ? 'bq-bg-orange-200 bq-text-orange-800'
-                                            : 'bq-bg-indigo-200 bq-text-indigo-800'
-                                    "
+                                    class="bq-rounded-6 bq-bg-gray-100 bq-px-2 bq-py-0.5 bq-text-[10px] bq-font-bold bq-text-gray-500"
                                 >
-                                    {{
-                                        record.type === 'milk' ? '餵奶' : '睡眠'
-                                    }}
+                                    {{ formatRecordTime(record) }}
                                 </span>
-                            </div>
-                            <div class="bq-mt-1 bq-text-xs bq-text-gray-500">
-                                <span class="mdi mdi-clock-outline"></span>
-                                {{ formatRecordTime(record) }}
+                                <!-- 時長標籤 (僅睡眠) -->
                                 <span
                                     v-if="record.duration"
-                                    class="bq-ml-2 bq-font-semibold bq-text-indigo-600"
+                                    class="bq-rounded-6 bq-bg-indigo-100 bq-px-2 bq-py-0.5 bq-text-[10px] bq-font-bold bq-text-indigo-600"
                                 >
-                                    ({{ formatDuration(record.duration) }})
+                                    {{ formatDuration(record.duration) }}
                                 </span>
                             </div>
+                            <!-- 備註框 -->
                             <p
                                 v-if="record.note"
-                                class="bq-mt-2 bq-text-sm bq-italic bq-text-gray-600"
+                                class="bq-rounded-8 bq-mt-2 bq-inline-block bq-max-w-full bq-border bq-border-gray-100/50 bq-bg-white/80 bq-p-2 bq-text-xs bq-italic bq-text-gray-600"
                             >
-                                「{{ record.note }}」
+                                💬 {{ record.note }}
                             </p>
                         </div>
                     </div>
 
-                    <!-- 縮圖與操作按鈕 -->
+                    <!-- 右側操作區 (照片縮圖 + 刪除按鈕) -->
                     <div
-                        class="bq-flex bq-w-full bq-items-center bq-justify-between bq-gap-4 md:bq-w-auto md:bq-justify-end"
+                        class="bq-ml-auto bq-flex bq-flex-shrink-0 bq-items-center bq-gap-2.5"
                     >
                         <!-- 相片縮圖 -->
                         <div
                             v-if="record.photo"
-                            class="photo-thumbnail-container"
+                            class="photo-thumbnail-container bq-flex-shrink-0"
                         >
                             <img
                                 :src="record.photo"
-                                class="bq-rounded-8 bq-h-16 bq-w-16 bq-cursor-pointer bq-border bq-border-gray-200 bq-object-cover bq-transition hover:bq-scale-105"
-                                alt="寶寶作息相片"
+                                class="bq-rounded-8 bq-h-12 bq-w-12 bq-cursor-pointer bq-border bq-border-gray-200 bq-object-cover bq-transition hover:bq-scale-105 active:bq-scale-95"
+                                alt="寶寶相片"
                                 @click="viewFullPhoto(record.photo)"
                             />
                         </div>
 
-                        <!-- 刪除按鈕 -->
+                        <!-- 刪除按鈕 (手機端垃圾桶樣式) -->
                         <button
                             type="button"
-                            class="bq-rounded-8 bq-px-3 bq-py-1.5 bq-text-xs bq-font-bold bq-text-red-500 bq-transition hover:bq-bg-red-50 hover:bq-text-red-700"
+                            class="bq-rounded-8 bq-flex bq-h-9 bq-w-9 bq-items-center bq-justify-center bq-text-lg bq-text-red-400 bq-transition hover:bq-bg-red-50 hover:bq-text-red-600 active:bq-scale-90"
                             @click="confirmDeleteRecord(record.id)"
+                            title="刪除"
                         >
-                            刪除
+                            🗑️
                         </button>
                     </div>
                 </div>
