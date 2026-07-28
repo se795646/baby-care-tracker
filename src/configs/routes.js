@@ -12,6 +12,10 @@ export default {
             NAME: 'DashboardGrowth',
             PATH: 'dashboard/growth'
         },
+        HISTORY: {
+            NAME: 'DashboardHistory',
+            PATH: 'dashboard/history'
+        },
         COMPONENTS: {
             NAME: 'DashboardComponents',
             PATH: 'dashboard/components'

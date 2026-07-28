@@ -67,11 +67,12 @@ export default {
     computed: {
         ...mapGetters('personal', ['member', 'isInfoReady']),
         navList() {
-            return getNavList(this.$t.bind(this));
+            return getNavList();
         },
         mobileNavItems() {
             return [
                 { id: 1, title: '作息概覽', icon: '🍼' },
+                { id: 3, title: '歷史日誌', icon: '📋' },
                 { id: 2, title: '成長曲線', icon: '📈' }
             ];
         },

@@ -21,6 +21,11 @@ const routes = [
                 path: Routes.DASHBOARD.GROWTH.PATH,
                 name: Routes.DASHBOARD.GROWTH.NAME,
                 component: () => import('@/views/Dashboard/Growth.vue')
+            },
+            {
+                path: Routes.DASHBOARD.HISTORY.PATH,
+                name: Routes.DASHBOARD.HISTORY.NAME,
+                component: () => import('@/views/Dashboard/History.vue')
             }
         ]
     },

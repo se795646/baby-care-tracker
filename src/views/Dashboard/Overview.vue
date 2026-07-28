@@ -561,63 +561,28 @@
             </div>
         </div>
 
-        <!-- 歷史清單區域 -->
+        <!-- 最近五筆作息記錄 -->
         <div
             class="bq-rounded-16 bq-border bq-border-gray-100 bq-bg-white bq-p-6 bq-shadow-sm"
         >
-            <div
-                class="bq-mb-6 bq-flex bq-flex-col bq-items-start bq-justify-between bq-gap-4 sm:bq-flex-row sm:bq-items-center"
-            >
+            <div class="bq-mb-6 bq-flex bq-items-center bq-justify-between">
                 <h3 class="bq-text-lg bq-font-bold bq-text-gray-800">
-                    作息歷史日誌
+                    最近作息記錄
                 </h3>
-
-                <!-- 篩選器與搜尋 -->
-                <div
-                    class="bq-flex bq-w-full bq-flex-wrap bq-gap-3 sm:bq-w-auto"
-                >
-                    <!-- Tab 切換 -->
-                    <div
-                        class="bq-rounded-8 bq-flex bq-items-center bq-bg-gray-100 bq-p-1"
-                    >
-                        <button
-                            v-for="tab in filterTabs"
-                            :key="tab.value"
-                            type="button"
-                            class="bq-rounded-6 bq-px-4 bq-py-1.5 bq-text-xs bq-font-bold bq-transition"
-                            :class="
-                                filterType === tab.value
-                                    ? 'bq-bg-white bq-text-gray-800 bq-shadow-sm'
-                                    : 'bq-text-gray-500 hover:bq-text-gray-800'
-                            "
-                            @click="filterType = tab.value"
-                        >
-                            {{ tab.label }}
-                        </button>
-                    </div>
-
-                    <!-- 搜尋框 -->
-                    <input
-                        v-model="searchQuery"
-                        type="text"
-                        placeholder="搜尋備註..."
-                        class="bq-rounded-8 bq-w-full bq-border bq-border-gray-200 bq-px-3 bq-py-1.5 bq-text-xs focus:bq-border-pink-300 focus:bq-outline-none sm:bq-w-40"
-                    />
-                </div>
             </div>
 
             <!-- 歷史日誌列表 -->
             <div
-                v-if="filteredRecords.length === 0"
+                v-if="recentRecords.length === 0"
                 class="bq-py-12 bq-text-center bq-text-gray-400"
             >
                 <div class="bq-mb-2 bq-text-4xl">🍃</div>
-                <div>沒有符合條件的作息記錄喔！</div>
+                <div>目前沒有作息記錄，點擊上方按鈕新增吧！</div>
             </div>
 
             <div v-else class="bq-flex bq-flex-col bq-gap-4">
                 <div
-                    v-for="record in filteredRecords"
+                    v-for="record in recentRecords"
                     :key="record.id"
                     class="record-card bq-rounded-12 bq-relative bq-flex bq-flex-col bq-items-start bq-justify-between bq-gap-4 bq-border bq-border-slate-100 bq-bg-slate-50 bq-p-4 bq-transition hover:bq-bg-slate-100/70 hover:bq-shadow-sm md:bq-flex-row md:bq-items-center"
                 >
@@ -699,6 +664,17 @@
                         </button>
                     </div>
                 </div>
+            </div>
+
+            <!-- 查看完整歷史日誌按鈕 -->
+            <div class="bq-mt-6 bq-flex bq-justify-center">
+                <button
+                    type="button"
+                    class="active:bq-scale-98 bq-rounded-10 bq-w-full bq-bg-slate-100 bq-px-6 bq-py-3 bq-text-sm bq-font-bold bq-text-gray-700 bq-transition hover:bq-bg-slate-200 sm:bq-w-auto"
+                    @click="$router.push({ name: 'DashboardHistory' })"
+                >
+                    📋 查看完整歷史日誌
+                </button>
             </div>
         </div>
 
@@ -1185,13 +1161,6 @@ const todayString = computed(() => {
 
 // ─── 數據來源與狀態 ───
 const records = ref([]);
-const searchQuery = ref('');
-const filterType = ref('all');
-const filterTabs = [
-    { label: '全部', value: 'all' },
-    { label: '餵奶 🍼', value: 'milk' },
-    { label: '睡眠 💤', value: 'sleep' }
-];
 
 // 載入作息記錄
 const loadRecords = async () => {
@@ -1331,29 +1300,11 @@ const sleepPercent = computed(() => {
     return Math.round((todaySleepMinutes.value / targetMins) * 100) || 0;
 });
 
-// ─── 歷史記錄過濾 ───
-const filteredRecords = computed(() => {
-    let list = records.value;
-
-    // 類別過濾
-    if (filterType.value !== 'all') {
-        list = list.filter((r) => r.type === filterType.value);
-    } else {
-        // 首頁日誌的 'all' 指的是餵奶與睡眠記錄，不包含體重記錄
-        list = list.filter((r) => r.type === 'milk' || r.type === 'sleep');
-    }
-
-    // 搜尋關鍵字過濾
-    if (searchQuery.value.trim() !== '') {
-        const query = searchQuery.value.toLowerCase();
-        list = list.filter(
-            (r) =>
-                r.note?.toLowerCase().includes(query) ||
-                getRecordTitle(r).toLowerCase().includes(query)
-        );
-    }
-
-    return list;
+// ─── 最近作息記錄 (前 5 筆) ───
+const recentRecords = computed(() => {
+    return records.value
+        .filter((r) => r.type === 'milk' || r.type === 'sleep')
+        .slice(0, 5);
 });
 
 // ─── 記錄標題與時間格式化 ───
