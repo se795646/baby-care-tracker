@@ -330,7 +330,9 @@
         </v-dialog>
 
         <!-- 今日統計資料與操作卡片 -->
-        <div class="bq-mb-8 bq-grid bq-grid-cols-1 bq-gap-6 md:bq-grid-cols-2 xl:bq-grid-cols-4">
+        <div
+            class="bq-mb-8 bq-grid bq-grid-cols-1 bq-gap-6 md:bq-grid-cols-2 xl:bq-grid-cols-4"
+        >
             <!-- 喝奶統計 -->
             <div
                 class="bq-rounded-16 bq-relative bq-flex bq-flex-col bq-items-center bq-overflow-hidden bq-border bq-border-gray-100 bq-bg-white bq-p-6 bq-shadow-sm"
@@ -515,7 +517,12 @@
                             :stroke-dasharray="364.4"
                             :stroke-dashoffset="
                                 364.4 -
-                                (364.4 * Math.min((todayDiaperTotal / 6) * 100, 100)) / 100
+                                (364.4 *
+                                    Math.min(
+                                        (todayDiaperTotal / 6) * 100,
+                                        100
+                                    )) /
+                                    100
                             "
                             stroke-linecap="round"
                             class="bq-transition-all bq-duration-1000"
@@ -537,20 +544,27 @@
                         <div class="bq-text-3xl bq-font-black bq-text-gray-800">
                             {{ todayDiaperTotal }}
                         </div>
-                        <div class="bq-text-xs bq-text-gray-400">
-                            次更換
-                        </div>
+                        <div class="bq-text-xs bq-text-gray-400">次更換</div>
                     </div>
                 </div>
                 <div class="bq-text-center">
                     <div class="bq-text-sm bq-font-medium bq-text-gray-600">
-                        💦 尿尿 {{ todayWetCount }} 次 / 💩 大便 {{ todayDirtyCount }} 次
+                        💦 尿尿 {{ todayWetCount }} 次 / 💩 大便
+                        {{ todayDirtyCount }} 次
                     </div>
                     <div
                         class="bq-mt-1 bq-text-xs bq-font-bold"
-                        :class="todayDiaperTotal >= 6 ? 'bq-text-emerald-500' : 'bq-text-amber-500'"
+                        :class="
+                            todayDiaperTotal >= 6
+                                ? 'bq-text-emerald-500'
+                                : 'bq-text-amber-500'
+                        "
                     >
-                        {{ todayDiaperTotal >= 6 ? '💦 水分補充足夠 (正常)' : '⚠️ 每日少於6次注意脫水' }}
+                        {{
+                            todayDiaperTotal >= 6
+                                ? '💦 水分補充足夠 (正常)'
+                                : '⚠️ 每日少於6次注意脫水'
+                        }}
                     </div>
                 </div>
             </div>
@@ -1444,7 +1458,10 @@ const todayDiaperTotal = computed(() => {
 // ─── 最近作息記錄 (前 5 筆) ───
 const recentRecords = computed(() => {
     return records.value
-        .filter((r) => r.type === 'milk' || r.type === 'sleep' || r.type === 'diaper')
+        .filter(
+            (r) =>
+                r.type === 'milk' || r.type === 'sleep' || r.type === 'diaper'
+        )
         .slice(0, 5);
 });
 
@@ -1459,8 +1476,12 @@ const getRecordTitle = (record) => {
         };
         const typeName = typeMap[record.milkType] || '喝奶';
         if (record.milkType === 'breast_direct') {
-            const left = record.leftDuration ? `${record.leftDuration}分` : '0分';
-            const right = record.rightDuration ? `${record.rightDuration}分` : '0分';
+            const left = record.leftDuration
+                ? `${record.leftDuration}分`
+                : '0分';
+            const right = record.rightDuration
+                ? `${record.rightDuration}分`
+                : '0分';
             return `${typeName} (左 ${left} / 右 ${right})`;
         }
         return `${typeName} ${record.amount} ml`;
@@ -1476,7 +1497,7 @@ const getRecordTitle = (record) => {
                 dry: '檢查尿布 ✨'
             };
             const typeLabel = typeLabels[meta.diaperType] || '換尿布';
-            
+
             if (meta.diaperType === 'dirty' || meta.diaperType === 'both') {
                 const colorLabels = {
                     normal_yellow: '黃色',
@@ -1798,6 +1819,21 @@ const handleVoiceSaveRecord = async (parsedResult) => {
             duration: parsedResult.duration,
             photo: '',
             note: parsedResult.note
+        };
+    } else if (parsedResult.type === 'diaper') {
+        const diaperMetadata = {
+            diaperType: parsedResult.diaperType,
+            poopColor: parsedResult.poopColor,
+            poopStatus: parsedResult.poopStatus,
+            realNote: parsedResult.note
+        };
+        record = {
+            id: `diaper-${Date.now()}`,
+            type: 'diaper',
+            timestamp: Date.now(),
+            photo: '',
+            note: JSON.stringify(diaperMetadata),
+            updatedAt: Date.now()
         };
     }
 

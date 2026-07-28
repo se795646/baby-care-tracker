@@ -383,5 +383,95 @@ export function parseVoiceInput(text) {
         }
     }
 
+    // 3. 偵測是否為尿布記錄
+    const isDiaper =
+        normalizedText.includes('尿布') ||
+        normalizedText.includes('尿尿') ||
+        normalizedText.includes('大便') ||
+        normalizedText.includes('便便') ||
+        normalizedText.includes('乾淨') ||
+        normalizedText.includes('檢查');
+
+    if (isDiaper) {
+        let diaperType = 'wet'; // 預設為尿尿
+        if (
+            (normalizedText.includes('尿') &&
+                normalizedText.includes('大便')) ||
+            (normalizedText.includes('尿') && normalizedText.includes('便便'))
+        ) {
+            diaperType = 'both';
+        } else if (
+            normalizedText.includes('大便') ||
+            normalizedText.includes('便便') ||
+            normalizedText.includes('便')
+        ) {
+            diaperType = 'dirty';
+        } else if (
+            normalizedText.includes('乾淨') ||
+            normalizedText.includes('檢查')
+        ) {
+            diaperType = 'dry';
+        } else if (normalizedText.includes('尿')) {
+            diaperType = 'wet';
+        }
+
+        // 解析大便顏色 (僅在大便或兩者都有時適用)
+        let poopColor = null;
+        if (diaperType === 'dirty' || diaperType === 'both') {
+            poopColor = 'normal_yellow'; // 預設正常黃
+            if (normalizedText.includes('灰白')) {
+                poopColor = 'abnormal_white';
+            } else if (normalizedText.includes('淡黃')) {
+                poopColor = 'abnormal_light_yellow';
+            } else if (
+                normalizedText.includes('紅') ||
+                normalizedText.includes('血')
+            ) {
+                poopColor = 'red';
+            } else if (normalizedText.includes('黑')) {
+                poopColor = 'black';
+            } else if (normalizedText.includes('綠')) {
+                poopColor = 'normal_green';
+            } else if (normalizedText.includes('褐')) {
+                poopColor = 'normal_brown';
+            } else if (normalizedText.includes('黃')) {
+                poopColor = 'normal_yellow';
+            }
+        }
+
+        // 解析大便狀態 (僅在大便或兩者都有時適用)
+        let poopStatus = null;
+        if (diaperType === 'dirty' || diaperType === 'both') {
+            poopStatus = 'soft'; // 預設軟便
+            if (
+                normalizedText.includes('稀') ||
+                normalizedText.includes('糊')
+            ) {
+                poopStatus = 'loose';
+            } else if (
+                normalizedText.includes('硬') ||
+                normalizedText.includes('乾')
+            ) {
+                poopStatus = 'hard';
+            } else if (
+                normalizedText.includes('水') ||
+                normalizedText.includes('瀉') ||
+                normalizedText.includes('拉肚子')
+            ) {
+                poopStatus = 'watery';
+            } else if (normalizedText.includes('軟')) {
+                poopStatus = 'soft';
+            }
+        }
+
+        return {
+            type: 'diaper',
+            diaperType,
+            poopColor,
+            poopStatus,
+            note: `語音匯入：「${text}」`
+        };
+    }
+
     return null;
 }

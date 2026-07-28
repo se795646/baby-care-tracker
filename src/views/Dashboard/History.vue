@@ -79,7 +79,9 @@
                         :class="getRecordCardClass(record)"
                     >
                         <!-- 左側資訊區 (Icon + Title/Time/Note) -->
-                        <div class="bq-flex bq-min-w-0 bq-flex-1 bq-items-start bq-gap-3.5">
+                        <div
+                            class="bq-flex bq-min-w-0 bq-flex-1 bq-items-start bq-gap-3.5"
+                        >
                             <!-- 類別 Icon -->
                             <span
                                 class="bq-flex bq-h-11 bq-w-11 bq-flex-shrink-0 bq-items-center bq-justify-center bq-rounded-full bq-text-xl bq-shadow-sm"
@@ -102,8 +104,12 @@
 
                             <!-- 內容資訊 -->
                             <div class="bq-min-w-0 bq-flex-1">
-                                <div class="bq-flex bq-flex-wrap bq-items-center bq-gap-2">
-                                    <span class="bq-text-sm bq-font-bold bq-text-gray-800">
+                                <div
+                                    class="bq-flex bq-flex-wrap bq-items-center bq-gap-2"
+                                >
+                                    <span
+                                        class="bq-text-sm bq-font-bold bq-text-gray-800"
+                                    >
                                         {{ getRecordTitle(record) }}
                                     </span>
                                     <!-- 時間標籤 -->
@@ -255,8 +261,12 @@ const getRecordTitle = (record) => {
         };
         const typeName = typeMap[record.milkType] || '喝奶';
         if (record.milkType === 'breast_direct') {
-            const left = record.leftDuration ? `${record.leftDuration}分` : '0分';
-            const right = record.rightDuration ? `${record.rightDuration}分` : '0分';
+            const left = record.leftDuration
+                ? `${record.leftDuration}分`
+                : '0分';
+            const right = record.rightDuration
+                ? `${record.rightDuration}分`
+                : '0分';
             return `${typeName} (左 ${left} / 右 ${right})`;
         }
         return `${typeName} ${record.amount} ml`;
@@ -272,7 +282,7 @@ const getRecordTitle = (record) => {
                 dry: '檢查尿布 ✨'
             };
             const typeLabel = typeLabels[meta.diaperType] || '換尿布';
-            
+
             if (meta.diaperType === 'dirty' || meta.diaperType === 'both') {
                 const colorLabels = {
                     normal_yellow: '黃色',

@@ -167,6 +167,70 @@ describe('voiceParser.js speech command parser', () => {
         });
     });
 
+    describe('Diaper parsing', () => {
+        it('should parse simple diaper change (wet)', () => {
+            const res = parseVoiceInput('換尿布');
+            expect(res).not.toBeNull();
+            expect(res.type).toBe('diaper');
+            expect(res.diaperType).toBe('wet');
+        });
+
+        it('should parse urine diaper change', () => {
+            const res = parseVoiceInput('寶寶尿尿了');
+            expect(res).not.toBeNull();
+            expect(res.type).toBe('diaper');
+            expect(res.diaperType).toBe('wet');
+        });
+
+        it('should parse poop diaper change with defaults', () => {
+            const res = parseVoiceInput('今天大便了');
+            expect(res).not.toBeNull();
+            expect(res.type).toBe('diaper');
+            expect(res.diaperType).toBe('dirty');
+            expect(res.poopColor).toBe('normal_yellow');
+            expect(res.poopStatus).toBe('soft');
+        });
+
+        it('should parse poop with color and status keywords', () => {
+            const res = parseVoiceInput('大便綠色稀稀的');
+            expect(res).not.toBeNull();
+            expect(res.type).toBe('diaper');
+            expect(res.diaperType).toBe('dirty');
+            expect(res.poopColor).toBe('normal_green');
+            expect(res.poopStatus).toBe('loose');
+        });
+
+        it('should parse warning poop color like gray-white', () => {
+            const res = parseVoiceInput('大便灰白色');
+            expect(res).not.toBeNull();
+            expect(res.type).toBe('diaper');
+            expect(res.diaperType).toBe('dirty');
+            expect(res.poopColor).toBe('abnormal_white');
+        });
+
+        it('should parse watery warning status (diarrhea)', () => {
+            const res = parseVoiceInput('拉肚子大便水水的');
+            expect(res).not.toBeNull();
+            expect(res.type).toBe('diaper');
+            expect(res.diaperType).toBe('dirty');
+            expect(res.poopStatus).toBe('watery');
+        });
+
+        it('should parse both wet and dirty diaper change', () => {
+            const res = parseVoiceInput('尿尿和大便了');
+            expect(res).not.toBeNull();
+            expect(res.type).toBe('diaper');
+            expect(res.diaperType).toBe('both');
+        });
+
+        it('should parse dry diaper inspection', () => {
+            const res = parseVoiceInput('檢查尿布是乾淨的');
+            expect(res).not.toBeNull();
+            expect(res.type).toBe('diaper');
+            expect(res.diaperType).toBe('dry');
+        });
+    });
+
     describe('Invalid inputs', () => {
         it('should return null for unrelated commands', () => {
             expect(parseVoiceInput('今天天氣真好')).toBeNull();
