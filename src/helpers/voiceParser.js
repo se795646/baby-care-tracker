@@ -221,11 +221,80 @@ export function parseVoiceTimestamp(normalizedText, now = new Date()) {
 export function parseVoiceInput(text) {
     if (!text) return null;
 
-    // 統一轉成小寫，方便比對 ml, cc 等
     const normalizedText = text.toLowerCase().trim();
     const now = new Date();
 
-    // 1. 偵測是否為睡眠記錄
+    // 用於記錄扣除時間文字後的內容，防止 Regex 匹配到時間點裡的數字而干擾奶量
+    let textWithoutTime = normalizedText;
+    let parsedTimestamp = null;
+
+    // 1. 優先匹配時間差
+    // A. "x個半小時前" 或 "半小時前"
+    const halfBeforeRegex =
+        /(?:(\d+|[一二兩三四五六七八九十]))?\s*(?:個)?半(?:小)?時前/;
+    const halfBeforeMatch = normalizedText.match(halfBeforeRegex);
+    if (halfBeforeMatch) {
+        const hoursPart = halfBeforeMatch[1]
+            ? chineseToNumber(halfBeforeMatch[1])
+            : 0;
+        const diffMs = (hoursPart * 60 + 30) * 60000;
+        parsedTimestamp = now.getTime() - diffMs;
+        textWithoutTime = textWithoutTime.replace(halfBeforeMatch[0], '');
+    }
+
+    // B. "x小時前"
+    if (!parsedTimestamp) {
+        const hoursBeforeRegex =
+            /(\d+|[一二兩三四五六七八九十]+)\s*(?:個)?\s*小時前/;
+        const hoursBeforeMatch = normalizedText.match(hoursBeforeRegex);
+        if (hoursBeforeMatch) {
+            const hours = chineseToNumber(hoursBeforeMatch[1]);
+            parsedTimestamp = now.getTime() - hours * 60 * 60000;
+            textWithoutTime = textWithoutTime.replace(hoursBeforeMatch[0], '');
+        }
+    }
+
+    // C. "x分鐘前" 或 "x分前"
+    if (!parsedTimestamp) {
+        const minsBeforeRegex =
+            /(\d+|[一二兩三四五六七八九十]+)\s*(?:分鐘|分)前/;
+        const minsBeforeMatch = normalizedText.match(minsBeforeRegex);
+        if (minsBeforeMatch) {
+            const mins = chineseToNumber(minsBeforeMatch[1]);
+            parsedTimestamp = now.getTime() - mins * 60000;
+            textWithoutTime = textWithoutTime.replace(minsBeforeMatch[0], '');
+        }
+    }
+
+    // 2. 匹配特定時間點，如 "下午兩點半", "10:30"
+    if (!parsedTimestamp) {
+        const timePointRegex =
+            /(?:下午|晚上|早上|上午|pm|am|下|晚|早|上)?\s*(?:\d{1,2}\s*:\s*\d{2}|\d+|[一二兩三四五六七八九十百]+)\s*(?:點|點鐘|時)(?:\d+|[一二兩三四五六七八九十]+|半)?\s*(?:分|分鐘)?/;
+        const timePointMatch = normalizedText.match(timePointRegex);
+        if (timePointMatch) {
+            const tp = parseTimePoint(timePointMatch[0], now);
+            if (tp) {
+                parsedTimestamp = tp.getTime();
+                textWithoutTime = textWithoutTime.replace(
+                    timePointMatch[0],
+                    ''
+                );
+            }
+        }
+    }
+
+    if (!parsedTimestamp) {
+        const colonMatch = normalizedText.match(/(\d{1,2})\s*:\s*(\d{2})/);
+        if (colonMatch) {
+            const tp = parseTimePoint(colonMatch[0], now);
+            if (tp) {
+                parsedTimestamp = tp.getTime();
+                textWithoutTime = textWithoutTime.replace(colonMatch[0], '');
+            }
+        }
+    }
+
+    // ─── 1. 偵測是否為睡眠記錄 ───
     if (normalizedText.includes('睡') || normalizedText.includes('眠')) {
         let durationMinutes = 0;
         let matched = false;
@@ -258,7 +327,6 @@ export function parseVoiceInput(text) {
                 const endPoint = parseTimePoint(splitMatch[2], now);
                 if (startPoint && endPoint) {
                     matched = true;
-                    // 如果結束時間早於開始時間（例如跨子夜，23:00 睡到 1:00），將結束時間加一天
                     if (endPoint.getTime() < startPoint.getTime()) {
                         endPoint.setDate(endPoint.getDate() + 1);
                     }
@@ -289,7 +357,7 @@ export function parseVoiceInput(text) {
                     /(\d+|[一二兩三四五六七八九十百]+)\s*(?:個)?\s*小時/
                 );
                 const hasMins = normalizedText.match(
-                    /(\d+|[一二兩三四五六七八九十百]+)\s*(?:個)?\s*(?:分鐘|分)/
+                    /(\d+|[原二兩三四五六七八九十百]+)\s*(?:個)?\s*(?:分鐘|分)/
                 );
 
                 if (hasHours || hasMins) {
@@ -327,53 +395,53 @@ export function parseVoiceInput(text) {
         }
     }
 
-    // 2. 偵測是否為餵奶記錄
+    // ─── 2. 偵測是否為餵奶記錄 ───
     const isMilk =
-        normalizedText.includes('奶') ||
-        normalizedText.includes('喝') ||
-        normalizedText.includes('餵') ||
-        normalizedText.includes('吃') ||
-        normalizedText.includes('ml') ||
-        normalizedText.includes('cc') ||
-        normalizedText.includes('副食') ||
-        normalizedText.includes('毫升');
+        textWithoutTime.includes('奶') ||
+        textWithoutTime.includes('喝') ||
+        textWithoutTime.includes('餵') ||
+        textWithoutTime.includes('吃') ||
+        textWithoutTime.includes('ml') ||
+        textWithoutTime.includes('cc') ||
+        textWithoutTime.includes('副食') ||
+        textWithoutTime.includes('毫升');
 
     if (isMilk) {
         let milkType = 'formula';
         if (
-            normalizedText.includes('親餵') ||
-            normalizedText.includes('直接')
+            textWithoutTime.includes('親餵') ||
+            textWithoutTime.includes('直接')
         ) {
             milkType = 'breast_direct';
         } else if (
-            normalizedText.includes('瓶餵') ||
-            normalizedText.includes('母乳瓶')
+            textWithoutTime.includes('瓶餵') ||
+            textWithoutTime.includes('母乳瓶')
         ) {
             milkType = 'breast_bottle';
         } else if (
-            normalizedText.includes('母乳') ||
-            normalizedText.includes('母奶')
+            textWithoutTime.includes('母乳') ||
+            textWithoutTime.includes('母奶')
         ) {
             milkType = 'breast_bottle';
         } else if (
-            normalizedText.includes('副食') ||
-            normalizedText.includes('粥') ||
-            normalizedText.includes('泥') ||
-            normalizedText.includes('麥精') ||
-            normalizedText.includes('米精') ||
-            normalizedText.includes('固體')
+            textWithoutTime.includes('副食') ||
+            textWithoutTime.includes('粥') ||
+            textWithoutTime.includes('泥') ||
+            textWithoutTime.includes('麥精') ||
+            textWithoutTime.includes('米精') ||
+            textWithoutTime.includes('固體')
         ) {
             milkType = 'solid';
         }
 
         if (milkType === 'breast_direct') {
-            const leftMatch = normalizedText.match(
+            const leftMatch = textWithoutTime.match(
                 /(?:左邊|左)\s*(\d+|[一二兩三四五六七八九十]+)\s*(?:個)?\s*(?:分鐘|分)/
             );
-            const rightMatch = normalizedText.match(
+            const rightMatch = textWithoutTime.match(
                 /(?:右邊|右)\s*(\d+|[一二兩三四五六七八九十]+)\s*(?:個)?\s*(?:分鐘|分)/
             );
-            const generalMatch = normalizedText.match(
+            const generalMatch = textWithoutTime.match(
                 /(?:親餵|餵|時間)\s*(\d+|[一二兩三四五六七八九十]+)\s*(?:個)?\s*(?:分鐘|分)/
             );
 
@@ -393,7 +461,7 @@ export function parseVoiceInput(text) {
                     leftDuration = Math.round(totalDur / 2);
                     rightDuration = totalDur - leftDuration;
                 } else {
-                    const numberMatch = normalizedText.match(
+                    const numberMatch = textWithoutTime.match(
                         /(\d+|[一二兩三四五六七八九十]+)\s*(?:個)?\s*(?:分鐘|分)/
                     );
                     if (numberMatch) {
@@ -411,15 +479,15 @@ export function parseVoiceInput(text) {
                     amount: 0,
                     leftDuration,
                     rightDuration,
-                    timestamp: parseVoiceTimestamp(normalizedText, now),
+                    timestamp: parsedTimestamp,
                     note: `語音匯入：「${text}」`
                 };
             }
         } else {
-            const amountMatch = normalizedText.match(
+            const amountMatch = textWithoutTime.match(
                 /(\d+|[一二兩三四五六七八九十百]+)\s*(?:cc|ml|毫升|克|g|個)?/
             );
-            const amountMatch2 = normalizedText.match(
+            const amountMatch2 = textWithoutTime.match(
                 /(?:餵|喝|吃|量|額)\s*(\d+|[一二兩三四五六七八九十百]+)/
             );
 
@@ -437,42 +505,42 @@ export function parseVoiceInput(text) {
                     amount,
                     leftDuration: 0,
                     rightDuration: 0,
-                    timestamp: parseVoiceTimestamp(normalizedText, now),
+                    timestamp: parsedTimestamp,
                     note: `語音匯入：「${text}」`
                 };
             }
         }
     }
 
-    // 3. 偵測是否為尿布記錄
+    // ─── 3. 偵測是否為尿布記錄 ───
     const isDiaper =
-        normalizedText.includes('尿布') ||
-        normalizedText.includes('尿尿') ||
-        normalizedText.includes('大便') ||
-        normalizedText.includes('便便') ||
-        normalizedText.includes('乾淨') ||
-        normalizedText.includes('檢查');
+        textWithoutTime.includes('尿布') ||
+        textWithoutTime.includes('尿尿') ||
+        textWithoutTime.includes('大便') ||
+        textWithoutTime.includes('便便') ||
+        textWithoutTime.includes('乾淨') ||
+        textWithoutTime.includes('檢查');
 
     if (isDiaper) {
         let diaperType = 'wet'; // 預設為尿尿
         if (
-            (normalizedText.includes('尿') &&
-                normalizedText.includes('大便')) ||
-            (normalizedText.includes('尿') && normalizedText.includes('便便'))
+            (textWithoutTime.includes('尿') &&
+                textWithoutTime.includes('大便')) ||
+            (textWithoutTime.includes('尿') && textWithoutTime.includes('便便'))
         ) {
             diaperType = 'both';
         } else if (
-            normalizedText.includes('大便') ||
-            normalizedText.includes('便便') ||
-            normalizedText.includes('便')
+            textWithoutTime.includes('大便') ||
+            textWithoutTime.includes('便便') ||
+            textWithoutTime.includes('便')
         ) {
             diaperType = 'dirty';
         } else if (
-            normalizedText.includes('乾淨') ||
-            normalizedText.includes('檢查')
+            textWithoutTime.includes('乾淨') ||
+            textWithoutTime.includes('檢查')
         ) {
             diaperType = 'dry';
-        } else if (normalizedText.includes('尿')) {
+        } else if (textWithoutTime.includes('尿')) {
             diaperType = 'wet';
         }
 
@@ -480,18 +548,18 @@ export function parseVoiceInput(text) {
         let poopColor = null;
         if (diaperType === 'dirty' || diaperType === 'both') {
             poopColor = 'normal_yellow'; // 預設正常黃
-            if (normalizedText.includes('灰白')) {
+            if (textWithoutTime.includes('灰白')) {
                 poopColor = 'abnormal_white';
-            } else if (normalizedText.includes('淡黃')) {
+            } else if (textWithoutTime.includes('淡黃')) {
                 poopColor = 'abnormal_light_yellow';
             } else if (
-                normalizedText.includes('紅') ||
-                normalizedText.includes('血')
+                textWithoutTime.includes('紅') ||
+                textWithoutTime.includes('血')
             ) {
                 poopColor = 'red';
-            } else if (normalizedText.includes('黑')) {
+            } else if (textWithoutTime.includes('黑')) {
                 poopColor = 'black';
-            } else if (normalizedText.includes('綠')) {
+            } else if (textWithoutTime.includes('綠')) {
                 poopColor = 'normal_green';
             } else if (normalizedText.includes('褐')) {
                 poopColor = 'normal_brown';
