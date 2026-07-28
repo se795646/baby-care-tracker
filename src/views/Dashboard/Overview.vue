@@ -330,7 +330,7 @@
         </v-dialog>
 
         <!-- 今日統計資料與操作卡片 -->
-        <div class="bq-mb-8 bq-grid bq-grid-cols-1 bq-gap-6 lg:bq-grid-cols-3">
+        <div class="bq-mb-8 bq-grid bq-grid-cols-1 bq-gap-6 md:bq-grid-cols-2 xl:bq-grid-cols-4">
             <!-- 喝奶統計 -->
             <div
                 class="bq-rounded-16 bq-relative bq-flex bq-flex-col bq-items-center bq-overflow-hidden bq-border bq-border-gray-100 bq-bg-white bq-p-6 bq-shadow-sm"
@@ -482,6 +482,79 @@
                 </div>
             </div>
 
+            <!-- 尿布統計 -->
+            <div
+                class="bq-rounded-16 bq-relative bq-flex bq-flex-col bq-items-center bq-overflow-hidden bq-border bq-border-gray-100 bq-bg-white bq-p-6 bq-shadow-sm"
+            >
+                <div
+                    class="bq-absolute bq-left-4 bq-top-3 bq-text-sm bq-font-bold bq-text-gray-500"
+                >
+                    今日尿布
+                </div>
+                <div
+                    class="bq-relative bq-my-4 bq-flex bq-items-center bq-justify-center"
+                    style="width: 140px; height: 140px"
+                >
+                    <!-- SVG 圓環進度條 -->
+                    <svg class="bq-h-full bq-w-full -bq-rotate-90">
+                        <circle
+                            cx="70"
+                            cy="70"
+                            r="58"
+                            stroke="#F3F4F6"
+                            stroke-width="12"
+                            fill="transparent"
+                        />
+                        <circle
+                            cx="70"
+                            cy="70"
+                            r="58"
+                            stroke="url(#diaperGradient)"
+                            stroke-width="12"
+                            fill="transparent"
+                            :stroke-dasharray="364.4"
+                            :stroke-dashoffset="
+                                364.4 -
+                                (364.4 * Math.min((todayDiaperTotal / 6) * 100, 100)) / 100
+                            "
+                            stroke-linecap="round"
+                            class="bq-transition-all bq-duration-1000"
+                        />
+                        <defs>
+                            <linearGradient
+                                id="diaperGradient"
+                                x1="0%"
+                                y1="0%"
+                                x2="100%"
+                                y2="100%"
+                            >
+                                <stop offset="0%" stop-color="#F59E0B" />
+                                <stop offset="100%" stop-color="#D97706" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <div class="bq-absolute bq-text-center">
+                        <div class="bq-text-3xl bq-font-black bq-text-gray-800">
+                            {{ todayDiaperTotal }}
+                        </div>
+                        <div class="bq-text-xs bq-text-gray-400">
+                            次更換
+                        </div>
+                    </div>
+                </div>
+                <div class="bq-text-center">
+                    <div class="bq-text-sm bq-font-medium bq-text-gray-600">
+                        💦 尿尿 {{ todayWetCount }} 次 / 💩 大便 {{ todayDirtyCount }} 次
+                    </div>
+                    <div
+                        class="bq-mt-1 bq-text-xs bq-font-bold"
+                        :class="todayDiaperTotal >= 6 ? 'bq-text-emerald-500' : 'bq-text-amber-500'"
+                    >
+                        {{ todayDiaperTotal >= 6 ? '💦 水分補充足夠 (正常)' : '⚠️ 每日少於6次注意脫水' }}
+                    </div>
+                </div>
+            </div>
+
             <!-- 快捷記錄與睡眠開關 -->
             <div
                 class="bq-rounded-16 bq-flex bq-flex-col bq-justify-center bq-gap-4 bq-border bq-border-gray-100 bq-bg-white bq-p-6 bq-shadow-sm"
@@ -542,6 +615,24 @@
                 </button>
 
                 <button
+                    class="action-card-btn bq-rounded-12 bq-flex bq-items-center bq-gap-4 bq-bg-gradient-to-r bq-from-amber-100 bq-to-orange-100 bq-p-4 bq-text-left bq-text-gray-800 bq-shadow-sm bq-transition hover:bq-from-amber-200 hover:bq-to-orange-200 hover:bq-shadow"
+                    @click="showDiaperDialog = true"
+                >
+                    <span
+                        class="bq-flex bq-h-12 bq-w-12 bq-items-center bq-justify-center bq-rounded-full bq-bg-white bq-text-2xl bq-shadow-sm"
+                        >🧷</span
+                    >
+                    <div>
+                        <div class="bq-text-base bq-font-bold">
+                            記錄更換尿布
+                        </div>
+                        <div class="bq-text-xs bq-text-gray-500">
+                            記錄大便與尿尿顏色狀態
+                        </div>
+                    </div>
+                </button>
+
+                <button
                     class="action-card-btn bq-rounded-12 bq-flex bq-items-center bq-gap-4 bq-bg-gradient-to-r bq-from-teal-100 bq-to-emerald-100 bq-p-4 bq-text-left bq-text-gray-800 bq-shadow-sm bq-transition hover:bq-from-teal-200 hover:bq-to-emerald-200 hover:bq-shadow"
                     @click="openVoiceDialog"
                 >
@@ -585,11 +676,7 @@
                     v-for="record in recentRecords"
                     :key="record.id"
                     class="record-card bq-rounded-16 bq-flex bq-items-center bq-gap-3 bq-border bq-p-4 bq-shadow-sm bq-transition hover:bq-shadow-md"
-                    :class="
-                        record.type === 'milk'
-                            ? 'bq-border-l-4 bq-border-y-gray-100 bq-border-l-amber-400 bq-border-r-gray-100 bq-bg-amber-50/20'
-                            : 'bq-border-l-4 bq-border-y-gray-100 bq-border-l-indigo-400 bq-border-r-gray-100 bq-bg-indigo-50/20'
-                    "
+                    :class="getRecordCardClass(record)"
                 >
                     <!-- 左側資訊區 (Icon + Title/Time/Note) -->
                     <div
@@ -601,10 +688,18 @@
                             :class="
                                 record.type === 'milk'
                                     ? 'bq-bg-amber-100'
-                                    : 'bq-bg-indigo-100'
+                                    : record.type === 'sleep'
+                                      ? 'bq-bg-indigo-100'
+                                      : 'bq-bg-orange-100'
                             "
                         >
-                            {{ record.type === 'milk' ? '🍼' : '💤' }}
+                            {{
+                                record.type === 'milk'
+                                    ? '🍼'
+                                    : record.type === 'sleep'
+                                      ? '💤'
+                                      : '🧷'
+                            }}
                         </span>
 
                         <!-- 內容資訊 -->
@@ -633,10 +728,10 @@
                             </div>
                             <!-- 備註框 -->
                             <p
-                                v-if="record.note"
+                                v-if="getRecordNote(record)"
                                 class="bq-rounded-8 bq-mt-2 bq-inline-block bq-max-w-full bq-border bq-border-gray-100/50 bq-bg-white/80 bq-p-2 bq-text-xs bq-italic bq-text-gray-600"
                             >
-                                💬 {{ record.note }}
+                                💬 {{ getRecordNote(record) }}
                             </p>
                         </div>
                     </div>
@@ -932,6 +1027,12 @@
             @save-record="handleVoiceSaveRecord"
         />
 
+        <!-- 尿布紀錄 Dialog -->
+        <DiaperRecordDialog
+            v-model="showDiaperDialog"
+            @save-record="handleDiaperSaveRecord"
+        />
+
         <!-- 3. 查看大圖 Dialog -->
         <v-dialog v-model="showPhotoDialog" max-width="700px">
             <v-card class="bq-rounded-16 bq-overflow-hidden">
@@ -1155,6 +1256,7 @@ import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue';
 import LayoutItem from '@/components/layout/LayoutItem.vue';
 import CameraPicker from '@/components/CameraPicker.vue';
 import VoiceRecordDialog from '@/components/VoiceRecordDialog.vue';
+import DiaperRecordDialog from '@/components/DiaperRecordDialog.vue';
 import { saveRecord, getRecords, deleteRecord } from '@/helpers/db.js';
 import { syncWithSupabase, subscribeToRealtime } from '@/helpers/sync.js';
 
@@ -1305,10 +1407,44 @@ const sleepPercent = computed(() => {
     return Math.round((todaySleepMinutes.value / targetMins) * 100) || 0;
 });
 
+// 今日尿布記錄
+const todayDiaperRecords = computed(() => {
+    return todayRecords.value.filter((r) => r.type === 'diaper');
+});
+
+// 今日尿尿次數
+const todayWetCount = computed(() => {
+    return todayDiaperRecords.value.filter((r) => {
+        try {
+            const meta = JSON.parse(r.note);
+            return meta.diaperType === 'wet' || meta.diaperType === 'both';
+        } catch {
+            return false;
+        }
+    }).length;
+});
+
+// 今日大便次數
+const todayDirtyCount = computed(() => {
+    return todayDiaperRecords.value.filter((r) => {
+        try {
+            const meta = JSON.parse(r.note);
+            return meta.diaperType === 'dirty' || meta.diaperType === 'both';
+        } catch {
+            return false;
+        }
+    }).length;
+});
+
+// 今日總尿布次數
+const todayDiaperTotal = computed(() => {
+    return todayDiaperRecords.value.length;
+});
+
 // ─── 最近作息記錄 (前 5 筆) ───
 const recentRecords = computed(() => {
     return records.value
-        .filter((r) => r.type === 'milk' || r.type === 'sleep')
+        .filter((r) => r.type === 'milk' || r.type === 'sleep' || r.type === 'diaper')
         .slice(0, 5);
 });
 
@@ -1323,19 +1459,73 @@ const getRecordTitle = (record) => {
         };
         const typeName = typeMap[record.milkType] || '喝奶';
         if (record.milkType === 'breast_direct') {
-            const left = record.leftDuration
-                ? `${record.leftDuration}分`
-                : '0分';
-            const right = record.rightDuration
-                ? `${record.rightDuration}分`
-                : '0分';
+            const left = record.leftDuration ? `${record.leftDuration}分` : '0分';
+            const right = record.rightDuration ? `${record.rightDuration}分` : '0分';
             return `${typeName} (左 ${left} / 右 ${right})`;
         }
         return `${typeName} ${record.amount} ml`;
     } else if (record.type === 'sleep') {
         return '寶寶睡覺';
+    } else if (record.type === 'diaper') {
+        try {
+            const meta = JSON.parse(record.note);
+            const typeLabels = {
+                wet: '尿尿 💦',
+                dirty: '大便 💩',
+                both: '尿尿+大便 💦+💩',
+                dry: '檢查尿布 ✨'
+            };
+            const typeLabel = typeLabels[meta.diaperType] || '換尿布';
+            
+            if (meta.diaperType === 'dirty' || meta.diaperType === 'both') {
+                const colorLabels = {
+                    normal_yellow: '黃色',
+                    normal_green: '綠色',
+                    normal_brown: '褐色',
+                    abnormal_white: '灰白(異常)',
+                    abnormal_light_yellow: '淡黃(異常)',
+                    red: '血便(警報)',
+                    black: '黑便(警報)'
+                };
+                const statusLabels = {
+                    loose: '稀糊',
+                    soft: '軟便',
+                    hard: '硬便',
+                    watery: '水樣'
+                };
+                const colorName = colorLabels[meta.poopColor] || '未知色';
+                const statusName = statusLabels[meta.poopStatus] || '未知狀態';
+                return `${typeLabel} (${colorName}, ${statusName})`;
+            }
+            return typeLabel;
+        } catch {
+            return '更換尿布';
+        }
     }
     return '作息記錄';
+};
+
+const getRecordNote = (record) => {
+    if (record.type === 'diaper') {
+        try {
+            const meta = JSON.parse(record.note);
+            return meta.realNote || '';
+        } catch {
+            return record.note;
+        }
+    }
+    return record.note;
+};
+
+const getRecordCardClass = (record) => {
+    if (record.type === 'milk') {
+        return 'bq-border-l-4 bq-border-l-amber-400 bq-border-y-gray-100 bq-border-r-gray-100 bq-bg-amber-50/20';
+    } else if (record.type === 'sleep') {
+        return 'bq-border-l-4 bq-border-l-indigo-400 bq-border-y-gray-100 bq-border-r-gray-100 bq-bg-indigo-50/20';
+    } else if (record.type === 'diaper') {
+        return 'bq-border-l-4 bq-border-l-orange-400 bq-border-y-gray-100 bq-border-r-gray-100 bq-bg-orange-50/20';
+    }
+    return 'bq-border-l-4 bq-border-l-slate-400 bq-border-y-gray-100 bq-border-r-gray-100 bq-bg-slate-50/20';
 };
 
 const formatRecordTime = (record) => {
@@ -1622,6 +1812,18 @@ const handleVoiceSaveRecord = async (parsedResult) => {
         } catch {
             alert('語音記錄儲存失敗，請重試');
         }
+    }
+};
+
+// ─── 尿布紀錄處理 ───
+const showDiaperDialog = ref(false);
+const handleDiaperSaveRecord = async (record) => {
+    try {
+        await saveRecord(record);
+        await loadRecords();
+        syncWithSupabase().then(() => loadRecords());
+    } catch {
+        alert('尿布記錄儲存失敗，請重試');
     }
 };
 

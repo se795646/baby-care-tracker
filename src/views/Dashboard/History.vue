@@ -76,36 +76,34 @@
                         v-for="record in filteredRecords"
                         :key="record.id"
                         class="record-card bq-rounded-16 bq-flex bq-items-center bq-gap-3 bq-border bq-p-4 bq-shadow-sm bq-transition hover:bq-shadow-md"
-                        :class="
-                            record.type === 'milk'
-                                ? 'bq-border-l-4 bq-border-y-gray-100 bq-border-l-amber-400 bq-border-r-gray-100 bq-bg-amber-50/20'
-                                : 'bq-border-l-4 bq-border-y-gray-100 bq-border-l-indigo-400 bq-border-r-gray-100 bq-bg-indigo-50/20'
-                        "
+                        :class="getRecordCardClass(record)"
                     >
                         <!-- 左側資訊區 (Icon + Title/Time/Note) -->
-                        <div
-                            class="bq-flex bq-min-w-0 bq-flex-1 bq-items-start bq-gap-3.5"
-                        >
+                        <div class="bq-flex bq-min-w-0 bq-flex-1 bq-items-start bq-gap-3.5">
                             <!-- 類別 Icon -->
                             <span
                                 class="bq-flex bq-h-11 bq-w-11 bq-flex-shrink-0 bq-items-center bq-justify-center bq-rounded-full bq-text-xl bq-shadow-sm"
                                 :class="
                                     record.type === 'milk'
                                         ? 'bq-bg-amber-100'
-                                        : 'bq-bg-indigo-100'
+                                        : record.type === 'sleep'
+                                          ? 'bq-bg-indigo-100'
+                                          : 'bq-bg-orange-100'
                                 "
                             >
-                                {{ record.type === 'milk' ? '🍼' : '💤' }}
+                                {{
+                                    record.type === 'milk'
+                                        ? '🍼'
+                                        : record.type === 'sleep'
+                                          ? '💤'
+                                          : '🧷'
+                                }}
                             </span>
 
                             <!-- 內容資訊 -->
                             <div class="bq-min-w-0 bq-flex-1">
-                                <div
-                                    class="bq-flex bq-flex-wrap bq-items-center bq-gap-2"
-                                >
-                                    <span
-                                        class="bq-text-sm bq-font-bold bq-text-gray-800"
-                                    >
+                                <div class="bq-flex bq-flex-wrap bq-items-center bq-gap-2">
+                                    <span class="bq-text-sm bq-font-bold bq-text-gray-800">
                                         {{ getRecordTitle(record) }}
                                     </span>
                                     <!-- 時間標籤 -->
@@ -124,10 +122,10 @@
                                 </div>
                                 <!-- 備註框 -->
                                 <p
-                                    v-if="record.note"
+                                    v-if="getRecordNote(record)"
                                     class="bq-rounded-8 bq-mt-2 bq-inline-block bq-max-w-full bq-border bq-border-gray-100/50 bq-bg-white/80 bq-p-2 bq-text-xs bq-italic bq-text-gray-600"
                                 >
-                                    💬 {{ record.note }}
+                                    💬 {{ getRecordNote(record) }}
                                 </p>
                             </div>
                         </div>
@@ -205,7 +203,8 @@ const filterType = ref('all');
 const filterTabs = [
     { label: '全部', value: 'all' },
     { label: '餵奶 🍼', value: 'milk' },
-    { label: '睡眠 💤', value: 'sleep' }
+    { label: '睡眠 💤', value: 'sleep' },
+    { label: '尿布 🧷', value: 'diaper' }
 ];
 
 // 載入記錄
@@ -224,7 +223,7 @@ onMounted(() => {
 // 篩選後記錄
 const filteredRecords = computed(() => {
     let list = records.value.filter(
-        (r) => r.type === 'milk' || r.type === 'sleep'
+        (r) => r.type === 'milk' || r.type === 'sleep' || r.type === 'diaper'
     );
 
     // 類別篩選
@@ -256,19 +255,73 @@ const getRecordTitle = (record) => {
         };
         const typeName = typeMap[record.milkType] || '喝奶';
         if (record.milkType === 'breast_direct') {
-            const left = record.leftDuration
-                ? `${record.leftDuration}分`
-                : '0分';
-            const right = record.rightDuration
-                ? `${record.rightDuration}分`
-                : '0分';
+            const left = record.leftDuration ? `${record.leftDuration}分` : '0分';
+            const right = record.rightDuration ? `${record.rightDuration}分` : '0分';
             return `${typeName} (左 ${left} / 右 ${right})`;
         }
         return `${typeName} ${record.amount} ml`;
     } else if (record.type === 'sleep') {
         return '寶寶睡覺';
+    } else if (record.type === 'diaper') {
+        try {
+            const meta = JSON.parse(record.note);
+            const typeLabels = {
+                wet: '尿尿 💦',
+                dirty: '大便 💩',
+                both: '尿尿+大便 💦+💩',
+                dry: '檢查尿布 ✨'
+            };
+            const typeLabel = typeLabels[meta.diaperType] || '換尿布';
+            
+            if (meta.diaperType === 'dirty' || meta.diaperType === 'both') {
+                const colorLabels = {
+                    normal_yellow: '黃色',
+                    normal_green: '綠色',
+                    normal_brown: '褐色',
+                    abnormal_white: '灰白(異常)',
+                    abnormal_light_yellow: '淡黃(異常)',
+                    red: '血便(警報)',
+                    black: '黑便(警報)'
+                };
+                const statusLabels = {
+                    loose: '稀糊',
+                    soft: '軟便',
+                    hard: '硬便',
+                    watery: '水樣'
+                };
+                const colorName = colorLabels[meta.poopColor] || '未知色';
+                const statusName = statusLabels[meta.poopStatus] || '未知狀態';
+                return `${typeLabel} (${colorName}, ${statusName})`;
+            }
+            return typeLabel;
+        } catch {
+            return '更換尿布';
+        }
     }
     return '作息記錄';
+};
+
+const getRecordNote = (record) => {
+    if (record.type === 'diaper') {
+        try {
+            const meta = JSON.parse(record.note);
+            return meta.realNote || '';
+        } catch {
+            return record.note;
+        }
+    }
+    return record.note;
+};
+
+const getRecordCardClass = (record) => {
+    if (record.type === 'milk') {
+        return 'bq-border-l-4 bq-border-l-amber-400 bq-border-y-gray-100 bq-border-r-gray-100 bq-bg-amber-50/20';
+    } else if (record.type === 'sleep') {
+        return 'bq-border-l-4 bq-border-l-indigo-400 bq-border-y-gray-100 bq-border-r-gray-100 bq-bg-indigo-50/20';
+    } else if (record.type === 'diaper') {
+        return 'bq-border-l-4 bq-border-l-orange-400 bq-border-y-gray-100 bq-border-r-gray-100 bq-bg-orange-50/20';
+    }
+    return 'bq-border-l-4 bq-border-l-slate-400 bq-border-y-gray-100 bq-border-r-gray-100 bq-bg-slate-50/20';
 };
 
 const formatRecordTime = (record) => {
