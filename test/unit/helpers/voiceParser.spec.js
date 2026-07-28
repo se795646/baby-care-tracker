@@ -124,6 +124,47 @@ describe('voiceParser.js speech command parser', () => {
             expect(res3.type).toBe('sleep');
             expect(res3.duration).toBe(150);
         });
+
+        it('should parse sleep timeframe from A to B', () => {
+            const res = parseVoiceInput('從下午兩點半睡到下午四點');
+            expect(res).not.toBeNull();
+            expect(res.type).toBe('sleep');
+            expect(res.duration).toBe(90);
+            
+            // 檢查解析出的起訖時間是否符合
+            const start = new Date(res.timestamp);
+            const end = new Date(res.endTime);
+            expect(start.getHours()).toBe(14);
+            expect(start.getMinutes()).toBe(30);
+            expect(end.getHours()).toBe(16);
+            expect(end.getMinutes()).toBe(0);
+        });
+
+        it('should parse sleep timeframe with digital hours', () => {
+            const res = parseVoiceInput('13點睡到15點30分');
+            expect(res).not.toBeNull();
+            expect(res.type).toBe('sleep');
+            expect(res.duration).toBe(150);
+
+            const start = new Date(res.timestamp);
+            const end = new Date(res.endTime);
+            expect(start.getHours()).toBe(13);
+            expect(start.getMinutes()).toBe(0);
+            expect(end.getHours()).toBe(15);
+            expect(end.getMinutes()).toBe(30);
+        });
+
+        it('should parse sleep timeframe from A to now', () => {
+            // 此測試主要驗證能成功匹配 "睡到剛剛"
+            const res = parseVoiceInput('從下午兩點半睡到剛剛');
+            expect(res).not.toBeNull();
+            expect(res.type).toBe('sleep');
+            expect(res.duration).toBeGreaterThan(0);
+            
+            const start = new Date(res.timestamp);
+            expect(start.getHours()).toBe(14);
+            expect(start.getMinutes()).toBe(30);
+        });
     });
 
     describe('Invalid inputs', () => {
