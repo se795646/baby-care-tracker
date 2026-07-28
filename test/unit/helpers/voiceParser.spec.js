@@ -84,6 +84,27 @@ describe('voiceParser.js speech command parser', () => {
             expect(res.leftDuration).toBe(10);
             expect(res.rightDuration).toBe(10);
         });
+
+        it('should parse milk amount with relative past time', () => {
+            const res = parseVoiceInput('半小時前喝奶 120cc');
+            expect(res).not.toBeNull();
+            expect(res.type).toBe('milk');
+            expect(res.amount).toBe(120);
+            expect(res.timestamp).not.toBeNull();
+            const diffMin = Math.round((Date.now() - res.timestamp) / 60000);
+            expect(diffMin).toBe(30);
+        });
+
+        it('should parse milk amount with specific past timePoint', () => {
+            const res = parseVoiceInput('下午兩點半喝奶 120cc');
+            expect(res).not.toBeNull();
+            expect(res.type).toBe('milk');
+            expect(res.amount).toBe(120);
+            expect(res.timestamp).not.toBeNull();
+            const d = new Date(res.timestamp);
+            expect(d.getHours()).toBe(14);
+            expect(d.getMinutes()).toBe(30);
+        });
     });
 
     describe('Sleep parsing', () => {
@@ -228,6 +249,27 @@ describe('voiceParser.js speech command parser', () => {
             expect(res).not.toBeNull();
             expect(res.type).toBe('diaper');
             expect(res.diaperType).toBe('dry');
+        });
+
+        it('should parse diaper change with relative past time', () => {
+            const res = parseVoiceInput('十分鐘前大便了');
+            expect(res).not.toBeNull();
+            expect(res.type).toBe('diaper');
+            expect(res.diaperType).toBe('dirty');
+            expect(res.timestamp).not.toBeNull();
+            const diffMin = Math.round((Date.now() - res.timestamp) / 60000);
+            expect(diffMin).toBe(10);
+        });
+
+        it('should parse diaper change with specific past timePoint', () => {
+            const res = parseVoiceInput('上午十點檢查尿布是乾淨的');
+            expect(res).not.toBeNull();
+            expect(res.type).toBe('diaper');
+            expect(res.diaperType).toBe('dry');
+            expect(res.timestamp).not.toBeNull();
+            const d = new Date(res.timestamp);
+            expect(d.getHours()).toBe(10);
+            expect(d.getMinutes()).toBe(0);
         });
     });
 

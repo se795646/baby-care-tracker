@@ -1787,7 +1787,7 @@ const handleVoiceSaveRecord = async (parsedResult) => {
 
     let record = null;
     if (parsedResult.type === 'milk') {
-        const timestamp = Date.now();
+        const timestamp = parsedResult.timestamp || Date.now();
         record = {
             id: `milk-${Date.now()}`,
             type: 'milk',
@@ -1830,7 +1830,7 @@ const handleVoiceSaveRecord = async (parsedResult) => {
         record = {
             id: `diaper-${Date.now()}`,
             type: 'diaper',
-            timestamp: Date.now(),
+            timestamp: parsedResult.timestamp || Date.now(),
             photo: '',
             note: JSON.stringify(diaperMetadata),
             updatedAt: Date.now()

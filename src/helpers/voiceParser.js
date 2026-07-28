@@ -154,6 +154,66 @@ export function parseTimePoint(str, now = new Date()) {
 }
 
 /**
+ * 嘗試在語句中解析出「時間點」或「時間差」
+ * @param {string} normalizedText
+ * @param {Date} now
+ * @returns {number|null} timestamp 如果有解析出時間，回傳 timestamp，否則回傳 null
+ */
+export function parseVoiceTimestamp(normalizedText, now = new Date()) {
+    // 1. 優先匹配時間差，如 "半小時前", "10分鐘前", "1小時前"
+    // A. "x個半小時前" 或 "半小時前"
+    const halfBeforeRegex =
+        /(?:(\d+|[一二兩三四五六七八九十]))?\s*(?:個)?半(?:小)?時前/;
+    const halfBeforeMatch = normalizedText.match(halfBeforeRegex);
+    if (halfBeforeMatch) {
+        const hoursPart = halfBeforeMatch[1]
+            ? chineseToNumber(halfBeforeMatch[1])
+            : 0;
+        const diffMs = (hoursPart * 60 + 30) * 60000;
+        return now.getTime() - diffMs;
+    }
+
+    // B. "x小時前"
+    const hoursBeforeRegex =
+        /(\d+|[一二兩三四五六七八九十]+)\s*(?:個)?\s*小時前/;
+    const hoursBeforeMatch = normalizedText.match(hoursBeforeRegex);
+    if (hoursBeforeMatch) {
+        const hours = chineseToNumber(hoursBeforeMatch[1]);
+        return now.getTime() - hours * 60 * 60000;
+    }
+
+    // C. "x分鐘前" 或 "x分前"
+    const minsBeforeRegex = /(\d+|[一二兩三四五六七八九十]+)\s*(?:分鐘|分)前/;
+    const minsBeforeMatch = normalizedText.match(minsBeforeRegex);
+    if (minsBeforeMatch) {
+        const mins = chineseToNumber(minsBeforeMatch[1]);
+        return now.getTime() - mins * 60000;
+    }
+
+    // 2. 匹配特定時間點，如 "下午兩點半", "10:30"
+    const timePointRegex =
+        /(?:下午|晚上|早上|上午|pm|am|下|晚|早|上)?\s*(?:\d{1,2}\s*:\s*\d{2}|\d+|[一二兩三四五六七八九十百]+)\s*(?:點|點鐘|時)(?:\d+|[一二兩三四五六七八九十]+|半)?\s*(?:分|分鐘)?/;
+    const timePointMatch = normalizedText.match(timePointRegex);
+    if (timePointMatch) {
+        const tp = parseTimePoint(timePointMatch[0], now);
+        if (tp) {
+            return tp.getTime();
+        }
+    }
+
+    // 如果含有 ":" 如 "14:30"
+    const colonMatch = normalizedText.match(/(\d{1,2})\s*:\s*(\d{2})/);
+    if (colonMatch) {
+        const tp = parseTimePoint(colonMatch[0], now);
+        if (tp) {
+            return tp.getTime();
+        }
+    }
+
+    return null;
+}
+
+/**
  * 解析語音文字
  * @param {string} text
  * @returns {Object|null} 解析結果
@@ -163,6 +223,7 @@ export function parseVoiceInput(text) {
 
     // 統一轉成小寫，方便比對 ml, cc 等
     const normalizedText = text.toLowerCase().trim();
+    const now = new Date();
 
     // 1. 偵測是否為睡眠記錄
     if (normalizedText.includes('睡') || normalizedText.includes('眠')) {
@@ -170,8 +231,6 @@ export function parseVoiceInput(text) {
         let matched = false;
         let computedStartTime = null;
         let computedEndTime = null;
-
-        const now = new Date();
 
         // A. 處理「從 A 睡到 剛剛/現在」
         const toNowMatch = normalizedText.match(
@@ -352,6 +411,7 @@ export function parseVoiceInput(text) {
                     amount: 0,
                     leftDuration,
                     rightDuration,
+                    timestamp: parseVoiceTimestamp(normalizedText, now),
                     note: `語音匯入：「${text}」`
                 };
             }
@@ -377,6 +437,7 @@ export function parseVoiceInput(text) {
                     amount,
                     leftDuration: 0,
                     rightDuration: 0,
+                    timestamp: parseVoiceTimestamp(normalizedText, now),
                     note: `語音匯入：「${text}」`
                 };
             }
@@ -469,6 +530,7 @@ export function parseVoiceInput(text) {
             diaperType,
             poopColor,
             poopStatus,
+            timestamp: parseVoiceTimestamp(normalizedText, now),
             note: `語音匯入：「${text}」`
         };
     }
